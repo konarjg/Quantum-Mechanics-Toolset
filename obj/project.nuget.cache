@@ -1,8 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "J1IPXKmtlHaOcfGQ2cMlBmDYQT3sK0hdMvpt6pgQ4CNAO/LkKWtSxl5+hxJNfwwGVFX9i8Bq1RXWLjCqPPkC/A==",
+  "dgSpecHash": "1CpCf2QAcSHBDIhu89xGIKBKhYl7mGZkx7Q8hyekS1bYW5zHbMzCKi6+evUXKCmgTgaJzFWHmPZhLGTlGKo90w==",
   "success": true,
   "projectFilePath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\konis\\.nuget\\packages\\accord\\3.8.0\\accord.3.8.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\accord.math\\3.8.0\\accord.math.3.8.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\matplotlibcs\\1.0.63\\matplotlibcs.1.0.63.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.4\\microsoft.netcore.platforms.3.1.4.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\newtonsoft.json\\11.0.2\\newtonsoft.json.11.0.2.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\nlog\\4.5.6\\nlog.4.5.6.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\scottplot\\4.1.67\\scottplot.4.1.67.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\system.drawing.common\\4.7.2\\system.drawing.common.4.7.2.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
+  ],
   "logs": []
 }
