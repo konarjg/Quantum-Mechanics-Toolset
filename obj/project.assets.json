@@ -5,10 +5,14 @@
       "Accord/3.8.0": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Accord.dll": {}
+          "lib/netstandard2.0/Accord.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/Accord.dll": {}
+          "lib/netstandard2.0/Accord.dll": {
+            "related": ".xml"
+          }
         },
         "build": {
           "build/Accord.targets": {}
@@ -20,21 +24,33 @@
           "Accord": "3.8.0"
         },
         "compile": {
-          "lib/netstandard2.0/Accord.Math.Core.dll": {},
-          "lib/netstandard2.0/Accord.Math.dll": {}
+          "lib/netstandard2.0/Accord.Math.Core.dll": {
+            "related": ".xml"
+          },
+          "lib/netstandard2.0/Accord.Math.dll": {
+            "related": ".Core.xml;.xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/Accord.Math.Core.dll": {},
-          "lib/netstandard2.0/Accord.Math.dll": {}
+          "lib/netstandard2.0/Accord.Math.Core.dll": {
+            "related": ".xml"
+          },
+          "lib/netstandard2.0/Accord.Math.dll": {
+            "related": ".Core.xml;.xml"
+          }
         }
       },
       "MathNet.Numerics/5.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/MathNet.Numerics.dll": {}
+          "lib/net6.0/MathNet.Numerics.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/MathNet.Numerics.dll": {}
+          "lib/net6.0/MathNet.Numerics.dll": {
+            "related": ".xml"
+          }
         }
       },
       "MatplotlibCS/1.0.63": {
@@ -44,10 +60,14 @@
           "Newtonsoft.Json": "11.0.2"
         },
         "compile": {
-          "lib/netstandard2.0/MatplotlibCS.dll": {}
+          "lib/netstandard2.0/MatplotlibCS.dll": {
+            "related": ".deps.json;.pdb"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/MatplotlibCS.dll": {}
+          "lib/netstandard2.0/MatplotlibCS.dll": {
+            "related": ".deps.json;.pdb"
+          }
         }
       },
       "Microsoft.NETCore.Platforms/3.1.4": {
@@ -65,10 +85,14 @@
           "Microsoft.NETCore.Platforms": "3.1.0"
         },
         "compile": {
-          "ref/netstandard2.0/_._": {}
+          "ref/netstandard2.0/_._": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {}
+          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {
+            "related": ".xml"
+          }
         },
         "runtimeTargets": {
           "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll": {
@@ -80,19 +104,27 @@
       "Newtonsoft.Json/11.0.2": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
         }
       },
       "NLog/4.5.6": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/NLog.dll": {}
+          "lib/netstandard2.0/NLog.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/NLog.dll": {}
+          "lib/netstandard2.0/NLog.dll": {
+            "related": ".xml"
+          }
         }
       },
       "ScottPlot/4.1.67": {
@@ -102,10 +134,14 @@
           "System.Numerics.Vectors": "4.5.0"
         },
         "compile": {
-          "lib/net6.0/ScottPlot.dll": {}
+          "lib/net6.0/ScottPlot.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/ScottPlot.dll": {}
+          "lib/net6.0/ScottPlot.dll": {
+            "related": ".xml"
+          }
         }
       },
       "System.Drawing.Common/4.7.2": {
@@ -115,7 +151,9 @@
           "Microsoft.Win32.SystemEvents": "4.7.0"
         },
         "compile": {
-          "ref/netcoreapp3.0/System.Drawing.Common.dll": {}
+          "ref/netcoreapp3.0/System.Drawing.Common.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
           "lib/netstandard2.0/System.Drawing.Common.dll": {}
@@ -506,19 +544,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\konis\\.nuget\\packages\\": {}
+    "C:\\Users\\konis\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
+      "projectUniqueName": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
       "projectName": "Quantum Mechanics",
-      "projectPath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
+      "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
       "packagesPath": "C:\\Users\\konis\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\obj\\",
+      "outputPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\konis\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -526,6 +569,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -567,7 +611,8 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
@@ -576,7 +621,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
       }
     }
   }
