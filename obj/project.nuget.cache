@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "CsQwRcM2pBW/LrNJJxNP7ZduzsLQmzbNAn+J+bB3YO7zgt+bXSju1IE5lfSW7nwUIB8Bej3o5JxMlAeEXg3cxw==",
+  "dgSpecHash": "1CpCf2QAcSHBDIhu89xGIKBKhYl7mGZkx7Q8hyekS1bYW5zHbMzCKi6+evUXKCmgTgaJzFWHmPZhLGTlGKo90w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
+  "projectFilePath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\konis\\.nuget\\packages\\accord\\3.8.0\\accord.3.8.0.nupkg.sha512",
     "C:\\Users\\konis\\.nuget\\packages\\accord.math\\3.8.0\\accord.math.3.8.0.nupkg.sha512",

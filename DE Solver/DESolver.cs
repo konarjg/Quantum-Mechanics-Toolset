@@ -156,7 +156,7 @@ namespace Quantum_Mechanics.DE_Solver
                         if (i > 0)
                             A[i, i - 1] = -b / dx - 2 * a / dx;
 
-                        A[i, i] = a / (dx * dx) + b / dx + c - E_guess;
+                        A[i, i] = a / (dx * dx) + b / dx + c;
                         break;
 
                     case DifferenceScheme.CENTRAL:
@@ -166,7 +166,7 @@ namespace Quantum_Mechanics.DE_Solver
                         if (i > 0)
                             A[i, i - 1] = a / (dx * dx) - b / (2 * dx);
 
-                        A[i, i] = -2 * a / (dx * dx) + c - E_guess;
+                        A[i, i] = -2 * a / (dx * dx) + c;
                         break;
 
                     case DifferenceScheme.FORWARD:
@@ -176,7 +176,7 @@ namespace Quantum_Mechanics.DE_Solver
                         if (i + 1 < n)
                             A[i, i + 1] = -2 * a / (dx * dx) + b / dx;
 
-                        A[i, i] = a / (dx * dx) - b / dx + c - E_guess;
+                        A[i, i] = a / (dx * dx) - b / dx + c;
                         break;
                 }
             }
