@@ -119,7 +119,7 @@ namespace Quantum_Mechanics.General
 
                 switch (symbol)
                 {
-                    case string s when Complex32.TryParse(s, out x) || s == "t" || s == "x" || s == "y" || s == "z" || s == "pi" || s == "e":
+                    case string s when Complex32.TryParse(s, out x) || s == "t" || s == "x" || s == "y" || s == "z" || s == "pi" || s == "e" || s == "h":
                         result.Enqueue(s);
                         break;
 
@@ -194,13 +194,22 @@ namespace Quantum_Mechanics.General
                         stack.Push(MathF.E);
                         break;
 
+                    case string s when s == "h":
+                        stack.Push(1.054571817f);
+                        break;
+
                     case string s when Complex32.TryParse(s, out x):
                         stack.Push(x);
                         break;
 
                     case string s when Operators.ContainsKey(s):
                         var a = stack.Pop();
-                        var b = stack.Pop();
+                        Complex32 b;
+
+                        if (stack.TryPeek(out b))
+                            b = stack.Pop();
+                        else
+                            b = Complex32.Zero;
 
                         stack.Push(ExecuteOperation(s, a, b));
                         break;
@@ -236,6 +245,10 @@ namespace Quantum_Mechanics.General
 
                     case string s when s == "e":
                         stack.Push(MathF.E);
+                        break;
+
+                    case string s when s == "h":
+                        stack.Push(1.054571817f * MathF.Pow(10, -3f));
                         break;
 
                     case string s when Operators.ContainsKey(s):
