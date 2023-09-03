@@ -9,9 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Accord.Math" Version="3.8.0" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="MatplotlibCS" Version="1.0.63" />
+    <PackageReference Include="OxyPlot.Core" Version="2.1.2" />
     <PackageReference Include="ScottPlot" Version="4.1.67" />
   </ItemGroup>
 

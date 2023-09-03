@@ -2,32 +2,6 @@
   "version": 3,
   "targets": {
     "net6.0": {
-      "Accord/3.8.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Accord.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Accord.dll": {}
-        },
-        "build": {
-          "build/Accord.targets": {}
-        }
-      },
-      "Accord.Math/3.8.0": {
-        "type": "package",
-        "dependencies": {
-          "Accord": "3.8.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Accord.Math.Core.dll": {},
-          "lib/netstandard2.0/Accord.Math.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Accord.Math.Core.dll": {},
-          "lib/netstandard2.0/Accord.Math.dll": {}
-        }
-      },
       "MathNet.Numerics/5.0.0": {
         "type": "package",
         "compile": {
@@ -35,19 +9,6 @@
         },
         "runtime": {
           "lib/net6.0/MathNet.Numerics.dll": {}
-        }
-      },
-      "MatplotlibCS/1.0.63": {
-        "type": "package",
-        "dependencies": {
-          "NLog": "4.5.6",
-          "Newtonsoft.Json": "11.0.2"
-        },
-        "compile": {
-          "lib/netstandard2.0/MatplotlibCS.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/MatplotlibCS.dll": {}
         }
       },
       "Microsoft.NETCore.Platforms/3.1.4": {
@@ -77,22 +38,13 @@
           }
         }
       },
-      "Newtonsoft.Json/11.0.2": {
+      "OxyPlot.Core/2.1.2": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+          "lib/netstandard2.0/OxyPlot.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NLog/4.5.6": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/NLog.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/NLog.dll": {}
+          "lib/netstandard2.0/OxyPlot.dll": {}
         }
       },
       "ScottPlot/4.1.67": {
@@ -143,96 +95,6 @@
     }
   },
   "libraries": {
-    "Accord/3.8.0": {
-      "sha512": "7kJrB570dO5ELim+2KWQNozuvWO9/BuZfZspdFy36fcWPNF2CEccblLuILeUlI8QJYd2DlBy0bfK8BlCx/uayA==",
-      "type": "package",
-      "path": "accord/3.8.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "accord.3.8.0.nupkg.sha512",
-        "accord.nuspec",
-        "build/Accord.dll.config",
-        "build/Accord.targets",
-        "lib/net35-unity full v3.5/Accord.dll",
-        "lib/net35-unity full v3.5/Accord.xml",
-        "lib/net35-unity micro v3.5/Accord.dll",
-        "lib/net35-unity micro v3.5/Accord.xml",
-        "lib/net35-unity subset v3.5/Accord.dll",
-        "lib/net35-unity subset v3.5/Accord.xml",
-        "lib/net35-unity web v3.5/Accord.dll",
-        "lib/net35-unity web v3.5/Accord.xml",
-        "lib/net35/Accord.dll",
-        "lib/net35/Accord.xml",
-        "lib/net40/Accord.dll",
-        "lib/net40/Accord.xml",
-        "lib/net45/Accord.dll",
-        "lib/net45/Accord.xml",
-        "lib/net46/Accord.dll",
-        "lib/net46/Accord.xml",
-        "lib/net462/Accord.dll",
-        "lib/net462/Accord.xml",
-        "lib/netstandard1.4/Accord.dll",
-        "lib/netstandard1.4/Accord.xml",
-        "lib/netstandard2.0/Accord.dll",
-        "lib/netstandard2.0/Accord.xml"
-      ]
-    },
-    "Accord.Math/3.8.0": {
-      "sha512": "K3dzeQjDIrwRnoTRoMOoIbul2Uc0B8cnEtdrSlirmIo37C+jVkmYpJzme/z4Kg99XR2Vj5W5TTNlhjn+AKR+8A==",
-      "type": "package",
-      "path": "accord.math/3.8.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "accord.math.3.8.0.nupkg.sha512",
-        "accord.math.nuspec",
-        "lib/net35-unity full v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity full v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity full v3.5/Accord.Math.dll",
-        "lib/net35-unity full v3.5/Accord.Math.xml",
-        "lib/net35-unity micro v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity micro v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity micro v3.5/Accord.Math.dll",
-        "lib/net35-unity micro v3.5/Accord.Math.xml",
-        "lib/net35-unity subset v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity subset v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity subset v3.5/Accord.Math.dll",
-        "lib/net35-unity subset v3.5/Accord.Math.xml",
-        "lib/net35-unity web v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity web v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity web v3.5/Accord.Math.dll",
-        "lib/net35-unity web v3.5/Accord.Math.xml",
-        "lib/net35/Accord.Math.Core.dll",
-        "lib/net35/Accord.Math.Core.xml",
-        "lib/net35/Accord.Math.dll",
-        "lib/net35/Accord.Math.xml",
-        "lib/net40/Accord.Math.Core.dll",
-        "lib/net40/Accord.Math.Core.xml",
-        "lib/net40/Accord.Math.dll",
-        "lib/net40/Accord.Math.xml",
-        "lib/net45/Accord.Math.Core.dll",
-        "lib/net45/Accord.Math.Core.xml",
-        "lib/net45/Accord.Math.dll",
-        "lib/net45/Accord.Math.xml",
-        "lib/net46/Accord.Math.Core.dll",
-        "lib/net46/Accord.Math.Core.xml",
-        "lib/net46/Accord.Math.dll",
-        "lib/net46/Accord.Math.xml",
-        "lib/net462/Accord.Math.Core.dll",
-        "lib/net462/Accord.Math.Core.xml",
-        "lib/net462/Accord.Math.dll",
-        "lib/net462/Accord.Math.xml",
-        "lib/netstandard1.4/Accord.Math.Core.dll",
-        "lib/netstandard1.4/Accord.Math.Core.xml",
-        "lib/netstandard1.4/Accord.Math.dll",
-        "lib/netstandard1.4/Accord.Math.xml",
-        "lib/netstandard2.0/Accord.Math.Core.dll",
-        "lib/netstandard2.0/Accord.Math.Core.xml",
-        "lib/netstandard2.0/Accord.Math.dll",
-        "lib/netstandard2.0/Accord.Math.xml"
-      ]
-    },
     "MathNet.Numerics/5.0.0": {
       "sha512": "pg1W2VwaEQMAiTpGK840hZgzavnqjlCMTVSbtVCXVyT+7AX4mc1o89SPv4TBlAjhgCOo9c1Y+jZ5m3ti2YgGgA==",
       "type": "package",
@@ -253,30 +115,6 @@
         "lib/netstandard2.0/MathNet.Numerics.xml",
         "mathnet.numerics.5.0.0.nupkg.sha512",
         "mathnet.numerics.nuspec"
-      ]
-    },
-    "MatplotlibCS/1.0.63": {
-      "sha512": "q3SwUxR0BpZsaUzl7ZhxO8TLPXuJAfunnUO87arJS9wxQASMJ5PdfabKQcxEM5t89nvLiUkXyh6+R9DhYCqH/Q==",
-      "type": "package",
-      "path": "matplotlibcs/1.0.63",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "content/MatplotlibCS/annotations.py",
-        "content/MatplotlibCS/arc.py",
-        "content/MatplotlibCS/helpers.py",
-        "content/MatplotlibCS/histogram.py",
-        "content/MatplotlibCS/hline.py",
-        "content/MatplotlibCS/line_2d.py",
-        "content/MatplotlibCS/matplotlib_cs.py",
-        "content/MatplotlibCS/subplot.py",
-        "content/MatplotlibCS/task.py",
-        "content/MatplotlibCS/vline.py",
-        "lib/netstandard2.0/MatplotlibCS.deps.json",
-        "lib/netstandard2.0/MatplotlibCS.dll",
-        "lib/netstandard2.0/MatplotlibCS.pdb",
-        "matplotlibcs.1.0.63.nupkg.sha512",
-        "matplotlibcs.nuspec"
       ]
     },
     "Microsoft.NETCore.Platforms/3.1.4": {
@@ -326,67 +164,24 @@
         "version.txt"
       ]
     },
-    "Newtonsoft.Json/11.0.2": {
-      "sha512": "IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
+    "OxyPlot.Core/2.1.2": {
+      "sha512": "/BuPL1Wa7ZhpKA2DBe72md+S8PgIHF+UP/NsKfO9BiheXnbns1/tqS7s2MWIR1xFy5i+PWVC67KziGPY48mNgA==",
       "type": "package",
-      "path": "newtonsoft.json/11.0.2",
+      "path": "oxyplot.core/2.1.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "LICENSE.md",
-        "lib/net20/Newtonsoft.Json.dll",
-        "lib/net20/Newtonsoft.Json.xml",
-        "lib/net35/Newtonsoft.Json.dll",
-        "lib/net35/Newtonsoft.Json.xml",
-        "lib/net40/Newtonsoft.Json.dll",
-        "lib/net40/Newtonsoft.Json.xml",
-        "lib/net45/Newtonsoft.Json.dll",
-        "lib/net45/Newtonsoft.Json.xml",
-        "lib/netstandard1.0/Newtonsoft.Json.dll",
-        "lib/netstandard1.0/Newtonsoft.Json.xml",
-        "lib/netstandard1.3/Newtonsoft.Json.dll",
-        "lib/netstandard1.3/Newtonsoft.Json.xml",
-        "lib/netstandard2.0/Newtonsoft.Json.dll",
-        "lib/netstandard2.0/Newtonsoft.Json.xml",
-        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
-        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
-        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
-        "newtonsoft.json.11.0.2.nupkg.sha512",
-        "newtonsoft.json.nuspec"
-      ]
-    },
-    "NLog/4.5.6": {
-      "sha512": "FZIdeH92NTu6ePm+QbLT9pyd5vY9B+GYX8S2bh6ZxJC+XSTZDhZ6EHWxDzyBIEjtIb+nSBJfIgdMuQNQEYMqbQ==",
-      "type": "package",
-      "path": "nlog/4.5.6",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/monoandroid44/NLog.dll",
-        "lib/monoandroid44/NLog.xml",
-        "lib/net35/NLog.dll",
-        "lib/net35/NLog.xml",
-        "lib/net40-client/NLog.dll",
-        "lib/net40-client/NLog.xml",
-        "lib/net45/NLog.dll",
-        "lib/net45/NLog.xml",
-        "lib/netstandard1.3/NLog.dll",
-        "lib/netstandard1.3/NLog.xml",
-        "lib/netstandard1.5/NLog.dll",
-        "lib/netstandard1.5/NLog.xml",
-        "lib/netstandard2.0/NLog.dll",
-        "lib/netstandard2.0/NLog.xml",
-        "lib/sl4/NLog.dll",
-        "lib/sl4/NLog.xml",
-        "lib/sl5/NLog.dll",
-        "lib/sl5/NLog.xml",
-        "lib/wp8/NLog.dll",
-        "lib/wp8/NLog.xml",
-        "lib/xamarinios10/NLog.dll",
-        "lib/xamarinios10/NLog.xml",
-        "nlog.4.5.6.nupkg.sha512",
-        "nlog.nuspec"
+        "OxyPlot_128.png",
+        "lib/net40/OxyPlot.dll",
+        "lib/net40/OxyPlot.xml",
+        "lib/net45/OxyPlot.dll",
+        "lib/net45/OxyPlot.xml",
+        "lib/netstandard1.0/OxyPlot.dll",
+        "lib/netstandard1.0/OxyPlot.xml",
+        "lib/netstandard2.0/OxyPlot.dll",
+        "lib/netstandard2.0/OxyPlot.xml",
+        "oxyplot.core.2.1.2.nupkg.sha512",
+        "oxyplot.core.nuspec"
       ]
     },
     "ScottPlot/4.1.67": {
@@ -499,9 +294,8 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Accord.Math >= 3.8.0",
       "MathNet.Numerics >= 5.0.0",
-      "MatplotlibCS >= 1.0.63",
+      "OxyPlot.Core >= 2.1.2",
       "ScottPlot >= 4.1.67"
     ]
   },
@@ -544,17 +338,13 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
-          "Accord.Math": {
-            "target": "Package",
-            "version": "[3.8.0, )"
-          },
           "MathNet.Numerics": {
             "target": "Package",
             "version": "[5.0.0, )"
           },
-          "MatplotlibCS": {
+          "OxyPlot.Core": {
             "target": "Package",
-            "version": "[1.0.63, )"
+            "version": "[2.1.2, )"
           },
           "ScottPlot": {
             "target": "Package",

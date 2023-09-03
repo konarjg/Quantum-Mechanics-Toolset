@@ -225,6 +225,67 @@ namespace Quantum_Mechanics.General
             return stack.Pop();
         }
 
+        public static Complex32 Calculate(string input, Complex32 x, Complex32 y, Complex32 z)
+        {
+            var queue = Parse(input);
+            var stack = new Stack<Complex32>();
+            var t = new Complex32(0, 0);
+
+            while (queue.Count > 0)
+            {
+                switch (queue.Dequeue())
+                {
+                    case string s when s == "x":
+                        stack.Push(x);
+                        break;
+
+                    case string s when s == "y":
+                        stack.Push(y);
+                        break;
+
+                    case string s when s == "z":
+                        stack.Push(z);
+                        break;
+
+                    case string s when s == "pi":
+                        stack.Push(MathF.PI);
+                        break;
+
+                    case string s when s == "e":
+                        stack.Push(MathF.E);
+                        break;
+
+                    case string s when s == "h":
+                        stack.Push(1.054571817f);
+                        break;
+
+                    case string s when Complex32.TryParse(s, out t):
+                        stack.Push(t);
+                        break;
+
+                    case string s when Operators.ContainsKey(s):
+                        var a = stack.Pop();
+                        Complex32 b;
+
+                        if (stack.TryPeek(out b))
+                            b = stack.Pop();
+                        else
+                            b = Complex32.Zero;
+
+                        stack.Push(ExecuteOperation(s, a, b));
+                        break;
+
+                    case string s when Functions.Contains(s):
+                        var c = stack.Pop();
+
+                        stack.Push(ExecuteFunction(s, c));
+                        break;
+                }
+            }
+
+            return stack.Pop();
+        }
+
         public static Complex32 Calculate(string input)
         {
             var queue = Parse(input);

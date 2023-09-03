@@ -13,10 +13,6 @@ C:\Users\konis\Desktop\Całki\Quantum Mechanics\obj\Debug\net6.0\refint\Quantum 
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\obj\Debug\net6.0\Quantum Mechanics.pdb
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\obj\Debug\net6.0\Quantum Mechanics.genruntimeconfig.cache
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\obj\Debug\net6.0\ref\Quantum Mechanics.dll
-C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\Accord.dll.config
-C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\Accord.dll
-C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\Accord.Math.Core.dll
-C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\Accord.Math.dll
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\obj\Debug\net6.0\Quantum Mechanics.csproj.CopyComplete
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\ScottPlot.dll
@@ -25,9 +21,6 @@ C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\runtimes\win\li
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
 C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\MathNet.Numerics.dll
-C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\MatplotlibCS.dll
-C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\Newtonsoft.Json.dll
-C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\NLog.dll
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\bin\Debug\net6.0\Quantum Mechanics.exe
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\bin\Debug\net6.0\Accord.dll.config
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\bin\Debug\net6.0\Quantum Mechanics.deps.json
@@ -58,3 +51,4 @@ C:\Users\konis\Desktop\Quantum Mechanics Toolset\obj\Debug\net6.0\refint\Quantum
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\obj\Debug\net6.0\Quantum Mechanics.pdb
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\obj\Debug\net6.0\Quantum Mechanics.genruntimeconfig.cache
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\obj\Debug\net6.0\ref\Quantum Mechanics.dll
+C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\OxyPlot.dll

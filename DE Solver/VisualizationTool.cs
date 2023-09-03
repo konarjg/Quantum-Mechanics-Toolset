@@ -1,18 +1,16 @@
 ﻿using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using ScottPlot;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quantum_Mechanics.DE_Solver
 {
     public class VisualizationTool
     {
-        public void Plot1D(Vector<Complex32> function, double[] domain, int n)
+        public void Plot(Vector<Complex32> function, double[] domain, int n)
         {
             var x = CreateVector.Sparse<double>(n);
             var dx = (domain[1] - domain[0]) / n;

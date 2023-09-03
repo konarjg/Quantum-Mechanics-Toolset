@@ -12,14 +12,11 @@ using MathNet.Numerics.Differentiation;
 using MathNet.Numerics.Interpolation;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Factorization;
-using MatplotlibCS;
 using Quantum_Mechanics.General;
 using ScottPlot;
 using ScottPlot.Plottable;
 using ScottPlot.Statistics.Interpolation;
-using Accord.Math.Optimization;
 using MathNet.Numerics.RootFinding;
-using Accord.Math;
 
 namespace Quantum_Mechanics.DE_Solver
 {
@@ -233,7 +230,88 @@ namespace Quantum_Mechanics.DE_Solver
 
             return solution;
         }
-        public static Vector<Complex32> SolvePDE(DifferenceScheme[] schemes, string[] equation, BoundaryCondition[,] boundaryConditions, double[,] domain, int n) { return null; }
+        public static Vector<Complex32> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryCondition[,] boundaryConditions, double[,] domain, int n) 
+        {
+            var dr = CreateVector.Dense<float>(3);
+
+            var r = CreateMatrix.Dense<float>(n, 3);
+            var a = CreateVector.Dense<Complex32>(equation.Length);
+
+            var A = CreateMatrix.Sparse<Complex32>(n * n * n, n * n * n);
+            var B = CreateVector.Sparse<Complex32>(n * n * n);
+
+            var solution = CreateVector.Sparse<Complex32>(n * n * n);
+
+            Console.WriteLine("Initializing Solver");
+
+            for (int i = 0; i < 3; ++i)
+                dr[i] = (float)((domain[i, 1] - domain[i, 0]) / n);
+
+            for (int j = 0; j < 3; ++j)
+            {
+                for (int i = 0; i < n; ++i)
+                    r[i, j] = (float)domain[j, 0] + i * dr[j];
+            }
+
+            Console.WriteLine("Setting Up The Parameters");
+
+            for (int i = 0; i < equation.Length; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                {
+                    for (int k = 0; k < n; ++k)
+                    {
+                        for (int m = 0; m < n; ++m)
+                        {
+                            a[i] = RPNParser.Calculate(equation[i], r[m, 0], r[j, 1], r[k, 2]);
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                {
+                    for (int k = 0; k < n; ++k)
+                    {
+                        var m = n * n * k + n * j + i;
+
+                        switch (scheme)
+                        {
+                            case DifferenceScheme.FORWARD:
+                                if (m + 2 < A.ColumnCount)
+                                    A[m, m + 2] = a[0] / (dr[0] * dr[0]);
+
+                                if (m + 1 < A.ColumnCount)
+                                    A[m, m + 1] = a[3] / dr[0] - 2 * a[0] / (dr[0] * dr[0]);
+
+                                if (m + 2 * n < A.ColumnCount)
+                                    A[m, m + 2 * n] = a[1] / (dr[1] * dr[1]);
+
+                                if (m + n < A.ColumnCount)
+                                    A[m, m + n] = a[4] / dr[1] - 2 * a[1] / (dr[1] * dr[1]);
+
+                                if (m + 2 * n * n < A.ColumnCount)
+                                    A[m, m + 2 * n * n] = a[2] / (dr[2] * dr[2]);
+
+                                if (m + n * n < A.ColumnCount)
+                                    A[m, m + n * n] = a[5] / dr[2] - 2 * a[2] / (dr[2] * dr[2]);
+
+                                A[m, m] = a[0] / (dr[0] * dr[0]) + a[1] / (dr[1] * dr[1]) + a[2] * (dr[2] * dr[2]) + a[3] / dr[0] + a[4] / dr[1] + a[5] / dr[2] + a[6];
+                                B[m] = a[7];
+                                break;
+                        }
+
+                        ++m;
+                    }
+                }
+            }
+
+            Console.WriteLine("Final Stage");
+            solution = A.Solve(B);
+            return solution; 
+        }
         
         public static Dictionary<Complex32, Vector<Complex32>> SolveEigenvaluePDE(DifferenceScheme[] schemes, string[] equation, BoundaryCondition[,] boundaryConditions, double[,] domain, int n) { return null; }
     }

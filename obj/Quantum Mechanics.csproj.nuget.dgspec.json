@@ -40,17 +40,13 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "Accord.Math": {
-              "target": "Package",
-              "version": "[3.8.0, )"
-            },
             "MathNet.Numerics": {
               "target": "Package",
               "version": "[5.0.0, )"
             },
-            "MatplotlibCS": {
+            "OxyPlot.Core": {
               "target": "Package",
-              "version": "[1.0.63, )"
+              "version": "[2.1.2, )"
             },
             "ScottPlot": {
               "target": "Package",
