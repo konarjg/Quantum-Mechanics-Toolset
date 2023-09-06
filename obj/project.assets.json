@@ -5,10 +5,49 @@
       "MathNet.Numerics/5.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/MathNet.Numerics.dll": {}
+          "lib/net6.0/MathNet.Numerics.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/MathNet.Numerics.dll": {}
+          "lib/net6.0/MathNet.Numerics.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "MathNet.Numerics.MKL.Win-x64/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "MathNet.Numerics.Providers.MKL": "5.0.0"
+        },
+        "build": {
+          "buildTransitive/net5.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win-x64/native/libMathNetNumericsMKL.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/libiomp5md.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          }
+        }
+      },
+      "MathNet.Numerics.Providers.MKL/5.0.0": {
+        "type": "package",
+        "dependencies": {
+          "MathNet.Numerics": "5.0.0"
+        },
+        "compile": {
+          "lib/net6.0/MathNet.Numerics.Providers.MKL.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/MathNet.Numerics.Providers.MKL.dll": {
+            "related": ".xml"
+          }
         }
       },
       "Microsoft.NETCore.Platforms/3.1.4": {
@@ -26,10 +65,14 @@
           "Microsoft.NETCore.Platforms": "3.1.0"
         },
         "compile": {
-          "ref/netstandard2.0/_._": {}
+          "ref/netstandard2.0/_._": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {}
+          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {
+            "related": ".xml"
+          }
         },
         "runtimeTargets": {
           "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll": {
@@ -41,10 +84,14 @@
       "OxyPlot.Core/2.1.2": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/OxyPlot.dll": {}
+          "lib/netstandard2.0/OxyPlot.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/OxyPlot.dll": {}
+          "lib/netstandard2.0/OxyPlot.dll": {
+            "related": ".xml"
+          }
         }
       },
       "ScottPlot/4.1.67": {
@@ -54,10 +101,14 @@
           "System.Numerics.Vectors": "4.5.0"
         },
         "compile": {
-          "lib/net6.0/ScottPlot.dll": {}
+          "lib/net6.0/ScottPlot.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/ScottPlot.dll": {}
+          "lib/net6.0/ScottPlot.dll": {
+            "related": ".xml"
+          }
         }
       },
       "System.Drawing.Common/4.7.2": {
@@ -67,7 +118,9 @@
           "Microsoft.Win32.SystemEvents": "4.7.0"
         },
         "compile": {
-          "ref/netcoreapp3.0/System.Drawing.Common.dll": {}
+          "ref/netcoreapp3.0/System.Drawing.Common.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
           "lib/netstandard2.0/System.Drawing.Common.dll": {}
@@ -115,6 +168,51 @@
         "lib/netstandard2.0/MathNet.Numerics.xml",
         "mathnet.numerics.5.0.0.nupkg.sha512",
         "mathnet.numerics.nuspec"
+      ]
+    },
+    "MathNet.Numerics.MKL.Win-x64/3.0.0": {
+      "sha512": "tgp9xQlPCiIqZ+VWJo2/c7GalV+1ucJkiaV7XEh9uNFt7KkG+rKN/7J2dhdiNxAAejD0MFeMkQy08cgQhHQc+Q==",
+      "type": "package",
+      "path": "mathnet.numerics.mkl.win-x64/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net461/MathNet.Numerics.MKL.Win-x64.targets",
+        "build/net48/MathNet.Numerics.MKL.Win-x64.targets",
+        "build/net5.0/_._",
+        "build/netstandard2.0/_._",
+        "buildTransitive/net461/MathNet.Numerics.MKL.Win-x64.targets",
+        "buildTransitive/net48/MathNet.Numerics.MKL.Win-x64.targets",
+        "buildTransitive/net5.0/_._",
+        "buildTransitive/netstandard2.0/_._",
+        "icon.png",
+        "license.txt",
+        "mathnet.numerics.mkl.win-x64.3.0.0.nupkg.sha512",
+        "mathnet.numerics.mkl.win-x64.nuspec",
+        "runtimes/win-x64/native/libMathNetNumericsMKL.dll",
+        "runtimes/win-x64/native/libiomp5md.dll"
+      ]
+    },
+    "MathNet.Numerics.Providers.MKL/5.0.0": {
+      "sha512": "cCOM4ImHjdbpD2iR4/6mVFq+sD0sI5hXlAYJXIKmob+20OiA7QQ259vY4GLXYOLBhy35D2QjGmBlgdzNNkuepw==",
+      "type": "package",
+      "path": "mathnet.numerics.providers.mkl/5.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/net461/MathNet.Numerics.Providers.MKL.dll",
+        "lib/net461/MathNet.Numerics.Providers.MKL.xml",
+        "lib/net48/MathNet.Numerics.Providers.MKL.dll",
+        "lib/net48/MathNet.Numerics.Providers.MKL.xml",
+        "lib/net5.0/MathNet.Numerics.Providers.MKL.dll",
+        "lib/net5.0/MathNet.Numerics.Providers.MKL.xml",
+        "lib/net6.0/MathNet.Numerics.Providers.MKL.dll",
+        "lib/net6.0/MathNet.Numerics.Providers.MKL.xml",
+        "lib/netstandard2.0/MathNet.Numerics.Providers.MKL.dll",
+        "lib/netstandard2.0/MathNet.Numerics.Providers.MKL.xml",
+        "mathnet.numerics.providers.mkl.5.0.0.nupkg.sha512",
+        "mathnet.numerics.providers.mkl.nuspec"
       ]
     },
     "Microsoft.NETCore.Platforms/3.1.4": {
@@ -295,24 +393,30 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "MathNet.Numerics >= 5.0.0",
+      "MathNet.Numerics.MKL.Win-x64 >= 3.0.0",
       "OxyPlot.Core >= 2.1.2",
       "ScottPlot >= 4.1.67"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\konis\\.nuget\\packages\\": {}
+    "C:\\Users\\konis\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
+      "projectUniqueName": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
       "projectName": "Quantum Mechanics",
-      "projectPath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
+      "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
       "packagesPath": "C:\\Users\\konis\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\obj\\",
+      "outputPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\konis\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -320,6 +424,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -342,6 +447,10 @@
             "target": "Package",
             "version": "[5.0.0, )"
           },
+          "MathNet.Numerics.MKL.Win-x64": {
+            "target": "Package",
+            "version": "[3.0.0, )"
+          },
           "OxyPlot.Core": {
             "target": "Package",
             "version": "[2.1.2, )"
@@ -357,7 +466,8 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
@@ -366,7 +476,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
       }
     }
   }

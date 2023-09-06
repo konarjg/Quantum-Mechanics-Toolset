@@ -17,6 +17,7 @@ using ScottPlot;
 using ScottPlot.Plottable;
 using ScottPlot.Statistics.Interpolation;
 using MathNet.Numerics.RootFinding;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Quantum_Mechanics.DE_Solver
 {
@@ -30,6 +31,22 @@ namespace Quantum_Mechanics.DE_Solver
         {
             Order = order;
             Argument = RPNParser.Calculate(argument);
+            Value = RPNParser.Calculate(value);
+        }
+    }
+
+    public class BoundaryConditionPDE
+    {
+        public int Order { get; set; }
+        public int Variable { get; set; }
+        public Complex32 Argument { get; set; }
+        public Complex32 Value { get; set; }
+
+        public BoundaryConditionPDE(int order, int variable, string argument, string value)
+        {
+            Order = order;
+            Variable = variable;
+            Argument = RPNParser.Calculate(argument); 
             Value = RPNParser.Calculate(value);
         }
     }
@@ -213,9 +230,9 @@ namespace Quantum_Mechanics.DE_Solver
                             g[m] = g_interpolated.Differentiate(x[m]);
 
                         if (g[k] != condition.Value.Real)
-                        { 
-                            valid = false; 
-                            break; 
+                        {
+                            valid = false;
+                            break;
                         }
                     }
                 }
@@ -230,89 +247,215 @@ namespace Quantum_Mechanics.DE_Solver
 
             return solution;
         }
-        public static Vector<Complex32> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryCondition[,] boundaryConditions, double[,] domain, int n) 
+        public static Vector<Complex32> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n)
         {
-            var dr = CreateVector.Dense<float>(3);
+            var r = CreateMatrix.Sparse<double>(n, 2);
+            var dr = CreateVector.Sparse<float>(2);
+            var a = CreateVector.Sparse<Complex32>(equation.Length);
 
-            var r = CreateMatrix.Dense<float>(n, 3);
-            var a = CreateVector.Dense<Complex32>(equation.Length);
+            var A = CreateMatrix.Sparse<Complex32>(n * n, n * n);
+            var B = CreateVector.Sparse<Complex32>(n * n);
+            var solution = CreateVector.Sparse<Complex32>(n * n);
 
-            var A = CreateMatrix.Sparse<Complex32>(n * n * n, n * n * n);
-            var B = CreateVector.Sparse<Complex32>(n * n * n);
-
-            var solution = CreateVector.Sparse<Complex32>(n * n * n);
-
-            Console.WriteLine("Initializing Solver");
-
-            for (int i = 0; i < 3; ++i)
-                dr[i] = (float)((domain[i, 1] - domain[i, 0]) / n);
-
-            for (int j = 0; j < 3; ++j)
+            for (int j = 0; j < 2; ++j)
             {
-                for (int i = 0; i < n; ++i)
-                    r[i, j] = (float)domain[j, 0] + i * dr[j];
-            }
+                dr[j] = (float)(domain[j, 1] - domain[j, 0]) / (n - 1);
 
-            Console.WriteLine("Setting Up The Parameters");
+                for (int i = 0; i < n; ++i)
+                    r[i, j] = domain[j, 0] + i * dr[j];
+            }
 
             for (int i = 0; i < equation.Length; ++i)
             {
                 for (int j = 0; j < n; ++j)
                 {
                     for (int k = 0; k < n; ++k)
+                        a[i] = RPNParser.Calculate(equation[i], (float)r[j, 0], (float)r[k, 1]);
+                }
+            }
+
+            for (int k = 0; k < n * n; ++k)
+            {
+                switch (scheme)
+                {
+                    case DifferenceScheme.FORWARD:
+                        if (k + 2 * n < n * n)
+                            A[k, k + 2 * n] = a[0] / (dr[0] * dr[0]);
+
+                        if (k + n < n * n)
+                            A[k, k + n] = a[2] / dr[0] - 2 * a[0] / (dr[0] * dr[0]);
+
+                        if (k + 2 < n * n)
+                            A[k, k + 2] = a[1] / (dr[1] * dr[1]);
+
+                        if (k + 1 < n * n)
+                            A[k, k + 1] = a[3] / dr[1] - 2 * a[1] / (dr[1] * dr[1]);
+
+                        A[k, k] = a[0] / (dr[0] * dr[0]) + a[1] / (dr[1] * dr[1]) - a[2] / dr[0] - a[3] / dr[1] + a[4];
+                        B[k] = a[5];
+                        break;
+
+                    case DifferenceScheme.CENTRAL:
+                        if (k + n < n * n)
+                            A[k, k + n] = a[0] / (dr[0] * dr[0]);
+
+                        if (k - n > 0)
+                            A[k, k - n] = a[0] / (dr[0] * dr[0]) - a[2] / (2 * dr[0]);
+
+                        if (k + 1 < n * n)
+                            A[k, k + 1] = a[1] / (dr[1] * dr[1]);
+
+                        if (k - 1 > 0)
+                            A[k, k - 1] = a[1] / (dr[1] * dr[1]) - a[3] / (2 * dr[1]);
+
+                        A[k, k] = a[4] - 2 * a[0] / (dr[0] * dr[0]) - 2 * a[1] / (dr[1] * dr[1]);
+                        B[k] = a[5];
+                        break;
+                }
+            }
+
+            for (int i = 0; i < boundaryConditions.Length; ++i)
+            {
+                var condition = boundaryConditions[i];
+
+                if (condition.Order == 0)
+                {
+                    if (condition.Variable == 0)
                     {
-                        for (int m = 0; m < n; ++m)
-                        {
-                            a[i] = RPNParser.Calculate(equation[i], r[m, 0], r[j, 1], r[k, 2]);
-                        }
+                        int x = (int)((condition.Argument.Real - domain[0, 0]) / dr[0]);
+
+                        for (int k = 0; k < n; ++k)
+                            A[n * x, n * k] = 0;
+
+                        A[n * x, n * x] = 1;
+                        B[n * x] = condition.Value;
+                    }
+                    else
+                    {
+                        int x = (int)((condition.Argument.Real - domain[1, 0]) / dr[1]);
+
+                        for (int k = 0; k < n; ++k)
+                            A[x, k] = 0;
+
+                        A[x, x] = 1;
+                        B[x] = condition.Value;
                     }
                 }
             }
 
-            for (int i = 0; i < n; ++i)
+            solution = A.Solve(B);
+            return solution;
+        }
+
+        public static Dictionary<Complex32, Vector<Complex32>> SolveEigenvaluePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n) 
+        {
+            var r = CreateMatrix.Sparse<double>(n, 2);
+            var dr = CreateVector.Sparse<float>(2);
+            var a = CreateVector.Sparse<Complex32>(equation.Length);
+
+            var A = CreateMatrix.Sparse<Complex32>(n * n, n * n);
+
+            var solution = new Dictionary<Complex32, Vector<Complex32>>();
+
+            for (int j = 0; j < 2; ++j)
+            {
+                dr[j] = (float)(domain[j, 1] - domain[j, 0]) / (n - 1);
+
+                for (int i = 0; i < n; ++i)
+                    r[i, j] = domain[j, 0] + i * dr[j];
+            }
+
+            for (int i = 0; i < equation.Length; ++i)
             {
                 for (int j = 0; j < n; ++j)
                 {
                     for (int k = 0; k < n; ++k)
-                    {
-                        var m = n * n * k + n * j + i;
-
-                        switch (scheme)
-                        {
-                            case DifferenceScheme.FORWARD:
-                                if (m + 2 < A.ColumnCount)
-                                    A[m, m + 2] = a[0] / (dr[0] * dr[0]);
-
-                                if (m + 1 < A.ColumnCount)
-                                    A[m, m + 1] = a[3] / dr[0] - 2 * a[0] / (dr[0] * dr[0]);
-
-                                if (m + 2 * n < A.ColumnCount)
-                                    A[m, m + 2 * n] = a[1] / (dr[1] * dr[1]);
-
-                                if (m + n < A.ColumnCount)
-                                    A[m, m + n] = a[4] / dr[1] - 2 * a[1] / (dr[1] * dr[1]);
-
-                                if (m + 2 * n * n < A.ColumnCount)
-                                    A[m, m + 2 * n * n] = a[2] / (dr[2] * dr[2]);
-
-                                if (m + n * n < A.ColumnCount)
-                                    A[m, m + n * n] = a[5] / dr[2] - 2 * a[2] / (dr[2] * dr[2]);
-
-                                A[m, m] = a[0] / (dr[0] * dr[0]) + a[1] / (dr[1] * dr[1]) + a[2] * (dr[2] * dr[2]) + a[3] / dr[0] + a[4] / dr[1] + a[5] / dr[2] + a[6];
-                                B[m] = a[7];
-                                break;
-                        }
-
-                        ++m;
-                    }
+                        a[i] = RPNParser.Calculate(equation[i], (float)r[j, 0], (float)r[k, 1]);
                 }
             }
 
-            Console.WriteLine("Final Stage");
-            solution = A.Solve(B);
+            for (int k = 0; k < n * n; ++k)
+            {
+                switch (scheme)
+                {
+                    case DifferenceScheme.FORWARD:
+                        if (k + 2 * n < n * n)
+                            A[k, k + 2 * n] = a[0] / (dr[0] * dr[0]);
+
+                        if (k + n < n * n)
+                            A[k, k + n] = a[2] / dr[0] - 2 * a[0] / (dr[0] * dr[0]);
+
+                        if (k + 2 < n * n)
+                            A[k, k + 2] = a[1] / (dr[1] * dr[1]);
+
+                        if (k + 1 < n * n)
+                            A[k, k + 1] = a[3] / dr[1] - 2 * a[1] / (dr[1] * dr[1]);
+
+                        A[k, k] = a[0] / (dr[0] * dr[0]) + a[1] / (dr[1] * dr[1]) - a[2] / dr[0] - a[3] / dr[1] + a[4];
+                        break;
+
+                    case DifferenceScheme.CENTRAL:
+                        if (k + n < n * n)
+                            A[k, k + n] = a[0] / (dr[0] * dr[0]);
+
+                        if (k - n > 0)
+                            A[k, k - n] = a[0] / (dr[0] * dr[0]) - a[2] / (2 * dr[0]);
+
+                        if (k + 1 < n * n)
+                            A[k, k + 1] = a[1] / (dr[1] * dr[1]);
+
+                        if (k - 1 > 0)
+                            A[k, k - 1] = a[1] / (dr[1] * dr[1]) - a[3] / (2 * dr[1]);
+
+                        A[k, k] = a[4] - 2 * a[0] / (dr[0] * dr[0]) - 2 * a[1] / (dr[1] * dr[1]);
+                        break;
+                }
+            }
+
+            var evd = A.Evd();
+            var Y = evd.EigenVectors;
+            var E = evd.EigenValues;
+
+            for (int i = 0; i < Y.ColumnCount; ++i)
+            {
+                var F = Y.Column(i);
+                var valid = true;
+
+                for (int j = 0; j < boundaryConditions.Length; ++j)
+                {
+                    var condition = boundaryConditions[j];
+                    
+                    if (condition.Variable == 0)
+                    {
+                        var x = (int)((condition.Argument.Real - domain[0, 0]) / dr[0]);
+
+                        if (Math.Abs(F[n * x].Real - condition.Value.Real) > 0.02)
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        var x = (int)((condition.Argument.Real - domain[1, 0]) / dr[1]);
+
+                        if (Math.Abs(F[x].Real - condition.Value.Real) > 0.02)
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+
+                    if (!valid)
+                        break;
+                }
+
+                if (!valid)
+                    continue;
+
+                solution.Add((Complex32)E[i], Y.Column(i));
+            }
             return solution; 
         }
-        
-        public static Dictionary<Complex32, Vector<Complex32>> SolveEigenvaluePDE(DifferenceScheme[] schemes, string[] equation, BoundaryCondition[,] boundaryConditions, double[,] domain, int n) { return null; }
     }
 }

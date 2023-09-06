@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "5FxfJnnnBMdRjd8qIzDDO8/4pQxXNbNTA6/bcquAscYiNAlfTZOrLlgmppOClKM2YHVFU7eO3vYU3mDWmL88Og==",
+  "dgSpecHash": "X8WZ7EP/hDmclCmgfGDeMG0S1ppWO0AFw6oSd2zioV1npEztYUcp1FQ6kceGvbiJ6r8O/y3FHyl1WoNGK3XCww==",
   "success": true,
-  "projectFilePath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
+  "projectFilePath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics.mkl.win-x64\\3.0.0\\mathnet.numerics.mkl.win-x64.3.0.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics.providers.mkl\\5.0.0\\mathnet.numerics.providers.mkl.5.0.0.nupkg.sha512",
     "C:\\Users\\konis\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.4\\microsoft.netcore.platforms.3.1.4.nupkg.sha512",
     "C:\\Users\\konis\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
     "C:\\Users\\konis\\.nuget\\packages\\oxyplot.core\\2.1.2\\oxyplot.core.2.1.2.nupkg.sha512",

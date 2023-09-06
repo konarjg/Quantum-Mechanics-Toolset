@@ -22,6 +22,7 @@ namespace Quantum_Mechanics.General
 
         private static List<string> Functions = new List<string>()
         {
+            "sqrt",
             "exp",
             "log",
             "sin",
@@ -36,6 +37,9 @@ namespace Quantum_Mechanics.General
         {
             switch (function)
             {
+                case "sqrt":
+                    return Complex32.Sqrt(argument);
+
                 case "exp":
                     return Complex32.Exp(argument);
 
@@ -112,6 +116,7 @@ namespace Quantum_Mechanics.General
             var stack = new Stack<string>();
 
             var symbols = input.Replace(" ", "").AddSpaces().Split(' ');
+            var o = "";
 
             for (int i = 0; i < symbols.Length; ++i)
             {
@@ -128,14 +133,8 @@ namespace Quantum_Mechanics.General
                         break;
 
                     case string s when Operators.ContainsKey(s):
-                        if (stack.Count > 0)
-                        {
-                            while (Operators.ContainsKey(stack.Peek()))
-                            {
-                                if (Operators[s] <= Operators[stack.Peek()])
-                                    result.Enqueue(stack.Pop());
-                            }
-                        }
+                        while (stack.TryPeek(out o) && Operators.ContainsKey(o) && Operators[s] <= Operators[o])
+                            result.Enqueue(stack.Pop());
 
                         stack.Push(s);
                         break;
@@ -166,7 +165,7 @@ namespace Quantum_Mechanics.General
                 }
             }
 
-            while (stack.Count > 0)
+            while (stack.TryPeek(out symbol))
                 result.Enqueue(stack.Pop());
 
             return result;
@@ -225,13 +224,14 @@ namespace Quantum_Mechanics.General
             return stack.Pop();
         }
 
-        public static Complex32 Calculate(string input, Complex32 x, Complex32 y, Complex32 z)
+        public static Complex32 Calculate(string input, Complex32 x, Complex32 y)
         {
             var queue = Parse(input);
             var stack = new Stack<Complex32>();
             var t = new Complex32(0, 0);
+            var r = "";
 
-            while (queue.Count > 0)
+            while (queue.TryPeek(out r))
             {
                 switch (queue.Dequeue())
                 {
@@ -241,10 +241,6 @@ namespace Quantum_Mechanics.General
 
                     case string s when s == "y":
                         stack.Push(y);
-                        break;
-
-                    case string s when s == "z":
-                        stack.Push(z);
                         break;
 
                     case string s when s == "pi":
@@ -282,7 +278,7 @@ namespace Quantum_Mechanics.General
                         break;
                 }
             }
-
+            
             return stack.Pop();
         }
 
