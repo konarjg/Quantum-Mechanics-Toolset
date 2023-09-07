@@ -240,7 +240,7 @@ namespace Quantum_Mechanics.DE_Solver
                 if (!valid)
                     continue;
 
-                var E = evd.EigenValues[i + 2];
+                var E = evd.EigenValues[i];
 
                 solution.Add((Complex32)E, F);
             }

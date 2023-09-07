@@ -32,6 +32,38 @@ namespace Quantum_Mechanics.DE_Solver
             };
         }
 
+        public static Func<double, double> Interpolate(double[] domain, Vector<double> values, int n)
+        {
+            return x =>
+            {
+                if (x >= domain[0] && x <= domain[1])
+                {
+                    var dx = (domain[1] - domain[0]) / (n - 1);
+                    var i = (int)((x - domain[0]) / dx);
+
+                    return values[i];
+                }
+
+                throw new ArgumentException();
+            };
+        }
+
+        public static Func<double, Complex32> InterpolateComplex(double[] domain, Vector<Complex32> values, int n)
+        {
+            return x =>
+            {
+                if (x >= domain[0] && x <= domain[1])
+                {
+                    var dx = (domain[1] - domain[0]) / (n - 1);
+                    var i = (int)((x - domain[0]) / dx);
+
+                    return values[i];
+                }
+
+                throw new ArgumentException();
+            };
+        }
+
         public static Func<double, double, double> Interpolate(double[,] domain, Matrix<double> values, int n)
         {
             return (x, y) =>

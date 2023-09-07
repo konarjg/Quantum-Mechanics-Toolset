@@ -14,9 +14,9 @@ using System.Runtime.Versioning;
 Control.UseNativeMKL();
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-var R = CreateMatrix.SparseOfArray(new double[,] { { 0, 5 }, { 0, 5 } });
-var psi = new QuantumSystem2D(QuantumConstants.Me, 1, "0", R.ToArray());
+var R = CreateVector.SparseOfArray(new double[] { 0, 5 });
+var psi = new QuantumSystem1D(QuantumConstants.Me, 1, "0", R.ToArray());
 
 var p = psi.WaveFunction.GetMomentumSpaceValues();
 
-VisualizationTool.Plot(p, psi.WaveFunction.MomentumMagnitudeDomain.ToArray());
+VisualizationTool.Plot(p, R.ToArray(), 400);

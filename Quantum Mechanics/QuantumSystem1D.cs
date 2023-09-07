@@ -35,13 +35,13 @@ namespace Quantum_Mechanics.Quantum_Mechanics
                 new BoundaryCondition(0, positionDomain[1].ToString(), "0")
             };
 
-            var U = DESolver.SolveEigenvalueODE(DifferenceScheme.CENTRAL, equation, boundaryConditions, positionDomain, 20).Values.ElementAt(energyLevel - 1);
+            var U = DESolver.SolveEigenvalueODE(DifferenceScheme.CENTRAL, equation, boundaryConditions, positionDomain, 400).Values.ElementAt(energyLevel - 1);
  
-            var u = CreateVector.Sparse<double>(20);
-            var psi = CreateVector.Sparse<Complex32>(20);
+            var u = CreateVector.Sparse<double>(400);
+            var psi = CreateVector.Sparse<Complex32>(400);
             var N = 0d;
 
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 400; ++i)
             {
                 u[i] = U[i].MagnitudeSquared;
                 psi[i] = U[i];
@@ -51,35 +51,27 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
             N = 1d / N;
          
-            u = u.Multiply(N);
-            psi =   psi.Multiply((float)Math.Sqrt(N));
+            u.Multiply(N);
+            psi.Multiply((float)Math.Sqrt(N));
 
             PositionSpaceValues = psi;
             PositionSpaceProbabilities = u;
-            PositionSpaceHandle = Interpolator.InterpolateComplex(positionDomain, psi, 20);
+            PositionSpaceHandle = Interpolator.InterpolateComplex(positionDomain, psi, 400);
         }
 
         #region Position Space
 
-        public Func<double, double, Complex32> GetPositionSpace()
+        public Func<double, Complex32> GetPositionSpace()
         {
             return PositionSpaceHandle;
         }
 
         public Vector<Complex32> GetPositionSpaceValues()
         {
-            var values = CreateVector.Sparse<Complex32>(400);
-
-            for (int i = 0; i < 20; ++i)
-            {
-                for (int j = 0; j < 20; ++j)
-                    values[20 * i + j] = PositionSpaceValues[i, j];
-            }
-
-            return values;
+            return PositionSpaceValues;
         }
 
-        public Matrix<double> GetProbabilityMapPositionSpace()
+        public Vector<double> GetProbabilityMapPositionSpace()
         {
             return PositionSpaceProbabilities;
         }
@@ -89,50 +81,48 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         #region Momentum Space
         public Func<double, Complex32> GetMomentumSpace()
         {
-            var momentumSpace = CreateMatrix.Sparse<Complex32>(20, 20);
-            PositionSpaceValues.CopyTo(momentumSpace);
+            var momentumSpace = CreateVector.SparseOfArray(PositionSpaceValues.ToArray());
+
+            for (int i = 0; i < 400; ++i)
+                momentumSpace[i] = PositionSpaceValues[i];
+
+            var fourier = momentumSpace.Multiply(1 / MathF.Sqrt(2 * MathF.PI)).ToArray();
             var values = CreateVector.Sparse<Complex32>(400);
 
-            Fourier.Forward2D(momentumSpace.Multiply(1 / MathF.Sqrt(2 * MathF.PI)), FourierOptions.InverseExponent);
+            var N = 0f;
+            var dp = (MomentumDomain[1] - MomentumDomain[0]) / 399;
 
-            var N = 0d;
-            var dpx = (MomentumDomain[0, 1] - MomentumDomain[0, 0]) / 19;
-            var dpy = (MomentumDomain[1, 1] - MomentumDomain[1, 0]) / 19;
-
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 400; ++i)
             {
-                for (int j = 0; j < 20; ++j)
-                {
-                    values[20 * i + j] = momentumSpace[i, j];
-                    N += momentumSpace[i, j].MagnitudeSquared;
-                }
+                N += fourier[i].MagnitudeSquared;
+                values[i] = fourier[i];
             }
+            values = values.Multiply(MathF.Sqrt(1 / N));
 
-            values.Multiply((float)Math.Sqrt(1 / N));
-            return Interpolator.InterpolateComplex(MomentumMagnitudeDomain, values);
+            return Interpolator.InterpolateComplex(MomentumDomain.ToArray(), values, 400);
         }
 
         public Vector<Complex32> GetMomentumSpaceValues()
         {
-            var p = GetMomentumSpace();
+            var psi = GetMomentumSpace();
             var values = CreateVector.Sparse<Complex32>(400);
+            var dp = (MomentumDomain[1] - MomentumDomain[0]) / 399;
 
             for (int i = 0; i < 400; ++i)
-                values[i] = p.Invoke(MomentumMagnitudeDomain[i]);
-
+            {
+                values[i] = psi.Invoke(MomentumDomain[0] + i * dp);
+                Console.WriteLine("psi(p={0})={1}", MomentumDomain[0] + i * dp, values[i]);
+            }
             return values;
         }
 
-        public Matrix<double> GetProbabilityMapMomentumSpace()
+        public Vector<double> GetProbabilityMapMomentumSpace()
         {
-            var map = CreateMatrix.Sparse<double>(20, 20);
+            var map = CreateVector.Sparse<double>(400);
             var values = GetMomentumSpaceValues();
 
-            for (int i = 0; i < 20; ++i)
-            {
-                for (int j = 0; j < 20; ++j)
-                    map[i, j] = values[20 * i + j].MagnitudeSquared;
-            }
+            for (int i = 0; i < 400; ++i)
+                map[i] = values[i].MagnitudeSquared;
 
             return map;
         }
@@ -140,118 +130,90 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         #endregion
     }
 
-    public class QuantumSystem2D
+    public class QuantumSystem1D
     {
         public double Mass { get; set; }
         public int EnergyLevel { get; set; }
         public string PotentialFunction { get; set; }
-        public double[,] PositionDomain { get; set; }
-        public WaveFunction2D WaveFunction { get; set; }
+        public double[] PositionDomain { get; set; }
+        public WaveFunction1D WaveFunction { get; set; }
 
-        public QuantumSystem2D(double mass, int energyLevel, string potentialFunction, double[,] positionDomain) 
+        public QuantumSystem1D(double mass, int energyLevel, string potentialFunction, double[] positionDomain) 
         {
             Mass = mass;
             EnergyLevel = energyLevel;
             PotentialFunction = potentialFunction;
             PositionDomain = positionDomain;
 
-            WaveFunction = new WaveFunction2D(Mass, EnergyLevel, PotentialFunction, PositionDomain);
+            WaveFunction = new WaveFunction1D(Mass, EnergyLevel, PotentialFunction, PositionDomain);
         }
 
         public Vector<Complex32> GetPlot()
         {
-            var dx = (PositionDomain[0, 1] - PositionDomain[0, 0]) / 19;
-            var dy = (PositionDomain[1, 1] - PositionDomain[1, 0]) / 19;
+            var dx = (PositionDomain[1] - PositionDomain[0]) / 399;
             var psi = CreateVector.Sparse<Complex32>(400);
 
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 400; ++i)
             {
-                for (int j = 0; j < 20; ++j)
-                {
-                    var x = PositionDomain[0, 0] + i * dx;
-                    var y = PositionDomain[1, 0] + j * dy;
-
-                    psi[20 * i + j] = WaveFunction.GetPositionSpace().Invoke(x, y);
-                }
+                var x = PositionDomain[0] + i * dx;
+                psi[i] = WaveFunction.GetPositionSpace().Invoke(x);
             }
 
             return psi;
         }
 
-        public Func<double, double, double> GetProbabilityFunction()
+        public Func<double, double> GetProbabilityFunction()
         {
-            return (x, y) =>
+            return x =>
             {
-                var dx = (PositionDomain[0, 1] - PositionDomain[0, 0]) / 19;
-                var dy = (PositionDomain[1, 1] - PositionDomain[1, 0]) / 19;
+                var dx = (PositionDomain[1] - PositionDomain[0]) / 399;
 
-                if (x >= PositionDomain[0, 0] && x <= PositionDomain[0, 1] && y >= PositionDomain[1, 0] && y <= PositionDomain[1, 1])
+                if (x >= PositionDomain[0] && x <= PositionDomain[1])
                 {
                     var map = WaveFunction.GetProbabilityMapPositionSpace();
-                    var P = 0d;
+                    var kx = (int)((x - PositionDomain[0]) / dx);
 
-                    var kx = (int)((x - PositionDomain[0, 0]) / dx);
-                    var ky = (int)((y - PositionDomain[1, 0]) / dy);
-
-                    return map[kx, ky];
+                    return map[kx];
                 }
 
                 throw new ArgumentException();
             };
         }
 
-        public Vector<double> MaxProbabilityPoint()
+        public double MaxProbabilityPoint()
         {
             var p = GetProbabilityFunction();
-            var dx = (PositionDomain[0, 1] - PositionDomain[0, 0]) / 19;
-            var dy = (PositionDomain[1, 1] - PositionDomain[1, 0]) / 19;
+            var dx = (PositionDomain[1] - PositionDomain[0]) / 399;
 
             var max_x = 0d;
-            var max_y = 0d;
 
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 400; ++i)
             {
-                for (int j = 0; j < 20; ++j)
-                {
-                    var x = PositionDomain[0, 0] + i * dx;
-                    var y = PositionDomain[1, 0] + j * dy;
+                var x = PositionDomain[0] + i * dx;
 
-                    var P = p.Invoke(x, y);
+                var P = p.Invoke(x);
 
-                    if (P >= p.Invoke(max_x, max_y))
-                    {
-                        max_x = x;
-                        max_y = y;
-                    }
-                }
+                if (P >= p.Invoke(max_x))
+                    max_x = x;
             }
 
-            return CreateVector.SparseOfArray(new double[] { max_x, max_y });
+            return max_x;
         }
 
-        public Vector<double> ExpectedPosition()
+        public double ExpectedPosition()
         {
             var P = WaveFunction.GetProbabilityMapPositionSpace();
 
-            var dx = (PositionDomain[0, 1] - PositionDomain[0, 0]) / 19;
-            var dy = (PositionDomain[1, 1] - PositionDomain[1, 0]) / 19;
-
+            var dx = (PositionDomain[1] - PositionDomain[0]) / 399;
             var x_exp = 0d;
-            var y_exp = 0d;
 
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 400; ++i)
             {
-                for (int j = 0; j < 20; ++j)
-                {
-                    var x = PositionDomain[0, 0] + i * dx;
-                    var y = PositionDomain[1, 0] + j * dy;
-
-                    x_exp += x * P[i, j];
-                    y_exp += y * P[i, j];
-                }
+                var x = PositionDomain[0] + i * dx;
+                x_exp += x * P[i];
             }
 
-            return CreateVector.SparseOfArray<double>(new double[] { x_exp, y_exp });
+            return x_exp;
         }
     }
 }

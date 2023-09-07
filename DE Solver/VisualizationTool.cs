@@ -35,7 +35,7 @@ namespace Quantum_Mechanics.DE_Solver
             var dx = (domain[1] - domain[0]) / n;
 
             for (int i = 0; i < n; ++i)
-                x += domain[0] + i * dx;
+                x[i] = domain[0] + i * dx;
 
             var y = CreateVector.Sparse<double>(n);
 
@@ -45,6 +45,7 @@ namespace Quantum_Mechanics.DE_Solver
             var plot = new Plot();
 
             plot.AddSignalXY(x.ToArray(), y.ToArray());
+            plot.SetAxisLimits(domain[0], domain[1], y.Min(), y.Max());
             plot.SaveFig("plot.png");
 
             Process.Start("explorer.exe", "plot.png");
