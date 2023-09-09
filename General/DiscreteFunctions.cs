@@ -24,7 +24,7 @@ namespace Quantum_Mechanics.General
                 if (i < 0 || i >= n)
                     continue;
 
-                result += y[i] * dx;
+                result += y[i];
             }
 
             return result;
@@ -44,31 +44,18 @@ namespace Quantum_Mechanics.General
                 if (i < 0 || i >= n)
                     continue;
 
-                result += y[i] * dx;
+                result += y[i];
             }
 
             return result;
         }
 
-        public static Vector<Complex32> Fourier(Vector<double> domain, Vector<Complex32> samples, int n)
+        public static Vector<Complex32> Fourier(Vector<Complex32> x, Vector<Complex32> k, Vector<Complex32> y, int n)
         {
             var result = CreateVector.Sparse<Complex32>(n);
-            var dx = (float)((domain[1] - domain[0]) / (n - 1));
 
             for (int i = 0; i < n; ++i)
-            {
-                var sample = Complex32.Zero;
-                var k = (float)(domain[0] + i * dx);
-
-                for (int j = 0; j < n; ++j)
-                {
-                    var x = (float)(domain[0] + j * dx);
-
-                    sample += samples[j] * 1f / MathF.Sqrt(2 * MathF.PI) * Complex32.Exp(-Complex32.ImaginaryOne * k * x);
-                }
-
-                result[i] = sample;
-            }
+                result[i] = y.Multiply(1 / MathF.Sqrt(2 * MathF.PI)).DotProduct(x.Multiply(-Complex32.ImaginaryOne * k[i]).PointwiseExp());
 
             return result;
         }

@@ -49,3 +49,6 @@ C:\Users\konis\Desktop\Quantum Mechanics Toolset\bin\Debug\net6.0\OxyPlot.dll
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\bin\Debug\net6.0\MathNet.Numerics.Providers.MKL.dll
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\bin\Debug\net6.0\runtimes\win-x64\native\libMathNetNumericsMKL.dll
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\bin\Debug\net6.0\runtimes\win-x64\native\libiomp5md.dll
+C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\MathNet.Numerics.Providers.MKL.dll
+C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\runtimes\win-x64\native\libMathNetNumericsMKL.dll
+C:\Users\konis\Desktop\Całki\Quantum Mechanics\bin\Debug\net6.0\runtimes\win-x64\native\libiomp5md.dll

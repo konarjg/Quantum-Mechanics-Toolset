@@ -98,7 +98,26 @@ namespace Quantum_Mechanics.General
             for (int i = 0; i < input.Length; ++i)
             {
                 if (Operators.ContainsKey(input[i].ToString()) || input[i] == '(' || input[i] == ')')
+                {
+                    if (input[i] == '-')
+                    {
+                        if (i - 1 < 0)
+                        {
+                            result += input[i];
+                            continue;
+                        }    
+
+                        if ((input[i - 1] >= '0' && input[i - 1] <= '9') || input[i - 1] == ')')
+                        {
+                            result += " " + input[i] + " ";
+                            continue;
+                        }
+
+                        result += input[i];
+                    }
+
                     result += " " + input[i] + " ";
+                }
                 else
                     result += input[i];
             }

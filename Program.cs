@@ -14,42 +14,42 @@ using System.Runtime.Versioning;
 
 Control.UseNativeMKL();
 Console.OutputEncoding = System.Text.Encoding.UTF8;
-/*
+
 var R = CreateVector.SparseOfArray(new double[] { 0, 5 });
-var psi = new QuantumSystem1D(QuantumConstants.Me, 1, "0", R.ToArray());
+var psi = new QuantumSystem1D(QuantumConstants.Me, 1, 5000*QuantumConstants.Me+"*x^2", R);
 
-var p = psi.WaveFunction.GetMomentumSpaceValues();
+var max_x = psi.MaxProbabilityPoint();
+var exp_x = psi.ExpectedPosition();
 
-VisualizationTool.Plot(p, R.ToArray(), 400);*/
+var max_k = psi.MaxProbabilityMomentum();
+var exp_k = psi.ExpectedMomentum();
+
+VisualizationTool.Plot("plot.png", psi.GetPlot(), R.ToArray(), 200);
+VisualizationTool.Plot("plot1.png", psi.WaveFunction.GetMomentumSpaceValues(), R.ToArray(), 200);
+
+Console.WriteLine("Energy level: E={0}", psi.WaveFunction.Energy);
+Console.WriteLine("Max probability point: P(x={0})={1}", max_x, psi.GetProbabilityFunctionPositionSpace().Invoke(max_x));
+Console.WriteLine("Expected point: P(x={0})={1}\n", exp_x, psi.GetProbabilityFunctionPositionSpace().Invoke(exp_x));
+Console.WriteLine("Max probability momentum: P(p={0})={1}", max_k / QuantumConstants.H, psi.GetProbabilityFunctionMomentumSpace().Invoke(max_k));
+Console.WriteLine("Expected momentum: P(p={0})={1}\n", exp_k / QuantumConstants.H, psi.GetProbabilityFunctionMomentumSpace().Invoke(exp_k));
 
 var n = 1000;
-
-var R = CreateVector.SparseOfArray(new double[] { -2.5, 2.5 });
-var x = CreateVector.Sparse<double>(n);
-var y = CreateVector.Sparse<Complex32>(n);
-
-var dx = (R[1] - R[0]) / (n - 1);
+var x_avg = 0d;
+var p_avg = 0d;
 
 for (int i = 0; i < n; ++i)
 {
-    x[i] = R[0] + i * dx;
-    y[i] = Complex32.Sqrt(0.4f) * Complex32.Sin(MathF.PI * (float)x[i] / 5f);
+    var x = psi.MeasurePosition();
+    //Console.WriteLine("Measured position x{0}={1}", i + 1, x);
+    x_avg += x / n;
 }
-
-var F = DiscreteFunctions.Fourier(R, y, n);
-var f = CreateVector.Sparse<double>(n);
-var N = 0f;
 
 for (int i = 0; i < n; ++i)
 {
-    f[i] = F[i].MagnitudeSquared;
-    N += (float)f[i];
+    var p = psi.MeasureMomentum() / QuantumConstants.H;
+    //Console.WriteLine("Measured momentum p{0}={1}", i + 1, p);
+    p_avg += p / n;
 }
-f *= 1 / N;
 
-var plot = new Plot();
-plot.SetAxisLimits(R[0], R[1], f.Min(), f.Max());
-plot.AddSignalXY(x.ToArray(), f.ToArray());
-plot.SaveFig("plot.png");
-
-Process.Start("explorer.exe", "plot.png");
+Console.WriteLine("On average ~x={0}", x_avg);
+Console.WriteLine("On average ~p={0}", p_avg);

@@ -5,14 +5,10 @@
       "MathNet.Numerics/5.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/MathNet.Numerics.dll": {
-            "related": ".xml"
-          }
+          "lib/net6.0/MathNet.Numerics.dll": {}
         },
         "runtime": {
-          "lib/net6.0/MathNet.Numerics.dll": {
-            "related": ".xml"
-          }
+          "lib/net6.0/MathNet.Numerics.dll": {}
         }
       },
       "MathNet.Numerics.MKL.Win-x64/3.0.0": {
@@ -40,14 +36,10 @@
           "MathNet.Numerics": "5.0.0"
         },
         "compile": {
-          "lib/net6.0/MathNet.Numerics.Providers.MKL.dll": {
-            "related": ".xml"
-          }
+          "lib/net6.0/MathNet.Numerics.Providers.MKL.dll": {}
         },
         "runtime": {
-          "lib/net6.0/MathNet.Numerics.Providers.MKL.dll": {
-            "related": ".xml"
-          }
+          "lib/net6.0/MathNet.Numerics.Providers.MKL.dll": {}
         }
       },
       "Microsoft.NETCore.Platforms/3.1.4": {
@@ -65,14 +57,10 @@
           "Microsoft.NETCore.Platforms": "3.1.0"
         },
         "compile": {
-          "ref/netstandard2.0/_._": {
-            "related": ".xml"
-          }
+          "ref/netstandard2.0/_._": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {}
         },
         "runtimeTargets": {
           "runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll": {
@@ -84,14 +72,10 @@
       "OxyPlot.Core/2.1.2": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/OxyPlot.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/OxyPlot.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/OxyPlot.dll": {
-            "related": ".xml"
-          }
+          "lib/netstandard2.0/OxyPlot.dll": {}
         }
       },
       "ScottPlot/4.1.67": {
@@ -101,14 +85,10 @@
           "System.Numerics.Vectors": "4.5.0"
         },
         "compile": {
-          "lib/net6.0/ScottPlot.dll": {
-            "related": ".xml"
-          }
+          "lib/net6.0/ScottPlot.dll": {}
         },
         "runtime": {
-          "lib/net6.0/ScottPlot.dll": {
-            "related": ".xml"
-          }
+          "lib/net6.0/ScottPlot.dll": {}
         }
       },
       "System.Drawing.Common/4.7.2": {
@@ -118,9 +98,7 @@
           "Microsoft.Win32.SystemEvents": "4.7.0"
         },
         "compile": {
-          "ref/netcoreapp3.0/System.Drawing.Common.dll": {
-            "related": ".xml"
-          }
+          "ref/netcoreapp3.0/System.Drawing.Common.dll": {}
         },
         "runtime": {
           "lib/netstandard2.0/System.Drawing.Common.dll": {}
@@ -399,24 +377,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\konis\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\konis\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
+      "projectUniqueName": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
       "projectName": "Quantum Mechanics",
-      "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
+      "projectPath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
       "packagesPath": "C:\\Users\\konis\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\obj\\",
+      "outputPath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
         "C:\\Users\\konis\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -424,7 +397,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -466,8 +438,7 @@
           "net47",
           "net471",
           "net472",
-          "net48",
-          "net481"
+          "net48"
         ],
         "assetTargetFallback": true,
         "warn": true,
@@ -476,7 +447,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
       }
     }
   }

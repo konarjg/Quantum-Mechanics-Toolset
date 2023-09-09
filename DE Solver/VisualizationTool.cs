@@ -29,10 +29,10 @@ namespace Quantum_Mechanics.DE_Solver
             Process.Start("explorer.exe", "plot.png");
         }
 
-        public static void Plot(Vector<Complex32> function, double[] domain, int n)
+        public static void Plot(string path, Vector<Complex32> function, double[] domain, int n)
         {
             var x = CreateVector.Sparse<double>(n);
-            var dx = (domain[1] - domain[0]) / n;
+            var dx = (domain[1] - domain[0]) / (n - 1);
 
             for (int i = 0; i < n; ++i)
                 x[i] = domain[0] + i * dx;
@@ -46,9 +46,31 @@ namespace Quantum_Mechanics.DE_Solver
 
             plot.AddSignalXY(x.ToArray(), y.ToArray());
             plot.SetAxisLimits(domain[0], domain[1], y.Min(), y.Max());
-            plot.SaveFig("plot.png");
+            plot.SaveFig(path);
 
-            Process.Start("explorer.exe", "plot.png");
+            Process.Start("explorer.exe", path);
+        }
+
+        public static void Plot(string path, Vector<double> function, double[] domain, int n)
+        {
+            var x = CreateVector.Sparse<double>(n);
+            var dx = (domain[1] - domain[0]) / (n - 1);
+
+            for (int i = 0; i < n; ++i)
+                x[i] = domain[0] + i * dx;
+
+            var y = CreateVector.Sparse<double>(n);
+
+            for (int i = 0; i < n; ++i)
+                y[i] = function[i];
+
+            var plot = new Plot();
+
+            plot.AddSignalXY(x.ToArray(), y.ToArray());
+            plot.SetAxisLimits(domain[0], domain[1], y.Min(), y.Max());
+            plot.SaveFig(path);
+
+            Process.Start("explorer.exe", path);
         }
 
         public static void Plot2D(Vector<Complex32> function, double[,] domain, int n)
