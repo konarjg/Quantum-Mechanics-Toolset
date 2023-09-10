@@ -26,6 +26,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         private Vector<Complex32> MomentumSpaceValues;
         private Func<double, Complex32> MomentumSpaceHandle;
+        public Vector<double> MomentumSpaceProbabilities;
 
         public WaveFunction1D(double mass, int energyLevel, string potential, Vector<double> positionDomain)
         {
@@ -63,6 +64,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
             MomentumSpaceHandle = GetMomentumSpace();
             MomentumSpaceValues = GetMomentumSpaceValues();
+            MomentumSpaceProbabilities = GetProbabilityMapMomentumSpace();
         }
 
         #region Position Space
@@ -101,6 +103,9 @@ namespace Quantum_Mechanics.Quantum_Mechanics
                 x[i] = (float)PositionDomain[0] + i * (float)dx;
                 k[i] = (float)MomentumDomain[0] + i * (float)dk;
                 k_real[i] = MomentumDomain[0] + i * dk;
+
+                k[i] *= 1 / (float)QuantumConstants.H;
+                k_real[i] *= 1 / QuantumConstants.H;
             }
 
             var fourier = DiscreteFunctions.Fourier(x, k, momentumSpace, 200);
