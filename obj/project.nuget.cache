@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "hU+iX+RwWYQXT3jmHmOPv/h+lsP2MPtJ8qkdPfiIwVbTZxUrbdQkoXFgDHqSBFT8ftIUmN9xvJgBZOMG0Ry6Xw==",
+  "dgSpecHash": "X8WZ7EP/hDmclCmgfGDeMG0S1ppWO0AFw6oSd2zioV1npEztYUcp1FQ6kceGvbiJ6r8O/y3FHyl1WoNGK3XCww==",
   "success": true,
-  "projectFilePath": "C:\\Users\\konis\\Desktop\\Całki\\Quantum Mechanics\\Quantum Mechanics.csproj",
+  "projectFilePath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Mechanics.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
     "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics.mkl.win-x64\\3.0.0\\mathnet.numerics.mkl.win-x64.3.0.0.nupkg.sha512",
