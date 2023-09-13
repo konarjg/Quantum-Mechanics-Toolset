@@ -73,7 +73,18 @@ namespace Quantum_Mechanics.DE_Solver
             Process.Start("explorer.exe", path);
         }
 
-        public static void Plot2D(Vector<Complex32> function, double[,] domain, int n)
+        public static void Plot(string path, Vector<double> function, Vector<double> x, int n)
+        {
+            var plot = new Plot();
+
+            plot.AddSignalXY(x.ToArray(), function.ToArray());
+            plot.SetAxisLimits(x.Min(), x.Max(), function.Min(), function.Max());
+            plot.SaveFig(path);
+
+            Process.Start("explorer.exe", path);
+        }
+
+        public static void Plot2D(string path, Vector<Complex32> function, double[,] domain, int n)
         {
             var r = CreateMatrix.Sparse<double>(n, n);
 
@@ -100,8 +111,39 @@ namespace Quantum_Mechanics.DE_Solver
             var bar = plot.AddColorbar();
             bar.DataAreaPadding = 10;
 
-            plot.SaveFig("plot.png");
-            Process.Start("explorer.exe", "plot.png");
+            plot.SaveFig(path);
+            Process.Start("explorer.exe", path);
+        }
+
+        public static void Plot2D(string path, Matrix<Complex32> function, double[,] domain, int n)
+        {
+            var r = CreateMatrix.Sparse<double>(n, n);
+
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                    r[i, j] = function[i, j].MagnitudeSquared;
+            }
+
+            var plot = new Plot();
+
+            plot.SetAxisLimits(domain[0, 0], domain[0, 1], domain[1, 0], domain[1, 1]);
+
+            var map = plot.AddHeatmap(r.ToArray());
+
+            map.CellWidth = (domain[0, 1] - domain[0, 0]) / (n - 1);
+            map.CellHeight = (domain[1, 1] - domain[1, 0]) / (n - 1);
+
+            map.XMin = domain[0, 0];
+            map.XMax = domain[0, 1];
+            map.YMin = domain[1, 0];
+            map.YMax = domain[1, 1];
+
+            var bar = plot.AddColorbar();
+            bar.DataAreaPadding = 10;
+
+            plot.SaveFig(path);
+            Process.Start("explorer.exe", path);
         }
     }
 }
