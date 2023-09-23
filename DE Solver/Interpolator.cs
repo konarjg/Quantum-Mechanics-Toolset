@@ -27,7 +27,12 @@ namespace Quantum_Mechanics.DE_Solver
         {
             var f = new Func<double, double, double>((x0, y0) =>
             {
-                
+                var fx = new double[u.RowCount];
+
+                for (int i = 0; i < u.RowCount; ++i)
+                    fx[i] = Interpolate.CubicSpline(x, u.Row(i)).Interpolate(y0);
+
+                return Interpolate.CubicSpline(y, fx).Interpolate(x0);
             });
 
             return new DiscreteFunction2D(f);
