@@ -24,8 +24,8 @@ namespace Quantum_Mechanics.DE_Solver
     public class BoundaryCondition
     {
         public int Order { get; set; }
-        public Complex32 Argument { get; set; }
-        public Complex32 Value { get; set; }
+        public System.Numerics.Complex Argument { get; set; }
+        public System.Numerics.Complex Value { get; set; }
 
         public BoundaryCondition(int order, string argument, string value)
         {
@@ -39,8 +39,8 @@ namespace Quantum_Mechanics.DE_Solver
     {
         public int Order { get; set; }
         public int Variable { get; set; }
-        public Complex32 Argument { get; set; }
-        public Complex32 Value { get; set; }
+        public System.Numerics.Complex Argument { get; set; }
+        public System.Numerics.Complex Value { get; set; }
 
         public BoundaryConditionPDE(int order, int variable, string argument, string value)
         {
@@ -60,14 +60,14 @@ namespace Quantum_Mechanics.DE_Solver
 
     public static class DESolver
     {
-        public static Vector<Complex32> SolveODE(DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
+        public static Vector<System.Numerics.Complex> SolveODE(DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
         {
             float dx = (float)(domain[1] - domain[0]) / (n - 1);
 
             var x = CreateVector.Dense<double>(n);
 
-            var A = CreateMatrix.Dense<Complex32>(n, n);
-            var B = CreateVector.Dense<Complex32>(n);
+            var A = CreateMatrix.Dense<System.Numerics.Complex>(n, n);
+            var B = CreateVector.Dense<System.Numerics.Complex>(n);
 
             for (int i = 0; i < n; ++i)
                 x[i] = domain[0] + i * dx;
@@ -143,14 +143,14 @@ namespace Quantum_Mechanics.DE_Solver
             return A.Solve(B);
         }
 
-        public static Dictionary<Complex32, Vector<Complex32>> SolveEigenvalueODE(DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
+        public static Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>> SolveEigenvalueODE(DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
         {
-            var solution = new Dictionary<Complex32, Vector<Complex32>>();
+            var solution = new Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>>();
 
             float dx = (float)(domain[1] - domain[0]) / (n - 1);
 
             var x = CreateVector.Dense<double>(n);
-            var A = CreateMatrix.Dense<Complex32>(n, n);
+            var A = CreateMatrix.Dense<System.Numerics.Complex>(n, n);
 
             for (int i = 0; i < n; ++i)
                 x[i] = domain[0] + i * dx;
@@ -242,20 +242,20 @@ namespace Quantum_Mechanics.DE_Solver
 
                 var E = evd.EigenValues[i];
 
-                solution.Add((Complex32)E, F);
+                solution.Add((System.Numerics.Complex)E, F);
             }
 
             return solution;
         }
-        public static Vector<Complex32> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n)
+        public static Vector<System.Numerics.Complex> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n)
         {
             var r = CreateMatrix.Sparse<double>(n, 2);
             var dr = CreateVector.Sparse<float>(2);
-            var a = CreateVector.Sparse<Complex32>(equation.Length);
+            var a = CreateVector.Sparse<System.Numerics.Complex>(equation.Length);
 
-            var A = CreateMatrix.Sparse<Complex32>(n * n, n * n);
-            var B = CreateVector.Sparse<Complex32>(n * n);
-            var solution = CreateVector.Sparse<Complex32>(n * n);
+            var A = CreateMatrix.Sparse<System.Numerics.Complex>(n * n, n * n);
+            var B = CreateVector.Sparse<System.Numerics.Complex>(n * n);
+            var solution = CreateVector.Sparse<System.Numerics.Complex>(n * n);
 
             for (int j = 0; j < 2; ++j)
             {
@@ -347,15 +347,15 @@ namespace Quantum_Mechanics.DE_Solver
             return solution;
         }
 
-        public static Dictionary<Complex32, Vector<Complex32>> SolveEigenvaluePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n) 
+        public static Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>> SolveEigenvaluePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n) 
         {
             var r = CreateMatrix.Sparse<double>(n, 2);
             var dr = CreateVector.Sparse<float>(2);
-            var a = CreateVector.Sparse<Complex32>(equation.Length);
+            var a = CreateVector.Sparse<System.Numerics.Complex>(equation.Length);
 
-            var A = CreateMatrix.Sparse<Complex32>(n * n, n * n);
+            var A = CreateMatrix.Sparse<System.Numerics.Complex>(n * n, n * n);
 
-            var solution = new Dictionary<Complex32, Vector<Complex32>>();
+            var solution = new Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>>();
 
             for (int j = 0; j < 2; ++j)
             {
@@ -453,7 +453,7 @@ namespace Quantum_Mechanics.DE_Solver
                 if (!valid)
                     continue;
 
-                solution.Add((Complex32)E[i], Y.Column(i));
+                solution.Add((System.Numerics.Complex)E[i], Y.Column(i));
             }
             return solution; 
         }

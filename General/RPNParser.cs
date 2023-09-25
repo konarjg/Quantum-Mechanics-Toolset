@@ -33,47 +33,47 @@ namespace Quantum_Mechanics.General
             "atan",
         };
 
-        private static Complex32 ExecuteFunction(string function, Complex32 argument)
+        private static System.Numerics.Complex ExecuteFunction(string function, System.Numerics.Complex argument)
         {
             switch (function)
             {
                 case "sqrt":
-                    return Complex32.Sqrt(argument);
+                    return System.Numerics.Complex.Sqrt(argument);
 
                 case "exp":
-                    return Complex32.Exp(argument);
+                    return System.Numerics.Complex.Exp(argument);
 
                 case "log":
-                    return Complex32.Log(argument);
+                    return System.Numerics.Complex.Log(argument);
 
                 case "sin":
-                    return Complex32.Sin(argument);
+                    return System.Numerics.Complex.Sin(argument);
 
                 case "cos":
-                    return Complex32.Cos(argument);
+                    return System.Numerics.Complex.Cos(argument);
 
                 case "tan":
-                    return Complex32.Tan(argument);
+                    return System.Numerics.Complex.Tan(argument);
 
                 case "asin":
-                    return Complex32.Asin(argument);
+                    return System.Numerics.Complex.Asin(argument);
 
                 case "acos":
-                    return Complex32.Acos(argument);
+                    return System.Numerics.Complex.Acos(argument);
 
                 case "atan":
-                    return Complex32.Atan(argument);
+                    return System.Numerics.Complex.Atan(argument);
             }
 
             throw new ArgumentException();
         }
 
-        private static Complex32 ExecuteOperation(string op, Complex32 a, Complex32 b)
+        private static System.Numerics.Complex ExecuteOperation(string op, System.Numerics.Complex a, System.Numerics.Complex b)
         {
             switch (op)
             {
                 case "^":
-                    return Complex32.Pow(b, a);
+                    return System.Numerics.Complex.Pow(b, a);
 
                 case "*":
                     return b * a;
@@ -190,10 +190,10 @@ namespace Quantum_Mechanics.General
             return result;
         }
 
-        public static Complex32 Calculate(string input, Complex32 t)
+        public static System.Numerics.Complex Calculate(string input, System.Numerics.Complex t)
         {
             var queue = Parse(input);
-            var stack = new Stack<Complex32>();
+            var stack = new Stack<System.Numerics.Complex>();
             var x = new Complex32(0, 0);
 
             while (queue.Count > 0)
@@ -217,17 +217,17 @@ namespace Quantum_Mechanics.General
                         break;
 
                     case string s when Complex32.TryParse(s, out x):
-                        stack.Push(x);
+                        stack.Push(new System.Numerics.Complex(x.Real, x.Imaginary));
                         break;
 
                     case string s when Operators.ContainsKey(s):
                         var a = stack.Pop();
-                        Complex32 b;
+                        System.Numerics.Complex b;
 
                         if (stack.TryPeek(out b))
                             b = stack.Pop();
                         else
-                            b = Complex32.Zero;
+                            b = System.Numerics.Complex.Zero;
 
                         stack.Push(ExecuteOperation(s, a, b));
                         break;
@@ -243,10 +243,10 @@ namespace Quantum_Mechanics.General
             return stack.Pop();
         }
 
-        public static Complex32 Calculate(string input, Complex32 x, Complex32 y)
+        public static System.Numerics.Complex Calculate(string input, System.Numerics.Complex x, System.Numerics.Complex y)
         {
             var queue = Parse(input);
-            var stack = new Stack<Complex32>();
+            var stack = new Stack<System.Numerics.Complex>();
             var t = new Complex32(0, 0);
             var r = "";
 
@@ -275,17 +275,17 @@ namespace Quantum_Mechanics.General
                         break;
 
                     case string s when Complex32.TryParse(s, out t):
-                        stack.Push(t);
+                        stack.Push(new System.Numerics.Complex(t.Real, t.Imaginary));
                         break;
 
                     case string s when Operators.ContainsKey(s):
                         var a = stack.Pop();
-                        Complex32 b;
+                        System.Numerics.Complex b;
 
                         if (stack.TryPeek(out b))
                             b = stack.Pop();
                         else
-                            b = Complex32.Zero;
+                            b = System.Numerics.Complex.Zero;
 
                         stack.Push(ExecuteOperation(s, a, b));
                         break;
@@ -301,10 +301,10 @@ namespace Quantum_Mechanics.General
             return stack.Pop();
         }
 
-        public static Complex32 Calculate(string input)
+        public static System.Numerics.Complex Calculate(string input)
         {
             var queue = Parse(input);
-            var stack = new Stack<Complex32>();
+            var stack = new Stack<System.Numerics.Complex>();
             var x = new Complex32(0, 0);
 
             while (queue.Count > 0)
@@ -312,7 +312,7 @@ namespace Quantum_Mechanics.General
                 switch (queue.Dequeue())
                 {
                     case string s when Complex32.TryParse(s, out x):
-                        stack.Push(x);
+                        stack.Push(new System.Numerics.Complex(x.Real, x.Imaginary));
                         break;
 
                     case string s when s == "pi":

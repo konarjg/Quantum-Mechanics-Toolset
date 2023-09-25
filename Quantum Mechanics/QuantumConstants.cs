@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Quantum_Mechanics.Quantum_Mechanics
 {
+    //All constants given in natural units h = 2pi, c = 1
     public static class QuantumConstants
     {
-        //Reduced Planck's Constant H = h / 2pi
-        public static double H = 1.054571817;
         //Mass of a single electron
-        public static double Me = 0.0091093837;
+        public static double Me = 0.511;
         //Kinetic energy of a single electron
-        public static double Te = -H * H / (2 * Me);
+        public static double Te = -1 / (2 * Me);
     }
 }
