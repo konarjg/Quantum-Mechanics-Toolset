@@ -14,4 +14,11 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         //Kinetic energy of a single electron
         public static double Te = -1 / (2 * Me);
     }
+
+    public enum CoordinateSystem
+    {
+        CARTESIAN_1D,
+        CARTESIAN_2D,
+        POLAR
+    }
 }

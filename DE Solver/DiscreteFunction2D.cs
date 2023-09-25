@@ -63,8 +63,14 @@ namespace Quantum_Mechanics.DE_Solver
             return ToPolarCoordinates(this, true).Integrate(a, b, c, d);
         }
 
-        public double Integrate(double a, double b, double c, double d)
+        public double Integrate(double a, double b, double c, double d, bool jacobian = false)
         {
+            if (jacobian)
+            {
+                var f = new Func<double, double, double>((x, y) => x * Function(x, y));
+                return MathUtils.Round(GaussLegendreRule.Integrate(f, a, b, c, d, 10));
+            }
+
             return MathUtils.Round(GaussLegendreRule.Integrate(Function, a, b, c, d, 10));
         }
 

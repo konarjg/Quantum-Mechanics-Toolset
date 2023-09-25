@@ -83,8 +83,17 @@ namespace Quantum_Mechanics.DE_Solver
             return ToPolarCoordinates(this, true).Integrate(a, b, c, d);
         }
 
-        public Complex Integrate(double a, double b, double c, double d)
+        public Complex Integrate(double a, double b, double c, double d, bool jacobian = false)
         {
+            if (jacobian)
+            {
+                var f = new DiscreteFunction2DComplex(new Func<double, double, Complex>((x, y) => x * Function(x, y)));
+                var re = MathUtils.Round(GaussLegendreRule.Integrate(f.GetRealPart().GetHandle(), a, b, c, d, 10));
+                var im = MathUtils.Round(GaussLegendreRule.Integrate(f.GetImaginaryPart().GetHandle(), a, b, c, d, 10));
+
+                return MathUtils.Round(new Complex(re, im));
+            }
+
             var real = GaussLegendreRule.Integrate(GetRealPart().GetHandle(), a, b, c, d, 10);
             var imaginary = GaussLegendreRule.Integrate(GetImaginaryPart().GetHandle(), a, b, c, d, 10);
 

@@ -18,8 +18,8 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         public DiscreteFunction2DComplex WaveFunctionMomentumSpace { get; private set; }
         public DiscreteFunction2D PositionSpaceProbabilityDensity { get; private set; }
         public DiscreteFunction2D MomentumSpaceProbabilityDensity { get; private set; }
-        public MathNet.Numerics.LinearAlgebra.Matrix<double> PositionSpaceProbabilities { get; private set; }
-        public MathNet.Numerics.LinearAlgebra.Matrix<double> MomentumSpaceProbabilities { get; private set; }
+        public Dictionary<Tuple<double, double>, double> PositionSpaceProbabilities { get; private set; }
+        public Dictionary<double, double> MomentumSpaceProbabilities { get; private set; }
         public double Energy { get; private set; }
         public double OrbitalAngularMomentum { get => AzimuthalLevel * (AzimuthalLevel + 1); }
 
@@ -110,7 +110,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         public void PlotPositionSpace()
         {
-            WaveFunction.Plot(PositionDomain, "position_space.png", 20);
+            WaveFunction.Plot(PositionDomain, "position_space.png", Precision);
         }
 
         public void PlotMomentumSpace()
@@ -123,7 +123,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             for (int i = 0; i < n; ++i)
             {
                 k[i] = MomentumMagnitudeDomain[0] + i * dk;
-                p[i] = MomentumSpaceProbabilities[i];
+                p[i] = MomentumSpaceProbabilityDensity.IntegratePolar(k[i] - dk, k[i] + dk, 0, Math.PI * 2);
             }
 
             var f = Interpolator.Cubic(k, p);
@@ -132,27 +132,24 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         #region Position Space
 
-        private MathNet.Numerics.LinearAlgebra.Matrix<double> GetPositionSpaceProbabilityMap()
+        private Dictionary<Tuple<double, double>, double> GetPositionSpaceProbabilityMap()
         {
             var n = Precision;
             var dx = (PositionDomain[0, 1] - PositionDomain[0, 0]) / (n - 1);
             var dy = (PositionDomain[1, 1] - PositionDomain[1, 0]) / (n - 1);
-
-            var x = CreateVector.Sparse<double>(n);
-            var y = CreateVector.Sparse<double>(n);
-            var p = CreateMatrix.Sparse<double>(n, n);
+            var P = new Dictionary<Tuple<double, double>, double>();  
 
             for (int i = 0; i < n; ++i)
             {
                 for (int j = 0; j < n; ++j)
                 {
-                    x[i] = PositionDomain[0, 0] + i * dx;
-                    y[j] = PositionDomain[1, 0] + j * dy;
-                    p[i, j] = PositionSpaceProbabilityDensity.Integrate(x[i] - dx, x[i] + dx, y[j] - dy, y[j] + dy);
+                    var x = PositionDomain[0, 0] + i * dx;
+                    var y = PositionDomain[1, 0] + j * dy;
+                    P.Add(Tuple.Create(x, y), PositionSpaceProbabilityDensity.Integrate(x - dx, x + dx, y - dy, y + dy));
                 }
             }
 
-            return p;
+            return P;
         }
 
         public double GetProbabilityPositionSpace(double x, double y)
@@ -181,32 +178,19 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var y = new double[Precision];
             var u = PositionSpaceProbabilities;
 
-            var max_x = 0;
-            var max_y = 0;
+            var max = 0;
             var result = new List<Tuple<double, double>>();
 
-            for (int i = 0; i < Precision; ++i)
+            for (int i = 0; i < u.Count; ++i)
             {
-                for (int j = 0; j < Precision; ++j)
-                {
-                    x[i] = PositionDomain[0, 0] + i * dx;
-                    y[j] = PositionDomain[1, 0] + j * dy;
-
-                    if (u[i, j] > u[max_x, max_y])
-                    {
-                        max_x = i;
-                        max_y = j;
-                    }
-                }
+                if (u.ElementAt(i).Value > u.ElementAt(max).Value)
+                    max = i;
             }
 
-            for (int i = 0; i < Precision; ++i)
+            for (int i = 0; i < u.Count; ++i)
             {
-                for (int j = 0; j < Precision; ++j)
-                {
-                    if (Math.Abs(u[i, j] - u[max_x, max_y]) <= 1e-6 + (1e-4 - 1e-6) / 11 * (EnergyLevel - 1))
-                        result.Add(Tuple.Create(x[i], y[j]));
-                }
+                if (Math.Abs(u.ElementAt(i).Value - u.ElementAt(max).Value) <= 1e-6 + (1e-4 - 1e-6) / 11 * (EnergyLevel - 1))
+                    result.Add(u.ElementAt(i).Key);
             }
 
             for (int i = 0; i < result.Count; ++i)
@@ -217,26 +201,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         public Tuple<double, double> MeasurePosition()
         {
-            var n = Precision;
-            var x = new double[n];
-            var y = new double[n];
-            var p = PositionSpaceProbabilities;
-            var dx = (PositionDomain[0, 1] - PositionDomain[0, 0]) / (n - 1);
-            var dy = (PositionDomain[1, 1] - PositionDomain[1, 0]) / (n - 1);
-
-            var P = new Dictionary<Tuple<double, double>, double>();
-
-            for (int i = 0; i < n; ++i)
-            {
-                for (int j = 0; j < n; ++j)
-                {
-                    x[i] = PositionDomain[0, 0] + i * dx;
-                    y[j] = PositionDomain[1, 0] + j * dy;
-                    P.Add(Tuple.Create(x[i], y[j]), p[i, j]);
-                }
-            }
-
-            var P_sorted = P.OrderByDescending(t => t.Value);
+            var P_sorted = PositionSpaceProbabilities.OrderByDescending(t => t.Value);
             var s = new Dictionary<Tuple<double, double>, double>();
             s.Add(P_sorted.ElementAt(0).Key, P_sorted.ElementAt(0).Value);
 
@@ -258,21 +223,19 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         #region Momentum Space
 
-        private MathNet.Numerics.LinearAlgebra.Matrix<double> GetMomentumSpaceProbabilityMap()
+        private Dictionary<double, double> GetMomentumSpaceProbabilityMap()
         {
             var n = Precision * Precision;
             var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
-
-            var k = CreateVector.Sparse<double>(n);
-            var p = CreateVector.Sparse<double>(n);
+            var P = new Dictionary<double, double>();
 
             for (int i = 0; i < n; ++i)
             {
-                k[i] = MomentumMagnitudeDomain[0] + i * dk;
-                p[i] = MomentumSpaceProbabilityDensity.IntegratePolar(k[i] - dk, k[i] + dk, 0, Math.PI * 2);
+                var k = MomentumMagnitudeDomain[0] + i * dk;
+                P.Add(k, MomentumSpaceProbabilityDensity.IntegratePolar(k - dk, k + dk, 0, Math.PI * 2));
             }
 
-            return p;
+            return P;
         }
 
         public double GetProbabilityMomentumSpace(double k)
@@ -290,26 +253,21 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         public double[] MostProbableMomenta()
         {
-            var n = Precision * Precision;
-            var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
-            var k = CreateVector.Sparse<double>(n);
             var u = MomentumSpaceProbabilities;
 
-            var max_k = 0;
+            var max = 0;
             var result = new List<double>();
 
-            for (int i = 0; i < n; ++i)
+            for (int i = 0; i < u.Count; ++i)
             {
-                k[i] = MomentumMagnitudeDomain[0] + i * dk;
-
-                if (u[i] > u[max_k])
-                    max_k = i;
+                if (u.ElementAt(i).Value > u.ElementAt(max).Value)
+                    max = i;
             }
 
-            for (int i = 0; i < n; ++i)
+            for (int i = 0; i < u.Count; ++i)
             {
-                if (Math.Abs(u[i] - u[max_k]) <= 1e-6 + (1e-4 - 1e-6) / 11 * (EnergyLevel - 1))
-                    result.Add(k[i]);
+                if (Math.Abs(u.ElementAt(i).Value - u.ElementAt(max).Value) <= 1e-6 + (1e-4 - 1e-6) / 11 * (EnergyLevel - 1))
+                    result.Add(u.ElementAt(i).Key);
             }
 
             for (int i = 0; i < result.Count; ++i)
@@ -320,25 +278,8 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         public double MeasureMomentum()
         {
-            var n = Precision;
-            var dkx = (MomentumDomain[0, 1] - MomentumDomain[0, 0]) / (n - 1);
-            var dky = (MomentumDomain[1, 1] - MomentumDomain[1, 0]) / (n - 1);
-            var kx = new double[n];
-            var ky = new double[n];
-            var P = new Dictionary<Tuple<double, double>, double>();
-
-            for (int i = 0; i < n; ++i)
-            {
-                for (int j = 0; j < n; ++j)
-                {
-                    kx[i] = MomentumDomain[0, 0] + i * dkx;
-                    ky[j] = MomentumDomain[1, 0] + j * dky;
-                    P.Add(Tuple.Create(kx[i], ky[j]), MomentumSpaceProbabilityDensity.Integrate(kx[i] - dkx, kx[i] + dkx, ky[j] - dky, ky[j] + dky));
-                }
-            }
-
-            var P_sorted = P.OrderByDescending(t => t.Value);
-            var s = new Dictionary<Tuple<double, double>, double>();
+            var P_sorted = MomentumSpaceProbabilities.OrderByDescending(t => t.Value);
+            var s = new Dictionary<double, double>();
             s.Add(P_sorted.ElementAt(0).Key, P_sorted.ElementAt(0).Value);
 
             for (int i = 1; i < P_sorted.Count(); ++i)
@@ -349,10 +290,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             for (int i = 0; i < s.Count; ++i)
             {
                 if (u < s.ElementAt(i).Value)
-                {
-                    var k = s.ElementAt(i).Key;
-                    return Math.Sqrt(k.Item1 * k.Item1 + k.Item2 * k.Item2);
-                }
+                    return s.ElementAt(i).Key;
             }
 
             throw new ArgumentException();
