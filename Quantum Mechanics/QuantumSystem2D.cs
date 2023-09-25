@@ -28,14 +28,17 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         private int Precision;
         private double[,] PositionDomain;
         private double[,] MomentumDomain;
+        private double[] MomentumMagnitudeDomain;
         private Random Random;
 
-        public QuantumSystem2D(int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[,] positionDomain, double[,] momentumDomain)
+        public QuantumSystem2D(int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[,] positionDomain, double[,] momentumDomain, double[] momentumMagnitudeDomain)
         {
             PositionDomain = positionDomain;
             MomentumDomain = momentumDomain;
+            MomentumMagnitudeDomain = momentumMagnitudeDomain;
             Precision = precision;
             EnergyLevel = energyLevel;
+            AzimuthalLevel = azimuthalLevel;
             Random = new Random();
 
             var T = -1 / (2 * mass);
@@ -103,6 +106,28 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             MomentumSpaceProbabilityDensity = WaveFunctionMomentumSpace.GetMagnitudeSquared();
             PositionSpaceProbabilities = GetPositionSpaceProbabilityMap();
             MomentumSpaceProbabilities = GetMomentumSpaceProbabilityMap();
+        }
+
+        public void PlotPositionSpace()
+        {
+            WaveFunction.Plot(PositionDomain, "position_space.png", 20);
+        }
+
+        public void PlotMomentumSpace()
+        {
+            var n = Precision * Precision;
+            var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
+            var k = CreateVector.Sparse<double>(n);
+            var p = CreateVector.Sparse<double>(n);
+
+            for (int i = 0; i < n; ++i)
+            {
+                k[i] = MomentumMagnitudeDomain[0] + i * dk;
+                p[i] = MomentumSpaceProbabilities[i];
+            }
+
+            var f = Interpolator.Cubic(k, p);
+            f.Plot(MomentumMagnitudeDomain, "momentum_space.png", n);
         }
 
         #region Position Space
@@ -235,79 +260,56 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         private MathNet.Numerics.LinearAlgebra.Matrix<double> GetMomentumSpaceProbabilityMap()
         {
-            var n = Precision;
-            var dkx = (MomentumDomain[0, 1] - MomentumDomain[0, 0]) / (n - 1);
-            var dky = (MomentumDomain[1, 1] - MomentumDomain[1, 0]) / (n - 1);
+            var n = Precision * Precision;
+            var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
 
-            var kx = CreateVector.Sparse<double>(n);
-            var ky = CreateVector.Sparse<double>(n);
-            var p = CreateMatrix.Sparse<double>(n, n);
+            var k = CreateVector.Sparse<double>(n);
+            var p = CreateVector.Sparse<double>(n);
 
             for (int i = 0; i < n; ++i)
             {
-                for (int j = 0; j < n; ++j)
-                {
-                    kx[i] = MomentumDomain[0, 0] + i * dkx;
-                    ky[j] = MomentumDomain[1, 0] + j * dky;
-                    p[i, j] = MomentumSpaceProbabilityDensity.Integrate(kx[i] - dkx, kx[i] + dkx, ky[j] - dky, ky[j] + dky);
-                }
+                k[i] = MomentumMagnitudeDomain[0] + i * dk;
+                p[i] = MomentumSpaceProbabilityDensity.IntegratePolar(k[i] - dk, k[i] + dk, 0, Math.PI * 2);
             }
 
             return p;
         }
 
-        public double GetProbabilityMomentumSpace(double kx, double ky)
+        public double GetProbabilityMomentumSpace(double k)
         {
-            var dkx = (MomentumDomain[0, 1] - MomentumDomain[0, 0]) / (Precision - 1);
-            var dky = (MomentumDomain[1, 1] - MomentumDomain[1, 0]) / (Precision - 1);
-            return PositionSpaceProbabilityDensity.Integrate(kx - dkx, kx + dkx, ky - dky, ky + dky);
+            var n = Precision * Precision;
+            var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
+            return MomentumSpaceProbabilityDensity.IntegratePolar(k - dk, k + dk, 0, Math.PI * 2);
         }
 
-        public Tuple<double, double> ExpectedMomentum()
+        public double ExpectedMomentum()
         {
-            var fkx = new DiscreteFunction2D(new Func<double, double, double>((kx, ky) => kx * MomentumSpaceProbabilityDensity.Evaluate(kx, ky)));
-            var fky = new DiscreteFunction2D(new Func<double, double, double>((kx, ky) => ky * MomentumSpaceProbabilityDensity.Evaluate(kx, ky)));
-
-            var exp_kx = fkx.Integrate(MomentumDomain[0, 0], MomentumDomain[0, 1], MomentumDomain[1, 0], MomentumDomain[1, 1]);
-            var exp_ky = fky.Integrate(MomentumDomain[0, 0], MomentumDomain[0, 1], MomentumDomain[1, 0], MomentumDomain[1, 1]);
-
-            return Tuple.Create(exp_kx, exp_ky);
+            var f = new DiscreteFunction2D(new Func<double, double, double>((kx, ky) => Math.Sqrt(kx * kx + ky * ky) * MomentumSpaceProbabilityDensity.Evaluate(kx, ky)));
+            return f.Integrate(MomentumDomain[0, 0], MomentumDomain[0, 1], MomentumDomain[1, 0], MomentumDomain[1, 1]);
         }
 
         public double[] MostProbableMomenta()
         {
-            var dkx = (MomentumDomain[0, 1] - MomentumDomain[0, 0]) / (Precision - 1);
-            var dky = (MomentumDomain[1, 1] - MomentumDomain[1, 0]) / (Precision - 1);
-            var kx = new double[Precision];
-            var ky = new double[Precision];
-            var u = PositionSpaceProbabilities;
+            var n = Precision * Precision;
+            var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
+            var k = CreateVector.Sparse<double>(n);
+            var u = MomentumSpaceProbabilities;
 
-            var max_kx = 0;
-            var max_ky = 0;
+            var max_k = 0;
             var result = new List<double>();
 
-            for (int i = 0; i < Precision; ++i)
+            for (int i = 0; i < n; ++i)
             {
-                for (int j = 0; j < Precision; ++j)
-                {
-                    kx[i] = MomentumDomain[0, 0] + i * dkx;
-                    ky[j] = MomentumDomain[1, 0] + j * dky;
+                k[i] = MomentumMagnitudeDomain[0] + i * dk;
 
-                    if (u[i, j] > u[max_kx, max_ky])
-                    {
-                        max_kx = i;
-                        max_ky = j;
-                    }
-                }
+                if (u[i] > u[max_k])
+                    max_k = i;
             }
 
-            for (int i = 0; i < Precision; ++i)
+            for (int i = 0; i < n; ++i)
             {
-                for (int j = 0; j < Precision; ++j)
-                {
-                    if (Math.Abs(u[i, j] - u[max_kx, max_ky]) <= 1e-6 + (1e-4 - 1e-6) / 11 * (EnergyLevel - 1))
-                        result.Add(Math.Sqrt(kx[i] * kx[i] + ky[j] * ky[j]));
-                }
+                if (Math.Abs(u[i] - u[max_k]) <= 1e-6 + (1e-4 - 1e-6) / 11 * (EnergyLevel - 1))
+                    result.Add(k[i]);
             }
 
             for (int i = 0; i < result.Count; ++i)
@@ -319,12 +321,10 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         public double MeasureMomentum()
         {
             var n = Precision;
-            var kx = new double[n];
-            var ky = new double[n];
-            var p = MomentumSpaceProbabilities;
             var dkx = (MomentumDomain[0, 1] - MomentumDomain[0, 0]) / (n - 1);
             var dky = (MomentumDomain[1, 1] - MomentumDomain[1, 0]) / (n - 1);
-
+            var kx = new double[n];
+            var ky = new double[n];
             var P = new Dictionary<Tuple<double, double>, double>();
 
             for (int i = 0; i < n; ++i)
@@ -333,7 +333,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
                 {
                     kx[i] = MomentumDomain[0, 0] + i * dkx;
                     ky[j] = MomentumDomain[1, 0] + j * dky;
-                    P.Add(Tuple.Create(kx[i], ky[j]), p[i, j]);
+                    P.Add(Tuple.Create(kx[i], ky[j]), MomentumSpaceProbabilityDensity.Integrate(kx[i] - dkx, kx[i] + dkx, ky[j] - dky, ky[j] + dky));
                 }
             }
 
@@ -351,34 +351,11 @@ namespace Quantum_Mechanics.Quantum_Mechanics
                 if (u < s.ElementAt(i).Value)
                 {
                     var k = s.ElementAt(i).Key;
-
                     return Math.Sqrt(k.Item1 * k.Item1 + k.Item2 * k.Item2);
                 }
             }
 
             throw new ArgumentException();
-        }
-
-        public void PlotPositionSpace()
-        {
-            WaveFunction.Plot(PositionDomain, "position_space.png", 20);
-        }
-
-        public void PlotMomentumSpace(double[] magnitudeDomain)
-        {
-            var n = Precision * Precision;
-            var dk = (magnitudeDomain[1] - magnitudeDomain[0]) / (n - 1);
-            var k = CreateVector.Sparse<double>(n);
-            var p = CreateVector.Sparse<double>(n);
-
-            for (int i = 0; i < n; ++i)
-            {
-                k[i] = magnitudeDomain[0] + i * dk;
-                p[i] = MomentumSpaceProbabilityDensity.IntegratePolar(k[i] - dk, k[i] + dk, 0, Math.PI * 2);
-            }
-
-            var f = Interpolator.Cubic(k, p);
-            f.Plot(magnitudeDomain, "momentum_space.png", n);
         }
 
         #endregion

@@ -8,10 +8,19 @@ var R = new double[,] { { 0, 5 }, { 0, 5 } };
 var P = new double[,] { { -5, 5 }, { -5, 5 } };
 var K = new double[] { 0, 5 };
 
-var psi = new QuantumSystem2D(20, 1, 1, QuantumConstants.Me, "0", R, P);
-psi.PlotMomentumSpace(K);
+var psi = new QuantumSystem2D(20, 1, 1, QuantumConstants.Me, "0", R, P, K);
+psi.PlotMomentumSpace();
 
-var max = psi.MostProbableMomenta();
+var exp_p = psi.ExpectedMomentum();
+var avg_p = 0d;
+var p = 0d;
 
-for (int i = 0; i < max.Count(); ++i)
-    Console.WriteLine(max[i]);
+for (int i = 0; i < 1000; ++i)
+{
+    p = psi.MeasureMomentum();
+    avg_p += p / 1000;
+    Console.WriteLine("p{0} = {1}", i + 1, p);
+}
+
+Console.WriteLine("\n<p> = {0}", exp_p);
+Console.WriteLine("~p = {0}", avg_p);
