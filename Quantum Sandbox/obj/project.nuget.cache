@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "kxGxvrDWvGBYZ3vioot4uVumgSA2S/hQLlZ1YI0s5lJPTS9uMqmEwctZUvXSmLkbUFkI02ILwcxyHl1zc+hUIA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\Quantum Sandbox\\Quantum Sandbox.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.4\\microsoft.netcore.platforms.3.1.4.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\scottplot\\4.1.67\\scottplot.4.1.67.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\scottplot.winforms\\4.1.67\\scottplot.winforms.4.1.67.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\system.drawing.common\\4.7.2\\system.drawing.common.4.7.2.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}
