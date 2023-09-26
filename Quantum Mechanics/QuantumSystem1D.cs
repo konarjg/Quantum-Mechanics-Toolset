@@ -29,7 +29,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         private int Precision;
         private double[] PositionDomain;
         private double[] MomentumDomain;
-        private Random Random;
 
         public QuantumSystem1D(int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[] positionDomain, double[] momentumDomain)
         {
@@ -37,7 +36,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             MomentumDomain = momentumDomain;
             Precision = precision;
             EnergyLevel = energyLevel;
-            Random = new Random();
 
             var T = -1 / (2 * mass);
             var V = potential;
@@ -124,7 +122,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var std = PositionSpaceDistributionParameters[1];
             var x = Normal.Sample(mean, std);
 
-            while (x < PositionDomain[0] || x > PositionDomain[1])
+            while (x <= PositionDomain[0] || x >= PositionDomain[1])
                 x = Normal.Sample(mean, std);   
 
             return x;
@@ -153,7 +151,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var std = MomentumSpaceDistributionParameters[1];
             var p = Normal.Sample(mean, std);
 
-            while (p < MomentumDomain[0] || p > MomentumDomain[1])
+            while (p <= MomentumDomain[0] || p >= MomentumDomain[1])
                 p = Normal.Sample(mean, std);
             
             return p;

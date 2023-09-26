@@ -32,7 +32,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         private double[,] PositionDomain;
         private double[,] MomentumDomain;
         private double[] MomentumMagnitudeDomain;
-        private Random Random;
 
         public QuantumSystem2D(int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[,] positionDomain, double[,] momentumDomain, double[] momentumMagnitudeDomain)
         {
@@ -42,7 +41,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             Precision = precision;
             EnergyLevel = energyLevel;
             AzimuthalLevel = azimuthalLevel;
-            Random = new Random();
 
             var T = -1 / (2 * mass);
             var V = potential;
@@ -170,10 +168,10 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var x = Normal.Sample(parameters[0, 0], parameters[0, 1]);
             var y = Normal.Sample(parameters[1, 0], parameters[1, 1]);
 
-            while (x < PositionDomain[0, 0] || x > PositionDomain[0, 1])
+            while (x <= PositionDomain[0, 0] || x >= PositionDomain[0, 1])
                 x = Normal.Sample(parameters[0, 0], parameters[0, 1]);
 
-            while (y < PositionDomain[1, 0] || y > PositionDomain[1, 1])
+            while (y <= PositionDomain[1, 0] || y >= PositionDomain[1, 1])
                 y = Normal.Sample(parameters[1, 0], parameters[1, 1]);
 
             return Tuple.Create(x, y);
@@ -209,7 +207,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var parameters = MomentumSpaceDistributionParameters;
             var p = Normal.Sample(parameters[0], parameters[1]);
 
-            while (p < MomentumMagnitudeDomain[0] || p > MomentumMagnitudeDomain[1])
+            while (p <= MomentumMagnitudeDomain[0] || p >= MomentumMagnitudeDomain[1])
                 p = Normal.Sample(parameters[0], parameters[1]);
 
             return p; 
