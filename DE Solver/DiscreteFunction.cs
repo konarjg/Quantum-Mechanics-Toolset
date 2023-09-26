@@ -70,6 +70,23 @@ namespace Quantum_Mechanics.DE_Solver
             return MathUtils.Round(GaussLegendreRule.Integrate(Function, a, b, 10));
         }
 
+        public DiscreteFunction Inverse(double[] domain, int precision)
+        {
+            var n = precision;
+            var dx = (domain[1] - domain[0]) / (n - 1);
+
+            var x = CreateVector.Sparse<double>(n);
+            var y = CreateVector.Sparse<double>(n);
+
+            for (int i = 0; i < n; ++i)
+            {
+                x[i] = domain[0] + i * dx;
+                y[i] = Evaluate(x[i]);
+            }
+
+            return Interpolator.Cubic(y, x);
+        }
+
         public void Plot(double[] domain, string path, int points)
         {
             var plot = new Plot();

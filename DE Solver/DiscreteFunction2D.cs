@@ -98,6 +98,10 @@ namespace Quantum_Mechanics.DE_Solver
             var map = plot.AddHeatmap(u);
             map.CellWidth = dx;
             map.CellHeight = dy;
+            map.XMin = domain[0, 0];
+            map.YMin = domain[1, 0];
+            map.XMax = domain[0, 1];
+            map.YMax = domain[1, 1];
 
             plot.AddColorbar(map);
             plot.SaveFig(path);
