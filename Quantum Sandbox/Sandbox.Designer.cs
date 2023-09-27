@@ -31,28 +31,50 @@
             components = new System.ComponentModel.Container();
             formsPlot1 = new ScottPlot.FormsPlot();
             timer1 = new System.Windows.Forms.Timer(components);
-            listView1 = new ListView();
-            label1 = new Label();
+            Parameters = new ListView();
+            ParametersTitle = new Label();
             CoordinateSystem = new ComboBox();
-            label2 = new Label();
-            label3 = new Label();
+            CoordinateSystemTitle = new Label();
+            MovementConstraintsTitle = new Label();
             MovementConstraints = new ComboBox();
-            label4 = new Label();
+            PotentialTypeTitle = new Label();
             PotentialType = new ComboBox();
-            label5 = new Label();
-            label6 = new Label();
+            EnvironmentTitle = new Label();
+            ParticleTitle = new Label();
             EnergyLevel = new ComboBox();
-            label8 = new Label();
-            label7 = new Label();
-            label9 = new Label();
-            label10 = new Label();
+            EnergyLevelTitle = new Label();
+            LaboratorySizeTitle = new Label();
+            Direction1Title = new Label();
+            Direction2Title = new Label();
             MinX = new TextBox();
             MaxX = new TextBox();
             MinY = new TextBox();
             MaxY = new TextBox();
             AzimuthalLevel = new ComboBox();
-            label11 = new Label();
+            AzimuthalLevelTitle = new Label();
             Simulate = new Button();
+            ErrorMessage = new Label();
+            ToolsMenu = new ListView();
+            ToolsTitle = new Label();
+            WavefunctionTitle = new Label();
+            GraphPositionSpace = new Button();
+            GraphMomentumSpace = new Button();
+            MeasurementsTitle = new Label();
+            MeasurePosition = new CheckBox();
+            MeasureMomentum = new CheckBox();
+            PositionMeasurement = new TextBox();
+            MomentumMeasurement = new TextBox();
+            MeasureAngularMomentum = new CheckBox();
+            AngularMomentumMeasurement = new TextBox();
+            MeasureEnergy = new CheckBox();
+            EnergyMeasurement = new TextBox();
+            CalculationsTitle = new Label();
+            ExpectedPosition = new TextBox();
+            CalculateExpectedPosition = new CheckBox();
+            ExpectedMomentum = new TextBox();
+            CalculateExpectedMomentum = new CheckBox();
+            RevealParticle = new Button();
+            Back = new Button();
             SuspendLayout();
             // 
             // formsPlot1
@@ -68,24 +90,24 @@
             timer1.Enabled = true;
             timer1.Interval = 500;
             // 
-            // listView1
+            // Parameters
             // 
-            listView1.Location = new Point(54, 134);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(602, 694);
-            listView1.TabIndex = 1;
-            listView1.UseCompatibleStateImageBehavior = false;
+            Parameters.Location = new Point(54, 134);
+            Parameters.Name = "Parameters";
+            Parameters.Size = new Size(602, 775);
+            Parameters.TabIndex = 1;
+            Parameters.UseCompatibleStateImageBehavior = false;
             // 
-            // label1
+            // ParametersTitle
             // 
-            label1.Anchor = AnchorStyles.Top;
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(180, 155);
-            label1.Name = "label1";
-            label1.Size = new Size(338, 45);
-            label1.TabIndex = 2;
-            label1.Text = "Simulation Parameters";
+            ParametersTitle.Anchor = AnchorStyles.Top;
+            ParametersTitle.AutoSize = true;
+            ParametersTitle.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point);
+            ParametersTitle.Location = new Point(180, 155);
+            ParametersTitle.Name = "ParametersTitle";
+            ParametersTitle.Size = new Size(338, 45);
+            ParametersTitle.TabIndex = 2;
+            ParametersTitle.Text = "Simulation Parameters";
             // 
             // CoordinateSystem
             // 
@@ -97,25 +119,25 @@
             CoordinateSystem.Size = new Size(173, 40);
             CoordinateSystem.TabIndex = 3;
             // 
-            // label2
+            // CoordinateSystemTitle
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(143, 262);
-            label2.Name = "label2";
-            label2.Size = new Size(196, 30);
-            label2.TabIndex = 4;
-            label2.Text = "Coordinate System";
+            CoordinateSystemTitle.AutoSize = true;
+            CoordinateSystemTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            CoordinateSystemTitle.Location = new Point(143, 262);
+            CoordinateSystemTitle.Name = "CoordinateSystemTitle";
+            CoordinateSystemTitle.Size = new Size(196, 30);
+            CoordinateSystemTitle.TabIndex = 4;
+            CoordinateSystemTitle.Text = "Coordinate System";
             // 
-            // label3
+            // MovementConstraintsTitle
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(96, 308);
-            label3.Name = "label3";
-            label3.Size = new Size(232, 30);
-            label3.TabIndex = 5;
-            label3.Text = "Movement Constraints";
+            MovementConstraintsTitle.AutoSize = true;
+            MovementConstraintsTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            MovementConstraintsTitle.Location = new Point(96, 308);
+            MovementConstraintsTitle.Name = "MovementConstraintsTitle";
+            MovementConstraintsTitle.Size = new Size(232, 30);
+            MovementConstraintsTitle.TabIndex = 5;
+            MovementConstraintsTitle.Text = "Movement Constraints";
             // 
             // MovementConstraints
             // 
@@ -127,15 +149,15 @@
             MovementConstraints.Size = new Size(256, 40);
             MovementConstraints.TabIndex = 6;
             // 
-            // label4
+            // PotentialTypeTitle
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(96, 361);
-            label4.Name = "label4";
-            label4.Size = new Size(231, 30);
-            label4.TabIndex = 7;
-            label4.Text = "External Potential Type";
+            PotentialTypeTitle.AutoSize = true;
+            PotentialTypeTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            PotentialTypeTitle.Location = new Point(96, 361);
+            PotentialTypeTitle.Name = "PotentialTypeTitle";
+            PotentialTypeTitle.Size = new Size(231, 30);
+            PotentialTypeTitle.TabIndex = 7;
+            PotentialTypeTitle.Text = "External Potential Type";
             // 
             // PotentialType
             // 
@@ -147,25 +169,25 @@
             PotentialType.Size = new Size(256, 40);
             PotentialType.TabIndex = 8;
             // 
-            // label5
+            // EnvironmentTitle
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label5.Location = new Point(266, 216);
-            label5.Name = "label5";
-            label5.Size = new Size(135, 30);
-            label5.TabIndex = 9;
-            label5.Text = "Environment";
+            EnvironmentTitle.AutoSize = true;
+            EnvironmentTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            EnvironmentTitle.Location = new Point(266, 216);
+            EnvironmentTitle.Name = "EnvironmentTitle";
+            EnvironmentTitle.Size = new Size(135, 30);
+            EnvironmentTitle.TabIndex = 9;
+            EnvironmentTitle.Text = "Environment";
             // 
-            // label6
+            // ParticleTitle
             // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(297, 603);
-            label6.Name = "label6";
-            label6.Size = new Size(82, 30);
-            label6.TabIndex = 10;
-            label6.Text = "Particle";
+            ParticleTitle.AutoSize = true;
+            ParticleTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            ParticleTitle.Location = new Point(297, 603);
+            ParticleTitle.Name = "ParticleTitle";
+            ParticleTitle.Size = new Size(82, 30);
+            ParticleTitle.TabIndex = 10;
+            ParticleTitle.Text = "Particle";
             // 
             // EnergyLevel
             // 
@@ -178,45 +200,45 @@
             EnergyLevel.Size = new Size(121, 40);
             EnergyLevel.TabIndex = 14;
             // 
-            // label8
+            // EnergyLevelTitle
             // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label8.Location = new Point(200, 641);
-            label8.Name = "label8";
-            label8.Size = new Size(136, 30);
-            label8.TabIndex = 13;
-            label8.Text = "Energy Level";
+            EnergyLevelTitle.AutoSize = true;
+            EnergyLevelTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            EnergyLevelTitle.Location = new Point(200, 641);
+            EnergyLevelTitle.Name = "EnergyLevelTitle";
+            EnergyLevelTitle.Size = new Size(136, 30);
+            EnergyLevelTitle.TabIndex = 13;
+            EnergyLevelTitle.Text = "Energy Level";
             // 
-            // label7
+            // LaboratorySizeTitle
             // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label7.Location = new Point(254, 438);
-            label7.Name = "label7";
-            label7.Size = new Size(163, 30);
-            label7.TabIndex = 15;
-            label7.Text = "Laboratory Size";
+            LaboratorySizeTitle.AutoSize = true;
+            LaboratorySizeTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            LaboratorySizeTitle.Location = new Point(263, 438);
+            LaboratorySizeTitle.Name = "LaboratorySizeTitle";
+            LaboratorySizeTitle.Size = new Size(163, 30);
+            LaboratorySizeTitle.TabIndex = 15;
+            LaboratorySizeTitle.Text = "Laboratory Size";
             // 
-            // label9
+            // Direction1Title
             // 
-            label9.AutoSize = true;
-            label9.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label9.Location = new Point(228, 485);
-            label9.Name = "label9";
-            label9.Size = new Size(118, 30);
-            label9.TabIndex = 16;
-            label9.Text = "Direction 1";
+            Direction1Title.AutoSize = true;
+            Direction1Title.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            Direction1Title.Location = new Point(228, 485);
+            Direction1Title.Name = "Direction1Title";
+            Direction1Title.Size = new Size(118, 30);
+            Direction1Title.TabIndex = 16;
+            Direction1Title.Text = "Direction 1";
             // 
-            // label10
+            // Direction2Title
             // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label10.Location = new Point(228, 527);
-            label10.Name = "label10";
-            label10.Size = new Size(118, 30);
-            label10.TabIndex = 17;
-            label10.Text = "Direction 2";
+            Direction2Title.AutoSize = true;
+            Direction2Title.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            Direction2Title.Location = new Point(228, 527);
+            Direction2Title.Name = "Direction2Title";
+            Direction2Title.Size = new Size(118, 30);
+            Direction2Title.TabIndex = 17;
+            Direction2Title.Text = "Direction 2";
             // 
             // MinX
             // 
@@ -265,21 +287,21 @@
             AzimuthalLevel.Size = new Size(121, 40);
             AzimuthalLevel.TabIndex = 23;
             // 
-            // label11
+            // AzimuthalLevelTitle
             // 
-            label11.AutoSize = true;
-            label11.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            label11.Location = new Point(180, 687);
-            label11.Name = "label11";
-            label11.Size = new Size(194, 30);
-            label11.TabIndex = 22;
-            label11.Text = "Azimuthal Number";
+            AzimuthalLevelTitle.AutoSize = true;
+            AzimuthalLevelTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            AzimuthalLevelTitle.Location = new Point(180, 687);
+            AzimuthalLevelTitle.Name = "AzimuthalLevelTitle";
+            AzimuthalLevelTitle.Size = new Size(194, 30);
+            AzimuthalLevelTitle.TabIndex = 22;
+            AzimuthalLevelTitle.Text = "Azimuthal Number";
             // 
             // Simulate
             // 
             Simulate.AutoSize = true;
             Simulate.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point);
-            Simulate.Location = new Point(266, 745);
+            Simulate.Location = new Point(266, 760);
             Simulate.Name = "Simulate";
             Simulate.Size = new Size(153, 55);
             Simulate.TabIndex = 24;
@@ -287,33 +309,283 @@
             Simulate.UseVisualStyleBackColor = true;
             Simulate.Click += Simulate_Click;
             // 
+            // ErrorMessage
+            // 
+            ErrorMessage.AutoSize = true;
+            ErrorMessage.BackColor = SystemColors.Window;
+            ErrorMessage.Enabled = false;
+            ErrorMessage.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            ErrorMessage.ForeColor = Color.Red;
+            ErrorMessage.Location = new Point(223, 827);
+            ErrorMessage.Name = "ErrorMessage";
+            ErrorMessage.Size = new Size(240, 32);
+            ErrorMessage.TabIndex = 25;
+            ErrorMessage.Text = "Incorrect parameters!";
+            ErrorMessage.Visible = false;
+            // 
+            // ToolsMenu
+            // 
+            ToolsMenu.Location = new Point(712, 30);
+            ToolsMenu.Name = "ToolsMenu";
+            ToolsMenu.Size = new Size(639, 838);
+            ToolsMenu.TabIndex = 26;
+            ToolsMenu.UseCompatibleStateImageBehavior = false;
+            // 
+            // ToolsTitle
+            // 
+            ToolsTitle.AutoSize = true;
+            ToolsTitle.Font = new Font("Segoe UI", 20F, FontStyle.Regular, GraphicsUnit.Point);
+            ToolsTitle.Location = new Point(931, 57);
+            ToolsTitle.Name = "ToolsTitle";
+            ToolsTitle.Size = new Size(212, 37);
+            ToolsTitle.TabIndex = 27;
+            ToolsTitle.Text = "Simulation Tools";
+            // 
+            // WavefunctionTitle
+            // 
+            WavefunctionTitle.AutoSize = true;
+            WavefunctionTitle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            WavefunctionTitle.Location = new Point(955, 108);
+            WavefunctionTitle.Name = "WavefunctionTitle";
+            WavefunctionTitle.Size = new Size(161, 32);
+            WavefunctionTitle.TabIndex = 28;
+            WavefunctionTitle.Text = "Wavefunction";
+            // 
+            // GraphPositionSpace
+            // 
+            GraphPositionSpace.AutoSize = true;
+            GraphPositionSpace.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            GraphPositionSpace.Location = new Point(898, 146);
+            GraphPositionSpace.Name = "GraphPositionSpace";
+            GraphPositionSpace.Size = new Size(249, 63);
+            GraphPositionSpace.TabIndex = 29;
+            GraphPositionSpace.Text = "Graph Position Space";
+            GraphPositionSpace.UseVisualStyleBackColor = true;
+            // 
+            // GraphMomentumSpace
+            // 
+            GraphMomentumSpace.AutoSize = true;
+            GraphMomentumSpace.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            GraphMomentumSpace.Location = new Point(881, 214);
+            GraphMomentumSpace.Name = "GraphMomentumSpace";
+            GraphMomentumSpace.Size = new Size(292, 63);
+            GraphMomentumSpace.TabIndex = 30;
+            GraphMomentumSpace.Text = "Graph Momentum Space";
+            GraphMomentumSpace.UseVisualStyleBackColor = true;
+            // 
+            // MeasurementsTitle
+            // 
+            MeasurementsTitle.AutoSize = true;
+            MeasurementsTitle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            MeasurementsTitle.Location = new Point(927, 297);
+            MeasurementsTitle.Name = "MeasurementsTitle";
+            MeasurementsTitle.Size = new Size(172, 32);
+            MeasurementsTitle.TabIndex = 31;
+            MeasurementsTitle.Text = "Measurements";
+            // 
+            // MeasurePosition
+            // 
+            MeasurePosition.AutoSize = true;
+            MeasurePosition.BackColor = SystemColors.Window;
+            MeasurePosition.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            MeasurePosition.Location = new Point(946, 340);
+            MeasurePosition.Name = "MeasurePosition";
+            MeasurePosition.Size = new Size(117, 36);
+            MeasurePosition.TabIndex = 32;
+            MeasurePosition.Text = "Position";
+            MeasurePosition.UseVisualStyleBackColor = false;
+            // 
+            // MeasureMomentum
+            // 
+            MeasureMomentum.AutoSize = true;
+            MeasureMomentum.BackColor = SystemColors.Window;
+            MeasureMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            MeasureMomentum.Location = new Point(915, 385);
+            MeasureMomentum.Name = "MeasureMomentum";
+            MeasureMomentum.Size = new Size(160, 36);
+            MeasureMomentum.TabIndex = 33;
+            MeasureMomentum.Text = "Momentum";
+            MeasureMomentum.UseVisualStyleBackColor = false;
+            // 
+            // PositionMeasurement
+            // 
+            PositionMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            PositionMeasurement.Location = new Point(1069, 338);
+            PositionMeasurement.Name = "PositionMeasurement";
+            PositionMeasurement.Size = new Size(60, 39);
+            PositionMeasurement.TabIndex = 34;
+            // 
+            // MomentumMeasurement
+            // 
+            MomentumMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            MomentumMeasurement.Location = new Point(1083, 384);
+            MomentumMeasurement.Name = "MomentumMeasurement";
+            MomentumMeasurement.Size = new Size(60, 39);
+            MomentumMeasurement.TabIndex = 35;
+            // 
+            // MeasureAngularMomentum
+            // 
+            MeasureAngularMomentum.AutoSize = true;
+            MeasureAngularMomentum.BackColor = SystemColors.Window;
+            MeasureAngularMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            MeasureAngularMomentum.Location = new Point(871, 429);
+            MeasureAngularMomentum.Name = "MeasureAngularMomentum";
+            MeasureAngularMomentum.Size = new Size(250, 36);
+            MeasureAngularMomentum.TabIndex = 36;
+            MeasureAngularMomentum.Text = "Angular Momentum";
+            MeasureAngularMomentum.UseVisualStyleBackColor = false;
+            // 
+            // AngularMomentumMeasurement
+            // 
+            AngularMomentumMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            AngularMomentumMeasurement.Location = new Point(1127, 428);
+            AngularMomentumMeasurement.Name = "AngularMomentumMeasurement";
+            AngularMomentumMeasurement.Size = new Size(60, 39);
+            AngularMomentumMeasurement.TabIndex = 37;
+            // 
+            // MeasureEnergy
+            // 
+            MeasureEnergy.AutoSize = true;
+            MeasureEnergy.BackColor = SystemColors.Window;
+            MeasureEnergy.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            MeasureEnergy.Location = new Point(957, 476);
+            MeasureEnergy.Name = "MeasureEnergy";
+            MeasureEnergy.Size = new Size(106, 36);
+            MeasureEnergy.TabIndex = 38;
+            MeasureEnergy.Text = "Energy";
+            MeasureEnergy.UseVisualStyleBackColor = false;
+            // 
+            // EnergyMeasurement
+            // 
+            EnergyMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            EnergyMeasurement.Location = new Point(1069, 475);
+            EnergyMeasurement.Name = "EnergyMeasurement";
+            EnergyMeasurement.Size = new Size(60, 39);
+            EnergyMeasurement.TabIndex = 39;
+            // 
+            // CalculationsTitle
+            // 
+            CalculationsTitle.AutoSize = true;
+            CalculationsTitle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            CalculationsTitle.Location = new Point(940, 535);
+            CalculationsTitle.Name = "CalculationsTitle";
+            CalculationsTitle.Size = new Size(142, 32);
+            CalculationsTitle.TabIndex = 42;
+            CalculationsTitle.Text = "Calculations";
+            // 
+            // ExpectedPosition
+            // 
+            ExpectedPosition.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            ExpectedPosition.Location = new Point(1092, 573);
+            ExpectedPosition.Name = "ExpectedPosition";
+            ExpectedPosition.Size = new Size(60, 39);
+            ExpectedPosition.TabIndex = 44;
+            // 
+            // CalculateExpectedPosition
+            // 
+            CalculateExpectedPosition.AutoSize = true;
+            CalculateExpectedPosition.BackColor = SystemColors.Window;
+            CalculateExpectedPosition.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            CalculateExpectedPosition.Location = new Point(869, 576);
+            CalculateExpectedPosition.Name = "CalculateExpectedPosition";
+            CalculateExpectedPosition.Size = new Size(220, 36);
+            CalculateExpectedPosition.TabIndex = 43;
+            CalculateExpectedPosition.Text = "Expected Position";
+            CalculateExpectedPosition.UseVisualStyleBackColor = false;
+            // 
+            // ExpectedMomentum
+            // 
+            ExpectedMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            ExpectedMomentum.Location = new Point(1119, 622);
+            ExpectedMomentum.Name = "ExpectedMomentum";
+            ExpectedMomentum.Size = new Size(60, 39);
+            ExpectedMomentum.TabIndex = 46;
+            // 
+            // CalculateExpectedMomentum
+            // 
+            CalculateExpectedMomentum.AutoSize = true;
+            CalculateExpectedMomentum.BackColor = SystemColors.Window;
+            CalculateExpectedMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            CalculateExpectedMomentum.Location = new Point(844, 625);
+            CalculateExpectedMomentum.Name = "CalculateExpectedMomentum";
+            CalculateExpectedMomentum.Size = new Size(263, 36);
+            CalculateExpectedMomentum.TabIndex = 45;
+            CalculateExpectedMomentum.Text = "Expected Momentum";
+            CalculateExpectedMomentum.UseVisualStyleBackColor = false;
+            // 
+            // RevealParticle
+            // 
+            RevealParticle.AutoSize = true;
+            RevealParticle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            RevealParticle.Location = new Point(931, 691);
+            RevealParticle.Name = "RevealParticle";
+            RevealParticle.Size = new Size(176, 63);
+            RevealParticle.TabIndex = 47;
+            RevealParticle.Text = "Reveal Particle";
+            RevealParticle.UseVisualStyleBackColor = true;
+            // 
+            // Back
+            // 
+            Back.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            Back.Location = new Point(725, 44);
+            Back.Name = "Back";
+            Back.Size = new Size(78, 56);
+            Back.TabIndex = 48;
+            Back.Text = "Back";
+            Back.UseVisualStyleBackColor = true;
+            // 
             // Sandbox
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1904, 1041);
+            Controls.Add(ToolsMenu);
+            Controls.Add(Parameters);
+
+            /*Controls.Add(Back);
+            Controls.Add(RevealParticle);
+            Controls.Add(ExpectedMomentum);
+            Controls.Add(CalculateExpectedMomentum);
+            Controls.Add(ExpectedPosition);
+            Controls.Add(CalculateExpectedPosition);
+            Controls.Add(CalculationsTitle);
+            Controls.Add(EnergyMeasurement);
+            Controls.Add(MeasureEnergy);
+            Controls.Add(AngularMomentumMeasurement);
+            Controls.Add(MeasureAngularMomentum);
+            Controls.Add(MomentumMeasurement);
+            Controls.Add(PositionMeasurement);
+            Controls.Add(MeasureMomentum);
+            Controls.Add(MeasurePosition);
+            Controls.Add(MeasurementsTitle);
+            Controls.Add(GraphMomentumSpace);
+            Controls.Add(GraphPositionSpace);
+            Controls.Add(WavefunctionTitle);
+            Controls.Add(ToolsTitle);
+            Controls.Add(ToolsMenu);
+            Controls.Add(ErrorMessage);
             Controls.Add(Simulate);
             Controls.Add(AzimuthalLevel);
-            Controls.Add(label11);
+            Controls.Add(AzimuthalLevelTitle);
             Controls.Add(MaxY);
             Controls.Add(MinY);
             Controls.Add(MaxX);
             Controls.Add(MinX);
-            Controls.Add(label10);
-            Controls.Add(label9);
-            Controls.Add(label7);
+            Controls.Add(Direction2Title);
+            Controls.Add(Direction1Title);
+            Controls.Add(LaboratorySizeTitle);
             Controls.Add(EnergyLevel);
-            Controls.Add(label8);
-            Controls.Add(label6);
-            Controls.Add(label5);
+            Controls.Add(EnergyLevelTitle);
+            Controls.Add(ParticleTitle);
+            Controls.Add(EnvironmentTitle);
             Controls.Add(PotentialType);
-            Controls.Add(label4);
+            Controls.Add(PotentialTypeTitle);
             Controls.Add(MovementConstraints);
-            Controls.Add(label3);
-            Controls.Add(label2);
+            Controls.Add(MovementConstraintsTitle);
+            Controls.Add(CoordinateSystemTitle);
             Controls.Add(CoordinateSystem);
-            Controls.Add(label1);
-            Controls.Add(listView1);
+            Controls.Add(ParametersTitle);
+            Controls.Add(Parameters);*/
             Controls.Add(formsPlot1);
             DoubleBuffered = true;
             MaximizeBox = false;
@@ -329,28 +601,50 @@
 
         private ScottPlot.FormsPlot formsPlot1;
         private System.Windows.Forms.Timer timer1;
-        private ListView listView1;
-        private Label label1;
+        private ListView Parameters;
+        private Label ParametersTitle;
         private ComboBox CoordinateSystem;
-        private Label label2;
-        private Label label3;
+        private Label CoordinateSystemTitle;
+        private Label MovementConstraintsTitle;
         private ComboBox MovementConstraints;
-        private Label label4;
+        private Label PotentialTypeTitle;
         private ComboBox PotentialType;
-        private Label label5;
-        private Label label6;
+        private Label EnvironmentTitle;
+        private Label ParticleTitle;
         private ComboBox ParticleType;
         private ComboBox EnergyLevel;
-        private Label label8;
-        private Label label7;
-        private Label label9;
-        private Label label10;
+        private Label EnergyLevelTitle;
+        private Label LaboratorySizeTitle;
+        private Label Direction1Title;
+        private Label Direction2Title;
         private TextBox MinX;
         private TextBox MaxX;
         private TextBox MinY;
         private TextBox MaxY;
         private ComboBox AzimuthalLevel;
-        private Label label11;
+        private Label AzimuthalLevelTitle;
         private Button Simulate;
+        private Label ErrorMessage;
+        private ListView ToolsMenu;
+        private Label ToolsTitle;
+        private Label WavefunctionTitle;
+        private Button GraphPositionSpace;
+        private Button GraphMomentumSpace;
+        private Label MeasurementsTitle;
+        private CheckBox MeasurePosition;
+        private CheckBox MeasureMomentum;
+        private TextBox PositionMeasurement;
+        private TextBox MomentumMeasurement;
+        private CheckBox MeasureAngularMomentum;
+        private TextBox AngularMomentumMeasurement;
+        private CheckBox MeasureEnergy;
+        private TextBox EnergyMeasurement;
+        private Label CalculationsTitle;
+        private TextBox ExpectedPosition;
+        private CheckBox CalculateExpectedPosition;
+        private TextBox ExpectedMomentum;
+        private CheckBox CalculateExpectedMomentum;
+        private Button RevealParticle;
+        private Button Back;
     }
 }

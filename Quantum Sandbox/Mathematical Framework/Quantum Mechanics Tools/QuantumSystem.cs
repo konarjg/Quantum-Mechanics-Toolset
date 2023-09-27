@@ -93,7 +93,7 @@ namespace Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools
                 case "Cartesian 2D":
                     return CoordinateSystem.CARTESIAN_2D;
 
-                case "POLAR":
+                case "Polar":
                     return CoordinateSystem.POLAR;
             }
 
