@@ -2,6 +2,7 @@
 using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra;
 using Quantum_Mechanics.DE_Solver;
+using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,10 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         private double[] PositionDomain;
         private double[] MomentumDomain;
 
-        public QuantumSystem1D(int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[] positionDomain, double[] momentumDomain)
+        public QuantumSystem1D(CancellationToken token, int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[] positionDomain, double[] momentumDomain)
         {
+            token.ThrowIfCancellationRequested();
+
             PositionDomain = positionDomain;
             MomentumDomain = momentumDomain;
             Precision = precision;
@@ -46,19 +49,29 @@ namespace Quantum_Mechanics.Quantum_Mechanics
                 new BoundaryCondition(0, positionDomain[1].ToString(), "0")
             };
 
+            token.ThrowIfCancellationRequested();
             var schrodingerEquation = new string[] { T.ToString(), "0", V };
 
-            var solution = DESolver.SolveEigenvalueODE(DifferenceScheme.CENTRAL, schrodingerEquation, boundaryConditions, positionDomain, precision);
+            var solution = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquation, boundaryConditions, positionDomain, precision);
+            token.ThrowIfCancellationRequested();
             Energy = solution.Keys.ElementAt(energyLevel - 1).Real;
 
             var dx = (positionDomain[1] - positionDomain[0]) / (precision - 1);
             var x = CreateVector.Sparse<double>(precision);
             var y = solution.Values.ElementAt(energyLevel - 1);
 
+            token.ThrowIfCancellationRequested();
+
             for (int i = 0; i < precision; ++i)
+            {
                 x[i] = positionDomain[0] + i * dx;
+                token.ThrowIfCancellationRequested();
+            }
 
             WaveFunction = Interpolator.Cubic(x, y);
+
+            token.ThrowIfCancellationRequested();
+
             var density = WaveFunction.GetMagnitudeSquared();
 
             var N = Math.Sqrt(1d / density.Integrate(positionDomain[0], positionDomain[1]));
@@ -66,6 +79,8 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             WaveFunction = Interpolator.Cubic(x, N * y);
             WaveFunctionMomentumSpace = WaveFunction.FourierTransform(positionDomain);
             density = WaveFunctionMomentumSpace.GetMagnitudeSquared();
+
+            token.ThrowIfCancellationRequested();
 
             var Np = Math.Sqrt(1d / density.Integrate(momentumDomain[0], momentumDomain[1]));
             var dk = (MomentumDomain[1] - MomentumDomain[0]) / (Precision - 1);
@@ -76,6 +91,8 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             {
                 k[i] = MomentumDomain[0] + i * dk;
                 p[i] = Np * WaveFunctionMomentumSpace.Evaluate(k[i]);
+
+                token.ThrowIfCancellationRequested();
             }
 
             WaveFunctionMomentumSpace = Interpolator.Cubic(k, p);
@@ -83,6 +100,18 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             MomentumSpaceProbabilityDensity = WaveFunctionMomentumSpace.GetMagnitudeSquared();
             PositionSpaceDistributionParameters = GetPositionSpaceDistributionParameters();
             MomentumSpaceDistributionParameters = GetMomentumSpaceDistributionParameters();
+
+            token.ThrowIfCancellationRequested();
+        }
+
+        public void PlotPositionSpace(FormsPlot plot)
+        {
+            WaveFunction.Plot(plot, PositionDomain, Precision);
+        }
+
+        public void PlotMomentumSpace(FormsPlot plot)
+        {
+            WaveFunctionMomentumSpace.Plot(plot, MomentumDomain, Precision);
         }
 
         #region Position Space

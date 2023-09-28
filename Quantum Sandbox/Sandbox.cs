@@ -2,48 +2,84 @@ using Quantum_Mechanics.General;
 using Quantum_Mechanics.Quantum_Mechanics;
 using Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools;
 using ScottPlot;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Quantum_Sandbox
 {
     public partial class Sandbox : Form
     {
-        int CurrentLoading;
-        private QuantumSystem1D SystemHandle1D;
-        private QuantumSystem2D SystemHandle2D;
-        private QuantumSystemPolar SystemHandlePolar;
+        private int CurrentLoading;
+        private bool LoadingCancelled;
+        private CancellationTokenSource CancelLoading = new CancellationTokenSource();
+
+        private Graph PositionSpaceGraph = new Graph();
+        private Graph MomentumSpaceGraph = new Graph();
+        private Control[] ParametersControls;
+        private Control[] ToolsControls;
+        private Control[] LoadingScreenControls;
+
+        [AllowNull]
+        private QuantumSystem1D SystemHandle1D { get; set; }
+        [AllowNull]
+        private QuantumSystem2D SystemHandle2D { get; set; }
+        [AllowNull]
+        private QuantumSystemPolar SystemHandlePolar { get; set; }
 
         public Sandbox()
         {
             InitializeComponent();
-            Parameters.Controls.AddRange(new Control[] { });
-            ToolsMenu.Controls.AddRange(new Control[] { Back, ToolsTitle, WavefunctionTitle, GraphPositionSpace, GraphMomentumSpace, MeasurementsTitle, MeasurePosition, PositionMeasurement, MeasureMomentum, MomentumMeasurement, MeasureAngularMomentum, AngularMomentumMeasurement, MeasureEnergy, EnergyMeasurement, CalculationsTitle, CalculateExpectedPosition, ExpectedPosition, CalculateExpectedMomentum, ExpectedMomentum, RevealParticle });
+            ParametersControls = new Control[] { Parameters, ParametersTitle, EnvironmentTitle, CoordinateSystemTitle, CoordinateSystem, MovementConstraintsTitle, MovementConstraints, PotentialTypeTitle, PotentialType, LaboratorySizeTitle, Direction1Title, MinX, MaxX, Direction2Title, MinY, MaxY, ParticleTitle, EnergyLevelTitle, EnergyLevel, AzimuthalLevelTitle, AzimuthalLevel, Simulate };
+            ToolsControls = new Control[] { ToolsTitle, WavefunctionTitle, Back, GraphPositionSpace, GraphMomentumSpace, MeasurementsTitle, MeasurePosition, PositionMeasurement, MeasureMomentum, MomentumMeasurement, MeasureAngularMomentum, AngularMomentumMeasurement, MeasureEnergy, EnergyMeasurement, CalculationsTitle, CalculateExpectedPosition, ExpectedPosition, CalculateExpectedMomentum, ExpectedMomentum, RevealParticle, ToolsMenu };
+            LoadingScreenControls = new Control[] { LoadingTitle, LoadingProgressBar, LoadingMessage, CancelLoadingButton, LoadingScreen };
+
+            PositionSpaceGraph.TopMost = true;
+            PositionSpaceGraph.Visible = false;
+            PositionSpaceGraph.Enabled = false;
+
+            MomentumSpaceGraph.TopMost = true;
+            MomentumSpaceGraph.Visible = false;
+            MomentumSpaceGraph.Enabled = false;
+
+            LoadingTimer.Enabled = false;
+            ParametersControls.SetVisible(true);
+            LoadingScreenControls.SetVisible(false);
+            ToolsControls.SetVisible(false);
         }
 
-        private Task<bool> ConstructSystem(int energyLevel, int azimuthalLevel, CoordinateSystem coordinateSystem, PotentialType potentialType, MovementConstraints movementConstraints, string[,] positionDomainText)
+        private Task<int> ConstructSystem(int energyLevel, int azimuthalLevel, CoordinateSystem coordinateSystem, PotentialType potentialType, MovementConstraints movementConstraints, string[,] positionDomainText)
         {
             return Task.Run(() =>
             {
                 try
                 {
+                    CancelLoading.Token.ThrowIfCancellationRequested();
+
                     switch (coordinateSystem)
                     {
                         case Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D:
                             if (coordinateSystem == Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D)
                             {
+                                CancelLoading.Token.ThrowIfCancellationRequested();
                                 var positionDomain1D = new double[] { RPNParser.Calculate(positionDomainText[0, 0]).Real, RPNParser.Calculate(positionDomainText[0, 1]).Real };
 
                                 if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
                                 {
-                                    SystemHandle1D = new QuantumSystem1D(500, energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomain1D, new double[] { -5, 5 });
-                                    formsPlot1.Plot.AddVerticalLine(positionDomain1D[0] - 0.1, Color.Black, 1);
-                                    formsPlot1.Plot.AddVerticalLine(positionDomain1D[1] + 0.1, Color.Black, 1);
+                                    SystemHandle1D = new QuantumSystem1D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomain1D, new double[] { -5, 5 });
+                                    CancelLoading.Token.ThrowIfCancellationRequested();
+                                    MainGraph.Plot.AddVerticalLine(positionDomain1D[0] - 0.1, Color.Black, 1);
+                                    MainGraph.Plot.AddVerticalLine(positionDomain1D[1] + 0.1, Color.Black, 1);
                                 }
                                 else
-                                    SystemHandle1D = new QuantumSystem1D(500, energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[] { -10000, 10000 }, new double[] { -5, 5 });
+                                    SystemHandle1D = new QuantumSystem1D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[] { -10000, 10000 }, new double[] { -5, 5 });
+
+                                CancelLoading.Token.ThrowIfCancellationRequested();
 
                                 for (int i = 0; i < 100; ++i)
-                                    formsPlot1.Plot.AddPoint(SystemHandle1D.MeasurePosition(), 0, Color.Blue);
-
+                                {
+                                    MainGraph.Plot.AddPoint(SystemHandle1D.MeasurePosition(), 0, Color.Blue);
+                                    CancelLoading.Token.ThrowIfCancellationRequested();
+                                }
                             }
 
                             break;
@@ -54,21 +90,28 @@ namespace Quantum_Sandbox
                                 var positionDomain2D = new double[,] { { RPNParser.Calculate(positionDomainText[0, 0]).Real, RPNParser.Calculate(positionDomainText[0, 1]).Real },
                                                                 { RPNParser.Calculate(positionDomainText[1, 0]).Real, RPNParser.Calculate(positionDomainText[1, 1]).Real } };
 
+                                CancelLoading.Token.ThrowIfCancellationRequested();
+
                                 if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
                                 {
-                                    SystemHandle2D = new QuantumSystem2D((int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomain2D, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
-                                    formsPlot1.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 0] - 0.1, Color.Black, 1);
-                                    formsPlot1.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
-                                    formsPlot1.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 1] + 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
-                                    formsPlot1.Plot.AddLine(positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
+                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomain2D, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
+                                    CancelLoading.Token.ThrowIfCancellationRequested();
+
+                                    MainGraph.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 0] - 0.1, Color.Black, 1);
+                                    MainGraph.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
+                                    MainGraph.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 1] + 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
+                                    MainGraph.Plot.AddLine(positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
                                 }
                                 else
-                                    SystemHandle2D = new QuantumSystem2D((int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[,] { { -10000, 10000 }, { -10000, 10000 } }, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
+                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[,] { { -10000, 10000 }, { -10000, 10000 } }, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
+
+                                CancelLoading.Token.ThrowIfCancellationRequested();
 
                                 for (int i = 0; i < 1000; ++i)
                                 {
                                     var r = SystemHandle2D.MeasurePosition();
-                                    formsPlot1.Plot.AddPoint(r.Item1, r.Item2, Color.Blue);
+                                    MainGraph.Plot.AddPoint(r.Item1, r.Item2, Color.Blue);
+                                    CancelLoading.Token.ThrowIfCancellationRequested();
                                 }
                             }
 
@@ -80,10 +123,13 @@ namespace Quantum_Sandbox
                                 var positionDomainPolar = new double[,] { { RPNParser.Calculate(positionDomainText[0, 0]).Real, RPNParser.Calculate(positionDomainText[0, 1]).Real },
                                                                 { RPNParser.Calculate(positionDomainText[1, 0]).Real, RPNParser.Calculate(positionDomainText[1, 1]).Real } };
 
+                                CancelLoading.Token.ThrowIfCancellationRequested();
 
                                 if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
                                 {
-                                    SystemHandlePolar = new QuantumSystemPolar((int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomainPolar, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomainPolar, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+                                    CancelLoading.Token.ThrowIfCancellationRequested();
+
                                     var dfi = (positionDomainPolar[1, 1] - positionDomainPolar[1, 0]) / 999;
                                     var r = positionDomainPolar[0, 1] + 0.1;
                                     var circle = Tuple.Create<double[], double[]>(new double[1000], new double[1000]);
@@ -96,52 +142,102 @@ namespace Quantum_Sandbox
 
                                         circle.Item1[i] = x;
                                         circle.Item2[i] = y;
+                                        CancelLoading.Token.ThrowIfCancellationRequested();
                                     }
 
-                                    formsPlot1.Plot.AddScatterLines(circle.Item1, circle.Item2, Color.Black, 1);
+                                    CancelLoading.Token.ThrowIfCancellationRequested();
+                                    MainGraph.Plot.AddScatterLines(circle.Item1, circle.Item2, Color.Black, 1);
                                 }
                                 else
-                                    SystemHandlePolar = new QuantumSystemPolar((int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[,] { { 0, 10000 }, { 0, Math.PI * 2 } }, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[,] { { 0, 10000 }, { 0, Math.PI * 2 } }, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+
+                                CancelLoading.Token.ThrowIfCancellationRequested();
 
                                 for (int i = 0; i < 1000; ++i)
                                 {
                                     var r = SystemHandlePolar.MeasurePosition();
-                                    formsPlot1.Plot.AddPoint(r.Item1, r.Item2, Color.Blue);
+                                    MainGraph.Plot.AddPoint(r.Item1, r.Item2, Color.Blue);
+                                    CancelLoading.Token.ThrowIfCancellationRequested();
                                 }
                             }
 
                             break;
                     }
 
-                    return true;
+                    CancelLoading.Token.ThrowIfCancellationRequested();
+                    return 1;
+                }
+                catch (OperationCanceledException)
+                {
+                    return 0;
                 }
                 catch (Exception)
                 {
-                    return false;
+                    return -1;
                 }
             });
         }
 
         private async void SetupSimulation(int energyLevel, int azimuthalLevel, CoordinateSystem system, PotentialType type, MovementConstraints constraints, string[,] domain)
         {
-            formsPlot1.Reset();
+            MainGraph.Reset();
+            LoadingTimer.Enabled = true;
+            Simulate.Enabled = false;
+            LoadingScreenControls.SetVisible(true);
             var task = ConstructSystem(energyLevel, azimuthalLevel, system, type, constraints, domain);
 
-            await task;
-
-            if (!task.Result)
+            try
             {
-                ErrorMessage.Enabled = true;
-                ErrorMessage.Visible = true;
+                await task;
+            }
+            catch (Exception)
+            {
+                MainGraph.Reset();
+                MainGraph.Refresh();
+                LoadingScreenControls.SetVisible(false);
+                ErrorMessage.Enabled = false;
+                ErrorMessage.Visible = false;
+                Simulate.Enabled = true;
+                LoadingCancelled = false;
+                CancelLoading.Dispose();
+                CancelLoading = new CancellationTokenSource();
+                return;
             }
 
-            formsPlot1.Refresh();
+            LoadingScreenControls.SetVisible(false);
+
+            if (task.Result == 0)
+            {
+                MainGraph.Reset();
+                MainGraph.Refresh();
+                ErrorMessage.Enabled = false;
+                ErrorMessage.Visible = false;
+                Simulate.Enabled = true;
+                LoadingCancelled = false;
+                CancelLoading.Dispose();
+                CancelLoading = new CancellationTokenSource();
+                return;
+            }
+            else if (task.Result == -1)
+            {
+                MainGraph.Reset();
+                MainGraph.Refresh();
+                ErrorMessage.Enabled = true;
+                ErrorMessage.Visible = true;
+                Simulate.Enabled = true;
+                return;
+            }
+
+            MainGraph.Refresh();
+            ParametersControls.SetVisible(false);
+            ToolsControls.SetVisible(true);
         }
 
         private void Simulate_Click(object sender, EventArgs e)
         {
             try
             {
+                LoadingMessage.Text = "This may take some time for complex scenarios";
                 ErrorMessage.Enabled = false;
                 ErrorMessage.Visible = false;
 
@@ -158,6 +254,98 @@ namespace Quantum_Sandbox
             {
                 ErrorMessage.Enabled = true;
                 ErrorMessage.Visible = true;
+            }
+        }
+
+        private void Back_Click(object sender, EventArgs e)
+        {
+            SystemHandle1D = null;
+            SystemHandle2D = null;
+            SystemHandlePolar = null;
+
+            PositionSpaceGraph.Visible = false;
+            PositionSpaceGraph.Enabled = false;
+
+            MainGraph.Reset();
+            MainGraph.Refresh();
+            ParametersControls.SetVisible(true);
+            ToolsControls.SetVisible(false);
+        }
+
+        private void LoadingTimer_Tick(object sender, EventArgs e)
+        {
+            if (CurrentLoading > 3)
+            {
+                CurrentLoading = 0;
+                return;
+            }
+
+            if (!LoadingCancelled)
+                LoadingTitle.Text = "Setting up the simulation";
+            else
+                LoadingTitle.Text = "Cancelling the simulation";
+
+            for (int i = 0; i < CurrentLoading; ++i)
+                LoadingTitle.Text += ".";
+
+            ++CurrentLoading;
+        }
+
+        private void CancelLoadingButton_Click(object sender, EventArgs e)
+        {
+            CancelLoading.Cancel();
+            CancelLoadingButton.Enabled = false;
+            LoadingCancelled = true;
+            LoadingMessage.Text = "It may take some time to free the used memory";
+        }
+
+        private void GraphPositionSpace_Click(object sender, EventArgs e)
+        {
+            var plot = PositionSpaceGraph.GetPlot();
+
+            plot.Reset();
+
+            if (SystemHandle1D != null)
+                SystemHandle1D.PlotPositionSpace(plot);
+            else if (SystemHandle2D != null)
+                SystemHandle2D.PlotPositionSpace(plot);
+            else if (SystemHandlePolar != null)
+                SystemHandlePolar.PlotPositionSpace(plot);
+
+            plot.Refresh();
+
+            PositionSpaceGraph.Visible = true;
+            PositionSpaceGraph.Enabled = true;
+        }
+
+        private void GraphMomentumSpace_Click(object sender, EventArgs e)
+        {
+            var plot = MomentumSpaceGraph.GetPlot();
+
+            plot.Reset();
+
+            if (SystemHandle1D != null)
+                SystemHandle1D.PlotMomentumSpace(plot);
+            else if (SystemHandle2D != null)
+                SystemHandle2D.PlotMomentumSpace(plot);
+            else if (SystemHandlePolar != null)
+                SystemHandlePolar.PlotMomentumSpace(plot);
+
+            plot.Refresh();
+
+            MomentumSpaceGraph.Visible = true;
+            MomentumSpaceGraph.Enabled = true;
+        }
+    }
+
+    internal static class ControlUtils
+    {
+        public static void SetVisible(this Control[] controls, bool visible)
+        {
+            for (int i = 0; i < controls.Length; ++i)
+            {
+                controls[i].Enabled = visible;
+                controls[i].Visible = visible;
             }
         }
     }

@@ -143,7 +143,7 @@ namespace Quantum_Mechanics.DE_Solver
             return A.Solve(B);
         }
 
-        public static Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>> SolveEigenvalueODE(DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
+        public static Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>> SolveEigenvalueODE(CancellationToken token, DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
         {
             var solution = new Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>>();
 
@@ -153,13 +153,18 @@ namespace Quantum_Mechanics.DE_Solver
             var A = CreateMatrix.Dense<System.Numerics.Complex>(n, n);
 
             for (int i = 0; i < n; ++i)
+            {
                 x[i] = domain[0] + i * dx;
+                token.ThrowIfCancellationRequested();
+            }
 
             for (int i = 0; i < n; ++i)
             {
                 var a = RPNParser.Calculate(equation[0], (float)x[i]);
                 var b = RPNParser.Calculate(equation[1], (float)x[i]);
                 var c = RPNParser.Calculate(equation[2], (float)x[i]);
+
+                token.ThrowIfCancellationRequested();
 
                 switch (scheme)
                 {
@@ -171,6 +176,7 @@ namespace Quantum_Mechanics.DE_Solver
                             A[i, i - 1] = -b / dx - 2 * a / dx;
 
                         A[i, i] = a / (dx * dx) + b / dx + c;
+                        token.ThrowIfCancellationRequested();
                         break;
 
                     case DifferenceScheme.CENTRAL:
@@ -181,6 +187,7 @@ namespace Quantum_Mechanics.DE_Solver
                             A[i, i - 1] = a / (dx * dx) - b / (2 * dx);
 
                         A[i, i] = -2 * a / (dx * dx) + c;
+                        token.ThrowIfCancellationRequested();
                         break;
 
                     case DifferenceScheme.FORWARD:
@@ -191,11 +198,13 @@ namespace Quantum_Mechanics.DE_Solver
                             A[i, i + 1] = -2 * a / (dx * dx) + b / dx;
 
                         A[i, i] = a / (dx * dx) - b / dx + c;
+                        token.ThrowIfCancellationRequested();
                         break;
                 }
             }
 
             var evd = A.Evd();
+            token.ThrowIfCancellationRequested();
 
             var Y = evd.EigenVectors;
 
@@ -203,17 +212,21 @@ namespace Quantum_Mechanics.DE_Solver
             {
                 var F = Y.Column(i);
                 var valid = true;
+                token.ThrowIfCancellationRequested();
 
                 for (int j = 0; j < boundaryConditions.Length; ++j)
                 {
                     var condition = boundaryConditions[j];
                     var k = (int)((condition.Argument.Real - domain[0]) / dx);
 
+                    token.ThrowIfCancellationRequested();
+
                     if (condition.Order == 0)
                     {
                         if (Math.Abs(F[k].Real - condition.Value.Real) > dx)
                         {
                             valid = false;
+                            token.ThrowIfCancellationRequested();
                             break;
                         }
                     }
@@ -222,16 +235,23 @@ namespace Quantum_Mechanics.DE_Solver
                         var g = CreateVector.Sparse<double>(n);
 
                         for (int m = 0; m < n; ++m)
+                        {
                             g[m] = F[m].Real;
+                            token.ThrowIfCancellationRequested();
+                        }
 
                         var g_interpolated = Interpolate.Linear(x, g);
 
                         for (int m = 0; m < n; ++m)
+                        {
                             g[m] = g_interpolated.Differentiate(x[m]);
+                            token.ThrowIfCancellationRequested();
+                        }
 
                         if (g[k] != condition.Value.Real)
                         {
                             valid = false;
+                            token.ThrowIfCancellationRequested();
                             break;
                         }
                     }
@@ -241,10 +261,12 @@ namespace Quantum_Mechanics.DE_Solver
                     continue;
 
                 var E = evd.EigenValues[i];
+                token.ThrowIfCancellationRequested();
 
                 solution.Add((System.Numerics.Complex)E, F);
             }
 
+            token.ThrowIfCancellationRequested();
             return solution;
         }
         public static Vector<System.Numerics.Complex> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n)
@@ -347,7 +369,7 @@ namespace Quantum_Mechanics.DE_Solver
             return solution;
         }
 
-        public static Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>> SolveEigenvaluePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n) 
+        public static Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>> SolveEigenvaluePDE(CancellationToken token, DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n) 
         {
             var r = CreateMatrix.Sparse<double>(n, 2);
             var dr = CreateVector.Sparse<float>(2);
@@ -356,26 +378,40 @@ namespace Quantum_Mechanics.DE_Solver
             var A = CreateMatrix.Sparse<System.Numerics.Complex>(n * n, n * n);
 
             var solution = new Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>>();
+            token.ThrowIfCancellationRequested();
 
             for (int j = 0; j < 2; ++j)
             {
                 dr[j] = (float)(domain[j, 1] - domain[j, 0]) / (n - 1);
+                token.ThrowIfCancellationRequested();
 
                 for (int i = 0; i < n; ++i)
+                {
                     r[i, j] = domain[j, 0] + i * dr[j];
+                    token.ThrowIfCancellationRequested();
+                }
             }
 
             for (int i = 0; i < equation.Length; ++i)
             {
+                token.ThrowIfCancellationRequested();
+
                 for (int j = 0; j < n; ++j)
                 {
+                    token.ThrowIfCancellationRequested();
+
                     for (int k = 0; k < n; ++k)
+                    {
                         a[i] = RPNParser.Calculate(equation[i], (float)r[j, 0], (float)r[k, 1]);
+                        token.ThrowIfCancellationRequested();
+                    }
                 }
             }
 
             for (int k = 0; k < n * n; ++k)
             {
+                token.ThrowIfCancellationRequested();
+
                 switch (scheme)
                 {
                     case DifferenceScheme.FORWARD:
@@ -392,6 +428,8 @@ namespace Quantum_Mechanics.DE_Solver
                             A[k, k + 1] = a[3] / dr[1] - 2 * a[1] / (dr[1] * dr[1]);
 
                         A[k, k] = a[0] / (dr[0] * dr[0]) + a[1] / (dr[1] * dr[1]) - a[2] / dr[0] - a[3] / dr[1] + a[4];
+
+                        token.ThrowIfCancellationRequested();
                         break;
 
                     case DifferenceScheme.CENTRAL:
@@ -408,40 +446,52 @@ namespace Quantum_Mechanics.DE_Solver
                             A[k, k - 1] = a[1] / (dr[1] * dr[1]) - a[3] / (2 * dr[1]);
 
                         A[k, k] = a[4] - 2 * a[0] / (dr[0] * dr[0]) - 2 * a[1] / (dr[1] * dr[1]);
+
+                        token.ThrowIfCancellationRequested();
                         break;
                 }
             }
 
             var evd = A.Evd();
+
+            token.ThrowIfCancellationRequested();
             var Y = evd.EigenVectors;
             var E = evd.EigenValues;
 
+            token.ThrowIfCancellationRequested();
+
             for (int i = 0; i < Y.ColumnCount; ++i)
             {
+                token.ThrowIfCancellationRequested();
                 var F = Y.Column(i);
                 var valid = true;
 
                 for (int j = 0; j < boundaryConditions.Length; ++j)
                 {
+                    token.ThrowIfCancellationRequested();
                     var condition = boundaryConditions[j];
                     
                     if (condition.Variable == 0)
                     {
                         var x = (int)((condition.Argument.Real - domain[0, 0]) / dr[0]);
+                        token.ThrowIfCancellationRequested();
 
                         if (Math.Abs(F[n * x].Real - condition.Value.Real) > 0.02)
                         {
                             valid = false;
+                            token.ThrowIfCancellationRequested();
                             break;
                         }
                     }
                     else
                     {
                         var x = (int)((condition.Argument.Real - domain[1, 0]) / dr[1]);
+                        token.ThrowIfCancellationRequested();
 
                         if (Math.Abs(F[x].Real - condition.Value.Real) > 0.02)
                         {
                             valid = false;
+                            token.ThrowIfCancellationRequested();
                             break;
                         }
                     }
@@ -455,6 +505,8 @@ namespace Quantum_Mechanics.DE_Solver
 
                 solution.Add((System.Numerics.Complex)E[i], Y.Column(i));
             }
+
+            token.ThrowIfCancellationRequested();
             return solution; 
         }
     }

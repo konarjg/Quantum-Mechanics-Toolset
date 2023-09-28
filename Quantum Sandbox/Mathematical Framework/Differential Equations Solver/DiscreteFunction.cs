@@ -86,10 +86,8 @@ namespace Quantum_Mechanics.DE_Solver
             return Interpolator.Cubic(y, x);
         }
 
-        public void Plot(double[] domain, string path, int points)
+        public void Plot(FormsPlot plot, double[] domain, int points)
         {
-            var plot = new Plot();
-
             var n = points;
             var x = new double[n];
             var y = new double[n];
@@ -101,11 +99,8 @@ namespace Quantum_Mechanics.DE_Solver
                 y[i] = Evaluate(x[i]);
             }
 
-            plot.SetAxisLimits(domain[0], domain[1], y.Min(), y.Max());
-            plot.AddSignalXY(x, y);
-            plot.SaveFig(path);
-
-            Process.Start("explorer.exe", path);
+            plot.Plot.SetAxisLimits(domain[0], domain[1], y.Min(), y.Max());
+            plot.Plot.AddSignalXY(x, y);
         }
     }
 }

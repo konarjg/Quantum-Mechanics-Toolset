@@ -117,10 +117,8 @@ namespace Quantum_Mechanics.DE_Solver
             return new DiscreteFunction2DComplex(g);
         }
 
-        public void Plot(double[,] domain, string path, int points)
+        public void Plot(FormsPlot plot, double[,] domain, int points)
         {
-            var plot = new Plot();
-
             var n = points;
             var u = new double[n, n];
 
@@ -137,8 +135,8 @@ namespace Quantum_Mechanics.DE_Solver
                 }
             }
 
-            plot.SetAxisLimits(domain[0, 0], domain[0, 1], domain[1, 0], domain[1, 1]);
-            var map = plot.AddHeatmap(u);
+            plot.Plot.SetAxisLimits(domain[0, 0], domain[0, 1], domain[1, 0], domain[1, 1]);
+            var map = plot.Plot.AddHeatmap(u);
             map.CellWidth = dx;
             map.CellHeight = dy;
             map.XMin = domain[0, 0];
@@ -146,10 +144,7 @@ namespace Quantum_Mechanics.DE_Solver
             map.XMax = domain[0, 1];
             map.YMax = domain[1, 1];
 
-            plot.AddColorbar(map);
-            plot.SaveFig(path);
-
-            Process.Start("explorer.exe", path);
+            plot.Plot.AddColorbar(map);
         }
     }
 
