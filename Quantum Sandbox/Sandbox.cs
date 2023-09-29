@@ -15,6 +15,7 @@ namespace Quantum_Sandbox
 
         private Graph PositionSpaceGraph = new Graph();
         private Graph MomentumSpaceGraph = new Graph();
+        private ValuesRevealed RevealScreen = new ValuesRevealed();
         private Control[] ParametersControls;
         private Control[] ToolsControls;
         private Control[] LoadingScreenControls;
@@ -26,11 +27,21 @@ namespace Quantum_Sandbox
         [AllowNull]
         private QuantumSystemPolar SystemHandlePolar { get; set; }
 
+        private double MeasuredX;
+        private double MeasuredY;
+        private double MeasuredMomentum;
+        private double MeasuredEnergy;
+        private double MeasuredAngularMomentum;
+
+        private double ExpectedPositionValueX;
+        private double ExpectedPositionValueY;
+        private double ExpectedMomentumValue;
+
         public Sandbox()
         {
             InitializeComponent();
             ParametersControls = new Control[] { Parameters, ParametersTitle, EnvironmentTitle, CoordinateSystemTitle, CoordinateSystem, MovementConstraintsTitle, MovementConstraints, PotentialTypeTitle, PotentialType, LaboratorySizeTitle, Direction1Title, MinX, MaxX, Direction2Title, MinY, MaxY, ParticleTitle, EnergyLevelTitle, EnergyLevel, AzimuthalLevelTitle, AzimuthalLevel, Simulate };
-            ToolsControls = new Control[] { ToolsTitle, WavefunctionTitle, Back, GraphPositionSpace, GraphMomentumSpace, MeasurementsTitle, MeasurePosition, PositionMeasurement, MeasureMomentum, MomentumMeasurement, MeasureAngularMomentum, AngularMomentumMeasurement, MeasureEnergy, EnergyMeasurement, CalculationsTitle, CalculateExpectedPosition, ExpectedPosition, CalculateExpectedMomentum, ExpectedMomentum, RevealParticle, ToolsMenu };
+            ToolsControls = new Control[] { ToolsTitle, WavefunctionTitle, Back, GraphPositionSpace, GraphMomentumSpace, MeasurementsTitle, MeasurePosition, PositionMeasurementX, PositionMeasurementY, MeasureMomentum, MomentumMeasurement, MeasureAngularMomentum, AngularMomentumMeasurement, MeasureEnergy, EnergyMeasurement, CalculationsTitle, CalculateExpectedPosition, ExpectedPosition, CalculateExpectedMomentum, ExpectedMomentum, RevealParticle, ToolsMenu };
             LoadingScreenControls = new Control[] { LoadingTitle, LoadingProgressBar, LoadingMessage, CancelLoadingButton, LoadingScreen };
 
             PositionSpaceGraph.TopMost = true;
@@ -40,6 +51,10 @@ namespace Quantum_Sandbox
             MomentumSpaceGraph.TopMost = true;
             MomentumSpaceGraph.Visible = false;
             MomentumSpaceGraph.Enabled = false;
+
+            RevealScreen.TopMost = true;
+            RevealScreen.Visible = false;
+            RevealScreen.Enabled = false;
 
             LoadingTimer.Enabled = false;
             ParametersControls.SetVisible(true);
@@ -228,9 +243,40 @@ namespace Quantum_Sandbox
                 return;
             }
 
+            if (SystemHandle1D != null)
+            {
+                ExpectedPositionValueX = SystemHandle1D.ExpectedPosition();
+                ExpectedMomentumValue = SystemHandle1D.ExpectedMomentum();
+                MeasuredEnergy = SystemHandle1D.Energy;
+                MeasuredAngularMomentum = SystemHandle1D.MeasureAngularMomentum();
+            }
+            else if (SystemHandle2D != null)
+            {
+                var exp = SystemHandle2D.ExpectedPosition();
+
+                ExpectedPositionValueX = exp.Item1;
+                ExpectedPositionValueY = exp.Item2;
+                ExpectedMomentumValue = SystemHandle2D.ExpectedMomentum();
+                MeasuredEnergy = SystemHandle2D.Energy;
+                MeasuredAngularMomentum = SystemHandle2D.MeasureAngularMomentum();
+            }
+            else if (SystemHandlePolar != null)
+            {
+                var exp = SystemHandlePolar.ExpectedPosition();
+
+                ExpectedPositionValueX = exp.Item1;
+                ExpectedPositionValueY = exp.Item2;
+                ExpectedMomentumValue = SystemHandlePolar.ExpectedMomentum();
+                MeasuredEnergy = SystemHandlePolar.Energy;
+                MeasuredAngularMomentum = SystemHandlePolar.MeasureAngularMomentum();
+            }
+
             MainGraph.Refresh();
             ParametersControls.SetVisible(false);
             ToolsControls.SetVisible(true);
+
+            MainTimer.Enabled = true;
+            MeasurementTimer.Enabled = true;
         }
 
         private void Simulate_Click(object sender, EventArgs e)
@@ -270,6 +316,9 @@ namespace Quantum_Sandbox
             MainGraph.Refresh();
             ParametersControls.SetVisible(true);
             ToolsControls.SetVisible(false);
+
+            MainTimer.Enabled = false;
+            MeasurementTimer.Enabled = false;
         }
 
         private void LoadingTimer_Tick(object sender, EventArgs e)
@@ -335,6 +384,94 @@ namespace Quantum_Sandbox
 
             MomentumSpaceGraph.Visible = true;
             MomentumSpaceGraph.Enabled = true;
+        }
+
+        private void RevealParticle_Click(object sender, EventArgs e)
+        {
+            RevealScreen.Visible = true;
+            RevealScreen.Enabled = true;
+        }
+
+        private void MainTimer_Tick(object sender, EventArgs e)
+        {
+            if (SystemHandle1D != null)
+            {
+                if (MeasurePosition.Checked && MeasureMomentum.Checked)
+                {
+                    var m = SystemHandle1D.MeasurePositionMomentum();
+                    MeasuredX = m.Item1;
+                    MeasuredMomentum = m.Item2;
+                }
+                else if (MeasurePosition.Checked)
+                    MeasuredX = SystemHandle1D.MeasurePosition();
+                else if (MeasureMomentum.Checked)
+                    MeasuredMomentum = SystemHandle1D.MeasureMomentum();
+            }
+            else if (SystemHandle2D != null)
+            {
+                if (MeasurePosition.Checked && MeasureMomentum.Checked)
+                {
+                    var m = SystemHandle2D.MeasurePositionMomentum();
+                    MeasuredX = m.Item1.Item1;
+                    MeasuredY = m.Item1.Item2;
+                    MeasuredMomentum = m.Item2;
+                }
+                else if (MeasurePosition.Checked)
+                {
+                    var r = SystemHandle2D.MeasurePosition();
+                    MeasuredX = r.Item1;
+                    MeasuredY = r.Item2;
+                }
+                else if (MeasureMomentum.Checked)
+                    MeasuredMomentum = SystemHandle2D.MeasureMomentum();
+            }
+            else if (SystemHandlePolar != null)
+            {
+                if (MeasurePosition.Checked && MeasureMomentum.Checked)
+                {
+                    var m = SystemHandlePolar.MeasurePositionMomentum();
+                    MeasuredX = m.Item1.Item1;
+                    MeasuredY = m.Item1.Item2;
+                    MeasuredMomentum = m.Item2;
+                }
+                else if (MeasurePosition.Checked)
+                {
+                    var r = SystemHandlePolar.MeasurePosition();
+                    MeasuredX = r.Item1;
+                    MeasuredY = r.Item2;
+                }
+                else if (MeasureMomentum.Checked)
+                    MeasuredMomentum = SystemHandlePolar.MeasureMomentum();
+            }
+        }
+
+        private void MeasurementTimer_Tick(object sender, EventArgs e)
+        {
+            if (MeasurePosition.Checked)
+            {
+                PositionMeasurementX.Text = MeasuredX.ToString();
+                PositionMeasurementY.Text = MeasuredY.ToString();
+            }
+            else
+            {
+                PositionMeasurementX.Text = "";
+                PositionMeasurementY.Text = "";
+            }
+
+            if (MeasureMomentum.Checked)
+                MomentumMeasurement.Text = MeasuredMomentum.ToString();
+            else
+                MomentumMeasurement.Text = "";
+
+            if (MeasureEnergy.Checked)
+                EnergyMeasurement.Text = MeasuredEnergy.ToString();
+            else
+                EnergyMeasurement.Text = "";
+
+            if (MeasureAngularMomentum.Checked)
+                AngularMomentumMeasurement.Text = MeasuredAngularMomentum.ToString();
+            else
+                AngularMomentumMeasurement.Text = "";
         }
     }
 

@@ -62,7 +62,7 @@
             MeasurementsTitle = new Label();
             MeasurePosition = new CheckBox();
             MeasureMomentum = new CheckBox();
-            PositionMeasurement = new TextBox();
+            PositionMeasurementX = new TextBox();
             MomentumMeasurement = new TextBox();
             MeasureAngularMomentum = new CheckBox();
             AngularMomentumMeasurement = new TextBox();
@@ -80,6 +80,9 @@
             LoadingTitle = new Label();
             LoadingMessage = new Label();
             CancelLoadingButton = new Button();
+            MainTimer = new System.Windows.Forms.Timer(components);
+            MeasurementTimer = new System.Windows.Forms.Timer(components);
+            PositionMeasurementY = new TextBox();
             SuspendLayout();
             // 
             // MainGraph
@@ -331,7 +334,7 @@
             // 
             // ToolsMenu
             // 
-            ToolsMenu.Location = new Point(54, 91);
+            ToolsMenu.Location = new Point(59, 91);
             ToolsMenu.Name = "ToolsMenu";
             ToolsMenu.Size = new Size(639, 838);
             ToolsMenu.TabIndex = 26;
@@ -385,7 +388,7 @@
             // 
             MeasurementsTitle.AutoSize = true;
             MeasurementsTitle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            MeasurementsTitle.Location = new Point(269, 358);
+            MeasurementsTitle.Location = new Point(269, 378);
             MeasurementsTitle.Name = "MeasurementsTitle";
             MeasurementsTitle.Size = new Size(172, 32);
             MeasurementsTitle.TabIndex = 31;
@@ -396,7 +399,7 @@
             MeasurePosition.AutoSize = true;
             MeasurePosition.BackColor = SystemColors.Window;
             MeasurePosition.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            MeasurePosition.Location = new Point(288, 401);
+            MeasurePosition.Location = new Point(241, 424);
             MeasurePosition.Name = "MeasurePosition";
             MeasurePosition.Size = new Size(117, 36);
             MeasurePosition.TabIndex = 32;
@@ -408,25 +411,25 @@
             MeasureMomentum.AutoSize = true;
             MeasureMomentum.BackColor = SystemColors.Window;
             MeasureMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            MeasureMomentum.Location = new Point(257, 446);
+            MeasureMomentum.Location = new Point(253, 466);
             MeasureMomentum.Name = "MeasureMomentum";
             MeasureMomentum.Size = new Size(160, 36);
             MeasureMomentum.TabIndex = 33;
             MeasureMomentum.Text = "Momentum";
             MeasureMomentum.UseVisualStyleBackColor = false;
             // 
-            // PositionMeasurement
+            // PositionMeasurementX
             // 
-            PositionMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            PositionMeasurement.Location = new Point(411, 399);
-            PositionMeasurement.Name = "PositionMeasurement";
-            PositionMeasurement.Size = new Size(60, 39);
-            PositionMeasurement.TabIndex = 34;
+            PositionMeasurementX.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            PositionMeasurementX.Location = new Point(364, 422);
+            PositionMeasurementX.Name = "PositionMeasurementX";
+            PositionMeasurementX.Size = new Size(60, 39);
+            PositionMeasurementX.TabIndex = 34;
             // 
             // MomentumMeasurement
             // 
             MomentumMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            MomentumMeasurement.Location = new Point(425, 445);
+            MomentumMeasurement.Location = new Point(421, 465);
             MomentumMeasurement.Name = "MomentumMeasurement";
             MomentumMeasurement.Size = new Size(60, 39);
             MomentumMeasurement.TabIndex = 35;
@@ -436,7 +439,7 @@
             MeasureAngularMomentum.AutoSize = true;
             MeasureAngularMomentum.BackColor = SystemColors.Window;
             MeasureAngularMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            MeasureAngularMomentum.Location = new Point(213, 490);
+            MeasureAngularMomentum.Location = new Point(197, 510);
             MeasureAngularMomentum.Name = "MeasureAngularMomentum";
             MeasureAngularMomentum.Size = new Size(250, 36);
             MeasureAngularMomentum.TabIndex = 36;
@@ -446,7 +449,7 @@
             // AngularMomentumMeasurement
             // 
             AngularMomentumMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            AngularMomentumMeasurement.Location = new Point(469, 489);
+            AngularMomentumMeasurement.Location = new Point(453, 509);
             AngularMomentumMeasurement.Name = "AngularMomentumMeasurement";
             AngularMomentumMeasurement.Size = new Size(60, 39);
             AngularMomentumMeasurement.TabIndex = 37;
@@ -456,7 +459,7 @@
             MeasureEnergy.AutoSize = true;
             MeasureEnergy.BackColor = SystemColors.Window;
             MeasureEnergy.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            MeasureEnergy.Location = new Point(299, 537);
+            MeasureEnergy.Location = new Point(277, 557);
             MeasureEnergy.Name = "MeasureEnergy";
             MeasureEnergy.Size = new Size(106, 36);
             MeasureEnergy.TabIndex = 38;
@@ -466,7 +469,7 @@
             // EnergyMeasurement
             // 
             EnergyMeasurement.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            EnergyMeasurement.Location = new Point(411, 536);
+            EnergyMeasurement.Location = new Point(389, 556);
             EnergyMeasurement.Name = "EnergyMeasurement";
             EnergyMeasurement.Size = new Size(60, 39);
             EnergyMeasurement.TabIndex = 39;
@@ -475,7 +478,7 @@
             // 
             CalculationsTitle.AutoSize = true;
             CalculationsTitle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            CalculationsTitle.Location = new Point(282, 596);
+            CalculationsTitle.Location = new Point(282, 635);
             CalculationsTitle.Name = "CalculationsTitle";
             CalculationsTitle.Size = new Size(142, 32);
             CalculationsTitle.TabIndex = 42;
@@ -484,7 +487,7 @@
             // ExpectedPosition
             // 
             ExpectedPosition.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            ExpectedPosition.Location = new Point(434, 634);
+            ExpectedPosition.Location = new Point(434, 673);
             ExpectedPosition.Name = "ExpectedPosition";
             ExpectedPosition.Size = new Size(60, 39);
             ExpectedPosition.TabIndex = 44;
@@ -494,7 +497,7 @@
             CalculateExpectedPosition.AutoSize = true;
             CalculateExpectedPosition.BackColor = SystemColors.Window;
             CalculateExpectedPosition.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            CalculateExpectedPosition.Location = new Point(211, 637);
+            CalculateExpectedPosition.Location = new Point(211, 676);
             CalculateExpectedPosition.Name = "CalculateExpectedPosition";
             CalculateExpectedPosition.Size = new Size(220, 36);
             CalculateExpectedPosition.TabIndex = 43;
@@ -504,7 +507,7 @@
             // ExpectedMomentum
             // 
             ExpectedMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            ExpectedMomentum.Location = new Point(461, 683);
+            ExpectedMomentum.Location = new Point(461, 722);
             ExpectedMomentum.Name = "ExpectedMomentum";
             ExpectedMomentum.Size = new Size(60, 39);
             ExpectedMomentum.TabIndex = 46;
@@ -514,7 +517,7 @@
             CalculateExpectedMomentum.AutoSize = true;
             CalculateExpectedMomentum.BackColor = SystemColors.Window;
             CalculateExpectedMomentum.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            CalculateExpectedMomentum.Location = new Point(186, 686);
+            CalculateExpectedMomentum.Location = new Point(186, 725);
             CalculateExpectedMomentum.Name = "CalculateExpectedMomentum";
             CalculateExpectedMomentum.Size = new Size(263, 36);
             CalculateExpectedMomentum.TabIndex = 45;
@@ -525,12 +528,13 @@
             // 
             RevealParticle.AutoSize = true;
             RevealParticle.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            RevealParticle.Location = new Point(273, 752);
+            RevealParticle.Location = new Point(273, 791);
             RevealParticle.Name = "RevealParticle";
             RevealParticle.Size = new Size(176, 63);
             RevealParticle.TabIndex = 47;
             RevealParticle.Text = "Reveal Particle";
             RevealParticle.UseVisualStyleBackColor = true;
+            RevealParticle.Click += RevealParticle_Click;
             // 
             // Back
             // 
@@ -596,11 +600,29 @@
             CancelLoadingButton.UseVisualStyleBackColor = true;
             CancelLoadingButton.Click += CancelLoadingButton_Click;
             // 
+            // MainTimer
+            // 
+            MainTimer.Interval = 1000;
+            MainTimer.Tick += MainTimer_Tick;
+            // 
+            // MeasurementTimer
+            // 
+            MeasurementTimer.Tick += MeasurementTimer_Tick;
+            // 
+            // PositionMeasurementY
+            // 
+            PositionMeasurementY.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            PositionMeasurementY.Location = new Point(430, 421);
+            PositionMeasurementY.Name = "PositionMeasurementY";
+            PositionMeasurementY.Size = new Size(60, 39);
+            PositionMeasurementY.TabIndex = 55;
+            // 
             // Sandbox
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1904, 1041);
+            Controls.Add(PositionMeasurementY);
             Controls.Add(CancelLoadingButton);
             Controls.Add(LoadingMessage);
             Controls.Add(LoadingTitle);
@@ -618,7 +640,7 @@
             Controls.Add(AngularMomentumMeasurement);
             Controls.Add(MeasureAngularMomentum);
             Controls.Add(MomentumMeasurement);
-            Controls.Add(PositionMeasurement);
+            Controls.Add(PositionMeasurementX);
             Controls.Add(MeasureMomentum);
             Controls.Add(MeasurePosition);
             Controls.Add(MeasurementsTitle);
@@ -697,7 +719,7 @@
         private Label MeasurementsTitle;
         private CheckBox MeasurePosition;
         private CheckBox MeasureMomentum;
-        private TextBox PositionMeasurement;
+        private TextBox PositionMeasurementX;
         private TextBox MomentumMeasurement;
         private CheckBox MeasureAngularMomentum;
         private TextBox AngularMomentumMeasurement;
@@ -715,5 +737,8 @@
         private Label LoadingTitle;
         private Label LoadingMessage;
         private Button CancelLoadingButton;
+        private System.Windows.Forms.Timer MainTimer;
+        private System.Windows.Forms.Timer MeasurementTimer;
+        private TextBox PositionMeasurementY;
     }
 }

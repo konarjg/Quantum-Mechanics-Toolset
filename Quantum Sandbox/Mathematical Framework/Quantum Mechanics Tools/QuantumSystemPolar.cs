@@ -25,7 +25,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         private double[] MomentumSpaceDistributionParameters;
 
         public double Energy { get; private set; }
-        public double OrbitalAngularMomentum { get => AzimuthalLevel * (AzimuthalLevel + 1); }
 
         private int EnergyLevel;
         private int AzimuthalLevel;
@@ -33,8 +32,11 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         private double[,] PositionDomain;
         private double[,] MomentumDomain;
 
+        private Random Random;
+
         public QuantumSystemPolar(CancellationToken token, int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[,] positionDomain, double[,] momentumDomain)
         {
+            Random = new Random();
             token.ThrowIfCancellationRequested();
 
             PositionDomain = positionDomain;
@@ -148,6 +150,32 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
             var f = Interpolator.Cubic(k, p);
             f.Plot(plot, CreateMatrix.SparseOfArray(MomentumDomain).Row(0).ToArray(), n);
+        }
+
+        private int RandomSign()
+        {
+            var sign = Random.Next(0, 2);
+
+            if (sign == 0)
+                return -1;
+
+            return 1;
+        }
+
+        public Tuple<Tuple<double, double>, double> MeasurePositionMomentum()
+        {
+            var r = MeasurePosition();
+            var x = r.Item1;
+            var y = r.Item1;
+            var p = MeasureMomentum();
+
+            var R = Tuple.Create(x + RandomSign() * Random.NextDouble() * 0.5, y + RandomSign() * Random.NextDouble());
+            return Tuple.Create(R, p + RandomSign() * Random.NextDouble() * 0.5);
+        }
+
+        public double MeasureAngularMomentum()
+        {
+            return AzimuthalLevel * (AzimuthalLevel + 1);
         }
 
         #region Position Space

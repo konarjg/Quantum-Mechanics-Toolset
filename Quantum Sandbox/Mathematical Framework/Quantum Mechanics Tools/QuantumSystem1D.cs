@@ -18,12 +18,11 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         public DiscreteFunctionComplex WaveFunctionMomentumSpace { get; private set; }
         public DiscreteFunction PositionSpaceProbabilityDensity { get; private set; }
         public DiscreteFunction MomentumSpaceProbabilityDensity { get; private set; }
-        
+
         private double[] PositionSpaceDistributionParameters;
         private double[] MomentumSpaceDistributionParameters;
 
         public double Energy { get; private set; }
-        public double OrbitalAngularMomentum { get => AzimuthalLevel * (AzimuthalLevel + 1); }
 
         private int EnergyLevel;
         private int AzimuthalLevel;
@@ -31,14 +30,18 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         private double[] PositionDomain;
         private double[] MomentumDomain;
 
+        private Random Random;
+
         public QuantumSystem1D(CancellationToken token, int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[] positionDomain, double[] momentumDomain)
         {
+            Random = new Random();
             token.ThrowIfCancellationRequested();
 
             PositionDomain = positionDomain;
             MomentumDomain = momentumDomain;
             Precision = precision;
             EnergyLevel = energyLevel;
+            AzimuthalLevel = azimuthalLevel;
 
             var T = -1 / (2 * mass);
             var V = potential;
@@ -112,6 +115,30 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         public void PlotMomentumSpace(FormsPlot plot)
         {
             WaveFunctionMomentumSpace.Plot(plot, MomentumDomain, Precision);
+        }
+
+        private int RandomSign()
+        {
+            var sign = Random.Next(0, 2);
+
+            if (sign == 0)
+                return -1;
+
+            return 1;
+        }
+
+        public Tuple<double, double> MeasurePositionMomentum()
+        {
+            var x = MeasurePosition();
+            var p = MeasureMomentum();
+
+
+            return Tuple.Create(x + RandomSign() * Random.NextDouble() * 0.5, p + RandomSign() * Random.NextDouble() * 0.5);
+        }
+
+        public double MeasureAngularMomentum()
+        {
+            return AzimuthalLevel * (AzimuthalLevel + 1);
         }
 
         #region Position Space
