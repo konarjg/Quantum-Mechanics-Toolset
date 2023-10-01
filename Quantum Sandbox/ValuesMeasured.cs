@@ -10,30 +10,19 @@ using System.Windows.Forms;
 
 namespace Quantum_Sandbox
 {
-    public partial class ValuesRevealed : Form
+    public partial class ValuesMeasured : Form
     {
         private Sandbox ParentSandboxMode;
-        private double[,] PositionDomain;
 
-        public ValuesRevealed(Sandbox parent)
+        public ValuesMeasured(Sandbox parent)
         {
             InitializeComponent();
             ParentSandboxMode = parent;
         }
 
-        public void SetPositionDomain(double[,] domain)
+        public void SetPosition(double x, double y, bool measured = true)
         {
-            PositionDomain = domain;
-        }
-
-        public double[,] GetPositionDomain()
-        {
-            return PositionDomain;
-        }
-
-        public void SetPosition(double x, double y, bool revealed = true)
-        {
-            if (!revealed)
+            if (!measured)
             {
                 PositionX.Text = "";
                 PositionY.Text = "";
@@ -44,9 +33,9 @@ namespace Quantum_Sandbox
             PositionY.Text = Math.Round(y, 3).ToString();
         }
 
-        public void SetMomentum(double p, bool revealed = true)
+        public void SetMomentum(double p, bool measured = true)
         {
-            if (!revealed)
+            if (!measured)
             {
                 Momentum.Text = "";
                 return;
@@ -55,9 +44,9 @@ namespace Quantum_Sandbox
             Momentum.Text = Math.Round(p, 3).ToString();
         }
 
-        public void SetEnergy(double E, bool revealed = true)
+        public void SetEnergy(double E, bool measured = true)
         {
-            if (!revealed)
+            if (!measured)
             {
                 Energy.Text = "";
                 return;
@@ -66,9 +55,9 @@ namespace Quantum_Sandbox
             Energy.Text = Math.Round(E, 3).ToString();
         }
 
-        public void SetAngularMomentum(double L, bool revealed = true)
+        public void SetAngularMomentum(double L, bool measured = true)
         {
-            if (!revealed)
+            if (!measured)
             {
                 AngularMomentum.Text = "";
                 return;
@@ -77,11 +66,11 @@ namespace Quantum_Sandbox
             AngularMomentum.Text = Math.Round(L, 3).ToString();
         }
 
-        private void ValuesRevealed_FormClosing(object sender, FormClosingEventArgs e)
+        private void ValuesMeasured_FormClosing(object sender, FormClosingEventArgs e)
         {
             Visible = false;
             Enabled = false;
-            ParentSandboxMode.RemoveReveal();
+            ParentSandboxMode.RemoveMeasurement();
             e.Cancel = true;
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Quantum_Sandbox
 {
-    partial class ValuesRevealed
+    partial class ValuesMeasured
     {
         /// <summary>
         /// Required designer variable.
@@ -44,11 +44,11 @@
             // 
             Title.AutoSize = true;
             Title.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point);
-            Title.Location = new Point(80, 9);
+            Title.Location = new Point(47, 9);
             Title.Name = "Title";
-            Title.Size = new Size(179, 45);
+            Title.Size = new Size(261, 45);
             Title.TabIndex = 0;
-            Title.Text = "Real Values";
+            Title.Text = "Measured Values";
             // 
             // label2
             // 
@@ -130,7 +130,7 @@
             Energy.Size = new Size(89, 23);
             Energy.TabIndex = 9;
             // 
-            // ValuesRevealed
+            // ValuesMeasured
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -145,13 +145,13 @@
             Controls.Add(PositionX);
             Controls.Add(label2);
             Controls.Add(Title);
-            Location = new Point(400, 400);
+            Location = new Point(400, 115);
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "ValuesRevealed";
+            Name = "ValuesMeasured";
             StartPosition = FormStartPosition.Manual;
             Text = "ValuesRevealed";
-            FormClosing += ValuesRevealed_FormClosing;
+            FormClosing += ValuesMeasured_FormClosing;
             ResumeLayout(false);
             PerformLayout();
         }

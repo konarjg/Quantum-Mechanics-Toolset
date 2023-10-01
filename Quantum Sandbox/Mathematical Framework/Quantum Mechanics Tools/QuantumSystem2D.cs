@@ -167,12 +167,13 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             return 1;
         }
 
-        public Tuple<Tuple<double, double>, double> MeasurePositionMomentum()
+        public Tuple<Tuple<double, double>, double> MeasurePositionMomentum(int seed)
         {
-            var r = MeasurePosition();
+            Random = new Random(seed);
+            var r = MeasurePosition(seed);
             var x = r.Item1;
             var y = r.Item1;
-            var p = MeasureMomentum();
+            var p = MeasureMomentum(seed);
             
 
             var R = Tuple.Create(x + RandomSign() * Random.NextDouble() * 0.5, y + RandomSign() * Random.NextDouble());
@@ -185,6 +186,11 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         }
 
         #region Position Space
+
+        public double[,] GetPositionDomain()
+        {
+            return PositionDomain;
+        }
 
         private double[,] GetPositionSpaceDistributionParameters()
         {
@@ -214,18 +220,19 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             return Tuple.Create(exp_x, exp_y);
         }
 
-        public Tuple<double, double> MeasurePosition()
+        public Tuple<double, double> MeasurePosition(int seed)
         {
             var parameters = PositionSpaceDistributionParameters;
+            Random = new Random(seed);
 
-            var x = Normal.Sample(parameters[0, 0], parameters[0, 1]);
-            var y = Normal.Sample(parameters[1, 0], parameters[1, 1]);
+            var x = Normal.Sample(Random, parameters[0, 0], parameters[0, 1]);
+            var y = Normal.Sample(Random, parameters[1, 0], parameters[1, 1]);
 
             while (x <= PositionDomain[0, 0] || x >= PositionDomain[0, 1])
-                x = Normal.Sample(parameters[0, 0], parameters[0, 1]);
+                x = Normal.Sample(Random, parameters[0, 0], parameters[0, 1]);
 
             while (y <= PositionDomain[1, 0] || y >= PositionDomain[1, 1])
-                y = Normal.Sample(parameters[1, 0], parameters[1, 1]);
+                y = Normal.Sample(Random, parameters[1, 0], parameters[1, 1]);
 
             return Tuple.Create(x, y);
         }
@@ -255,13 +262,14 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             return f.Integrate(MomentumDomain[0, 0], MomentumDomain[0, 1], MomentumDomain[1, 0], MomentumDomain[1, 1]);
         }
 
-        public double MeasureMomentum()
+        public double MeasureMomentum(int seed)
         {
+            Random = new Random(seed);
             var parameters = MomentumSpaceDistributionParameters;
-            var p = Normal.Sample(parameters[0], parameters[1]);
+            var p = Normal.Sample(Random, parameters[0], parameters[1]);
 
             while (p <= MomentumMagnitudeDomain[0] || p >= MomentumMagnitudeDomain[1])
-                p = Normal.Sample(parameters[0], parameters[1]);
+                p = Normal.Sample(Random, parameters[0], parameters[1]);
 
             return p; 
         }

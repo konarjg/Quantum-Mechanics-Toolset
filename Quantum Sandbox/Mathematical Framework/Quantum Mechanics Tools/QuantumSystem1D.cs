@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics;
 using MathNet.Numerics.Distributions;
+using MathNet.Numerics.Integration;
 using MathNet.Numerics.LinearAlgebra;
 using Quantum_Mechanics.DE_Solver;
 using ScottPlot;
@@ -117,7 +118,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             WaveFunctionMomentumSpace.Plot(plot, MomentumDomain, Precision);
         }
 
-        private int RandomSign()
+        private double RandomSign()
         {
             var sign = Random.Next(0, 2);
 
@@ -127,11 +128,11 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             return 1;
         }
 
-        public Tuple<double, double> MeasurePositionMomentum()
+        public Tuple<double, double> MeasurePositionMomentum(int seed)
         {
-            var x = MeasurePosition();
-            var p = MeasureMomentum();
-
+            Random = new Random(seed);
+            var x = MeasurePosition(seed);
+            var p = MeasureMomentum(seed);
 
             return Tuple.Create(x + RandomSign() * Random.NextDouble() * 0.5, p + RandomSign() * Random.NextDouble() * 0.5);
         }
@@ -142,6 +143,12 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         }
 
         #region Position Space
+
+
+        public double[] GetPositionDomain()
+        {
+            return PositionDomain;
+        }
 
         private double[] GetPositionSpaceDistributionParameters()
         {
@@ -172,14 +179,15 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             return new DiscreteFunction(f).Integrate(PositionDomain[0], PositionDomain[1]);
         }
 
-        public double MeasurePosition()
+        public double MeasurePosition(int seed)
         {
+            Random = new Random(seed);
             var mean = PositionSpaceDistributionParameters[0];
             var std = PositionSpaceDistributionParameters[1];
-            var x = Normal.Sample(mean, std);
+            var x = Normal.Sample(Random, mean, std);
 
             while (x <= PositionDomain[0] || x >= PositionDomain[1])
-                x = Normal.Sample(mean, std);   
+                x = Normal.Sample(Random, mean, std);   
 
             return x;
         }
@@ -201,14 +209,15 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             return new DiscreteFunction(f).Integrate(MomentumDomain[0], MomentumDomain[1]);
         }
 
-        public double MeasureMomentum()
+        public double MeasureMomentum(int seed)
         {
+            Random = new Random(seed);
             var mean = MomentumSpaceDistributionParameters[0];
             var std = MomentumSpaceDistributionParameters[1];
-            var p = Normal.Sample(mean, std);
+            var p = Normal.Sample(Random, mean, std);
 
             while (p <= MomentumDomain[0] || p >= MomentumDomain[1])
-                p = Normal.Sample(mean, std);
+                p = Normal.Sample(Random, mean, std);
             
             return p;
         }

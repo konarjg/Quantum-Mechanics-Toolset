@@ -21,3 +21,4 @@ C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.Sandbox.resources
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.Graph.resources
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.ValuesRevealed.resources
+C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.ValuesMeasured.resources
