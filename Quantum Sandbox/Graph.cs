@@ -16,6 +16,8 @@ namespace Quantum_Sandbox
         public Graph()
         {
             InitializeComponent();
+            WavefunctionGraph.Configuration.Pan = false;
+            WavefunctionGraph.Configuration.Zoom = false;
         }
 
         public FormsPlot GetPlot()

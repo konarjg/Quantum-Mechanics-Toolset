@@ -59,7 +59,7 @@ namespace Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools
                             return 0.5 * QuantumConstants.Me + "*(x^2+y^2)";
 
                         case PotentialType.ELECTRIC:
-                            return "(0-1)/(sqrt(x*x+y*y)+0,0001)";
+                            return "(0-1)/(sqrt(x*x + y*y) + 0,0001)";
                     }
 
                     break;
