@@ -139,6 +139,8 @@ namespace Quantum_Mechanics.DE_Solver
             var map = plot.Plot.AddHeatmap(u);
             map.CellWidth = dx;
             map.CellHeight = dy;
+            map.OffsetX = domain[0, 0];
+            map.OffsetY = domain[1, 0];
             map.XMin = domain[0, 0];
             map.YMin = domain[1, 0];
             map.XMax = domain[0, 1];

@@ -3,6 +3,8 @@ using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra;
 using Quantum_Mechanics.DE_Solver;
 using ScottPlot;
+using ScottPlot.Drawing;
+using ScottPlot.Plottable;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -62,16 +64,20 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var solution = DESolver.SolveEigenvaluePDE(token, DifferenceScheme.CENTRAL, schrodingerEquation, boundaryConditions, positionDomain, precision);
             token.ThrowIfCancellationRequested();
 
-            var n0 = EnergyLevel - 1;
-            var l0 = AzimuthalLevel - 1;
             var t = 0;
             var done = false;
 
-            for (int n = 0; n < 10; ++n)
+            for (int n = 1; n <= 10; ++n)
             {
-                for (int l = 0; l < 10; ++l)
+                if (done)
+                    break;
+
+                for (int l = 0; l <= 10; ++l)
                 {
-                    if (n == n0 && l == l0)
+                    if (done)
+                        break;
+
+                    if (n == EnergyLevel && l == AzimuthalLevel - 1)
                     {
                         done = true;
                         break;
@@ -79,9 +85,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
                     ++t;
                 }
-
-                if (done)
-                    break;
             }
 
             Energy = solution.Keys.ElementAt(t).Real;
@@ -155,31 +158,19 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         public void PlotPositionSpace(FormsPlot plot)
         {
             var domain = new double[,] { { -PositionDomain[0, 1], PositionDomain[0, 1] }, { -PositionDomain[0, 1], PositionDomain[0, 1] } };
-            var dx = (domain[0, 1] - domain[0, 0]) / (Precision - 1);
-            var dy = (domain[1, 1] - domain[1, 0]) / (Precision - 1);
-            var u = new double[Precision, Precision];
 
-            for (int i = 0; i < Precision; ++i)
+            var f = new DiscreteFunction2DComplex((x, y) =>
             {
-                for (int j = 0; j < Precision; ++j)
-                {
-                    var x = domain[0, 0] + i * dx;
-                    var y = domain[1, 0] + j * dy;
+                var r = Math.Sqrt(x * x + y * y);
+                var fi = Math.Atan2(y, x);
 
-                    var r = Math.Sqrt(x * x + y * y);
-                    var fi = Math.Atan2(y, x);
-                    u[i, j] = PositionSpaceProbabilityDensity.Evaluate(r, fi);
-                }
-            }
+                if (fi < 0)
+                    fi += 2 * Math.PI;
 
-            plot.Reset();
-            plot.Plot.SetAxisLimits(domain[0, 0], domain[0, 1], domain[1, 0], domain[1, 1]);
-            var map = plot.Plot.AddHeatmap(u);
-            map.CellWidth = dx;
-            map.CellHeight = dy;
-            plot.Plot.AddColorbar(map);
-            
-            plot.Refresh();
+                return WaveFunction.Evaluate(r, fi);
+            });
+
+            f.Plot(plot, domain, Precision);
         }
 
         public void PlotMomentumSpace(FormsPlot plot)

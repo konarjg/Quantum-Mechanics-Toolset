@@ -25,7 +25,9 @@ namespace Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools
     {
         NONE,
         HARMONIC,
-        ELECTRIC
+        ELECTRIC,
+        MAGNETIC,
+        ELECTROMAGNETIC
     }
     
     public class QuantumSystem
@@ -41,10 +43,16 @@ namespace Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools
                             return "0";
 
                         case PotentialType.HARMONIC:
-                            return 0.5 * QuantumConstants.Me + "*x^2";
+                            return 0.5 * QuantumConstants.Me + "*100*x^2";
 
                         case PotentialType.ELECTRIC:
-                            return "(0-1)/(x+0,0001)";
+                            return "(0-100)/(x+0,0001)";
+
+                        case PotentialType.MAGNETIC:
+                            return "((0-100)*x^2)/(16*" + QuantumConstants.Me + "^2)";
+
+                        case PotentialType.ELECTROMAGNETIC:
+                            return PotentialFunction(system, PotentialType.ELECTRIC) + "+ (" + PotentialFunction(system, PotentialType.MAGNETIC) + ")";
                     }
 
                     break;
@@ -56,10 +64,16 @@ namespace Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools
                             return "0";
 
                         case PotentialType.HARMONIC:
-                            return 0.5 * QuantumConstants.Me + "*(x^2+y^2)";
+                            return 0.5 * QuantumConstants.Me + "*100*(x^2+y^2)";
 
                         case PotentialType.ELECTRIC:
-                            return "(0-1)/(sqrt(x*x + y*y) + 0,0001)";
+                            return "(0-100)/(sqrt(x^2 + y^2) + 0,0001)";
+
+                        case PotentialType.MAGNETIC:
+                            return "((0-100)*(x^2 + y^2))/(16*" + QuantumConstants.Me + "^2)";
+
+                        case PotentialType.ELECTROMAGNETIC:
+                            return PotentialFunction(system, PotentialType.ELECTRIC) + "+ (" + PotentialFunction(system, PotentialType.MAGNETIC) + ")";
                     }
 
                     break;
@@ -71,10 +85,16 @@ namespace Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools
                             return "0";
 
                         case PotentialType.HARMONIC:
-                            return 0.5 * QuantumConstants.Me + "*x^2";
+                            return 0.5 * QuantumConstants.Me + "*100*x^2";
 
                         case PotentialType.ELECTRIC:
-                            return "(0-1)/(x+0,0001)";
+                            return "(0-100)/(x+0,0001)";
+
+                        case PotentialType.MAGNETIC:
+                            return "((0-100)*x^2)/(16*" + QuantumConstants.Me + "^2)";
+
+                        case PotentialType.ELECTROMAGNETIC:
+                            return PotentialFunction(system, PotentialType.ELECTRIC) + "+ (" + PotentialFunction(system, PotentialType.MAGNETIC) + ")";
                     }
 
                     break;
@@ -112,6 +132,12 @@ namespace Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools
 
                 case "Electric":
                     return PotentialType.ELECTRIC;
+
+                case "Magnetic":
+                    return PotentialType.MAGNETIC;
+
+                case "Electromagnetic":
+                    return PotentialType.ELECTROMAGNETIC;
             }
 
             throw new ArgumentException();
