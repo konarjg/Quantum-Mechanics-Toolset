@@ -1,8 +1,11 @@
+using Quantum_Mechanics.DE_Solver;
 using Quantum_Mechanics.General;
 using Quantum_Mechanics.Quantum_Mechanics;
 using Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools;
 using ScottPlot;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 //fajny dzidziuœ tu by³ <33
 
@@ -216,14 +219,15 @@ namespace Quantum_Sandbox
 
                                 domain = new double[,] { { positionDomain2D[0, 0], positionDomain2D[0, 1] }, { positionDomain2D[1, 0], positionDomain2D[1, 1] } };
                                 CancelLoading.Token.ThrowIfCancellationRequested();
+                                var potential = QuantumSystem.PotentialFunction(Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D, potentialType);
 
                                 if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
                                 {
-                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomain2D, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
+                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, 0, QuantumConstants.Me, potential, potential, positionDomain2D, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
                                     CancelLoading.Token.ThrowIfCancellationRequested();
                                 }
                                 else
-                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[,] { { -10000, 10000 }, { -10000, 10000 } }, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
+                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, 0, QuantumConstants.Me, potential, potential, new double[,] { { -10000, 10000 }, { -10000, 10000 } }, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
 
                                 CancelLoading.Token.ThrowIfCancellationRequested();
 
@@ -299,8 +303,9 @@ namespace Quantum_Sandbox
                 {
                     return 0;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    MessageBox.Show(e.StackTrace);
                     return -1;
                 }
             });
@@ -693,6 +698,11 @@ namespace Quantum_Sandbox
                 Calculate.Enabled = false;
             else
                 Calculate.Enabled = true;
+        }
+
+        private void Sandbox_Load(object sender, EventArgs e)
+        {
+            
         }
     }
 

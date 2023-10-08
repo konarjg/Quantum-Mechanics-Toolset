@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics;
 using MathNet.Numerics.Distributions;
+using MathNet.Numerics.Integration;
 using MathNet.Numerics.LinearAlgebra;
 using Quantum_Mechanics.DE_Solver;
 using ScottPlot;
@@ -16,144 +17,150 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 {
     public class QuantumSystem2D
     {
-        public DiscreteFunction2DComplex WaveFunction { get; private set; }
-        public DiscreteFunction2DComplex WaveFunctionMomentumSpace { get; private set; }
-        public DiscreteFunction2D PositionSpaceProbabilityDensity { get; private set; }
-        public DiscreteFunction2D MomentumSpaceProbabilityDensity { get; private set; }
+        private double[] EnergiesX;
+        private double[] EnergiesY;
+        public DiscreteFunctionComplex[] WaveFunctionX { get; private set; }
+        public DiscreteFunctionComplex[] WaveFunctionY { get; private set; }
+        public DiscreteFunctionComplex[] WaveFunctionMomentumSpaceX { get; private set; }
+        public DiscreteFunctionComplex[] WaveFunctionMomentumSpaceY { get; private set; }
 
-        private double[,] PositionSpaceDistributionParameters;
-        private double[] MomentumSpaceDistributionParameters;
+        private List<double[]> PositionSpaceDistributionParametersX = new List<double[]>();
+        private List<double[]> PositionSpaceDistributionParametersY = new List<double[]>();
+        private List<double[]> MomentumSpaceDistributionParametersX = new List<double[]>();
+        private List<double[]> MomentumSpaceDistributionParametersY = new List<double[]>();
 
-        public double Energy { get; private set; }
+        public double Energy { get => EnergiesX[EnergyLevelX] + EnergiesY[EnergyLevelY]; }
 
-        private int EnergyLevel;
+        private int EnergyLevelX;
+        private int EnergyLevelY;
         private int AzimuthalLevel;
         private int Precision;
-        private double[,] PositionDomain;
-        private double[,] MomentumDomain;
+        private double[] PositionDomainX;
+        private double[] PositionDomainY;
+        private double[] MomentumDomainX;
+        private double[] MomentumDomainY;
         private double[] MomentumMagnitudeDomain;
 
         private Random Random;
 
-        public QuantumSystem2D(CancellationToken token, int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[,] positionDomain, double[,] momentumDomain, double[] momentumMagnitudeDomain)
+        public QuantumSystem2D(CancellationToken token, int precision, int energyLevelX, int energyLevelY, int azimuthalLevel, double mass, string potentialX, string potentialY, double[,] positionDomain, double[,] momentumDomain, double[] momentumMagnitudeDomain)
         {
             Random = new Random();
             token.ThrowIfCancellationRequested();
 
-            PositionDomain = positionDomain;
-            MomentumDomain = momentumDomain;
+            PositionDomainX = new double[] { positionDomain[0, 0], positionDomain[0, 1] };
+            PositionDomainY = new double[] { positionDomain[1, 0], positionDomain[1, 1] };
+            MomentumDomainX = new double[] { momentumDomain[0, 0], momentumDomain[0, 1] };
+            MomentumDomainY = new double[] { momentumDomain[1, 0], momentumDomain[1, 1] };
             MomentumMagnitudeDomain = momentumMagnitudeDomain;
             Precision = precision;
-            EnergyLevel = energyLevel;
+            EnergyLevelX = energyLevelX - 1;
+            EnergyLevelY = energyLevelY - 1;
             AzimuthalLevel = azimuthalLevel;
 
             token.ThrowIfCancellationRequested();
 
             var T = -1 / (2 * mass);
-            var V = potential;
+            var V = new string[] { potentialX, potentialY };
 
-            var boundaryConditions = new BoundaryConditionPDE[]
+            var boundaryConditionsX = new BoundaryCondition[]
             {
-                new BoundaryConditionPDE(0, 0, positionDomain[0, 0].ToString(), "0"),
-                new BoundaryConditionPDE(0, 0, positionDomain[0, 1].ToString(), "0"),
-                new BoundaryConditionPDE(0, 1, positionDomain[1, 0].ToString(), "0"),
-                new BoundaryConditionPDE(0, 1, positionDomain[1, 1].ToString(), "0")
+                new BoundaryCondition(0, positionDomain[0, 0].ToString(), "0"),
+                new BoundaryCondition(0, positionDomain[0, 1].ToString(), "0")
+            };
+
+            var boundaryConditionsY = new BoundaryCondition[]
+            {
+                new BoundaryCondition(0, positionDomain[1, 0].ToString(), "0"),
+                new BoundaryCondition(0, positionDomain[1, 1].ToString(), "0")
             };
 
             token.ThrowIfCancellationRequested();
-            var schrodingerEquation = new string[] { T.ToString(), T.ToString(), "0", "0", V };
+            var schrodingerEquationX = new string[] { T.ToString(), "0", V[0] };
+            var schrodingerEquationY = new string[] { T.ToString(), "0", V[1] };
 
-            var solution = DESolver.SolveEigenvaluePDE(token, DifferenceScheme.CENTRAL, schrodingerEquation, boundaryConditions, positionDomain, precision);
+            var solutionX = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationX, boundaryConditionsX, PositionDomainX, precision);
+            var solutionY = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationY, boundaryConditionsY, PositionDomainY, precision);
             token.ThrowIfCancellationRequested();
 
-            Energy = solution.Keys.ElementAt(energyLevel - 1).Real;
+            var waveFunctionsX = solutionX.Values.ToArray();
+            var waveFunctionsY = solutionY.Values.ToArray();
+            EnergiesX = CreateVector.SparseOfEnumerable(solutionX.Keys).Real().ToArray();
+            EnergiesY = CreateVector.SparseOfEnumerable(solutionY.Keys).Real().ToArray();
 
-            var dx = (positionDomain[0, 1] - positionDomain[0, 0]) / (precision - 1);
-            var dy = (positionDomain[1, 1] - positionDomain[1, 0]) / (precision - 1);
-            var x = CreateVector.Sparse<double>(precision);
-            var y = CreateVector.Sparse<double>(precision);
-            var u_vector = solution.Values.ElementAt(energyLevel - 1);
-            var u = CreateMatrix.Sparse<Complex>(Precision, Precision);
-
-            token.ThrowIfCancellationRequested();
-
-            for (int i = 0; i < precision; ++i)
-            {
-                token.ThrowIfCancellationRequested();
-
-                for (int j = 0; j < precision; ++j)
-                {
-                    x[i] = positionDomain[0, 0] + i * dx;
-                    y[j] = positionDomain[1, 0] + j * dy;
-                    u[i, j] = u_vector[precision * i + j];
-                    token.ThrowIfCancellationRequested();
-                }
-            }
-
-            WaveFunction = Interpolator.Bicubic(x, y, u);
-            var density = WaveFunction.GetMagnitudeSquared();
-
-            token.ThrowIfCancellationRequested();
-
-            var N = Math.Sqrt(1d / density.Integrate(positionDomain[0, 0], positionDomain[0, 1], positionDomain[1, 0], positionDomain[1, 1]));
-            token.ThrowIfCancellationRequested();
-
-            WaveFunction = Interpolator.Bicubic(x, y, N * u);
-            WaveFunctionMomentumSpace = WaveFunction.FourierTransform(positionDomain);
-            density = WaveFunctionMomentumSpace.GetMagnitudeSquared();
-
-            token.ThrowIfCancellationRequested();
-
-            var Np = Math.Sqrt(1d / density.Integrate(momentumDomain[0, 0], momentumDomain[0, 1], momentumDomain[1, 0], momentumDomain[1, 1]));
-            var dkx = (MomentumDomain[0, 1] - MomentumDomain[0, 0]) / (Precision - 1);
-            var dky = (MomentumDomain[1, 1] - MomentumDomain[1, 0]) / (Precision - 1);
-            var kx = CreateVector.Sparse<double>(Precision);
-            var ky = CreateVector.Sparse<double>(Precision);
-            var k = CreateMatrix.Sparse<Complex>(Precision, Precision);
-
-            token.ThrowIfCancellationRequested();
+            var dx = (PositionDomainX[1] - PositionDomainX[0]) / (Precision - 1);
+            var dy = (PositionDomainY[1] - PositionDomainY[0]) / (Precision - 1);
+            var x = CreateVector.Sparse<double>(Precision);
+            var y = CreateVector.Sparse<double>(Precision);
 
             for (int i = 0; i < Precision; ++i)
             {
-                token.ThrowIfCancellationRequested();
-
-                for (int j = 0; j < Precision; ++j)
-                {
-                    kx[i] = MomentumDomain[0, 0] + i * dkx;
-                    ky[j] = MomentumDomain[1, 0] + j * dky;
-
-                    k[i, j] = Np * WaveFunctionMomentumSpace.Evaluate(kx[i], ky[j]);
-                    token.ThrowIfCancellationRequested();
-                }
+                x[i] = PositionDomainX[0] + i * dx;
+                y[i] = PositionDomainY[0] + i * dy;
             }
 
-            WaveFunctionMomentumSpace = Interpolator.Bicubic(kx, ky, k);
-            PositionSpaceProbabilityDensity = WaveFunction.GetMagnitudeSquared();
-            MomentumSpaceProbabilityDensity = WaveFunctionMomentumSpace.GetMagnitudeSquared();
-            PositionSpaceDistributionParameters = GetPositionSpaceDistributionParameters();
-            MomentumSpaceDistributionParameters = GetMomentumSpaceDistributionParameters();
+            WaveFunctionX = new DiscreteFunctionComplex[10];
+            WaveFunctionY = new DiscreteFunctionComplex[10];
+            WaveFunctionMomentumSpaceX = new DiscreteFunctionComplex[10];
+            WaveFunctionMomentumSpaceY = new DiscreteFunctionComplex[10];
+
+            for (int i = 0; i < 10; ++i)
+            {
+                token.ThrowIfCancellationRequested();
+
+                WaveFunctionX[i] = Interpolator.Cubic(x, waveFunctionsX[i]);
+                WaveFunctionY[i] = Interpolator.Cubic(y, waveFunctionsY[i]);
+
+                var Nx = Math.Sqrt(1d / WaveFunctionX[i].GetMagnitudeSquared().Integrate(PositionDomainX[0], PositionDomainX[1]));
+                var Ny = Math.Sqrt(1d / WaveFunctionY[i].GetMagnitudeSquared().Integrate(PositionDomainY[0], PositionDomainY[1]));
+
+                WaveFunctionX[i] = Interpolator.Cubic(x, waveFunctionsX[i] * Nx);
+                WaveFunctionY[i] = Interpolator.Cubic(y, waveFunctionsY[i] * Ny);
+
+                var px = WaveFunctionX[i].FourierTransform(MomentumDomainX);
+                var py = WaveFunctionY[i].FourierTransform(MomentumDomainY);
+
+                var Npx = Math.Sqrt(1d / px.GetMagnitudeSquared().Integrate(MomentumDomainX[0], MomentumDomainX[1]));
+                var Npy = Math.Sqrt(1d / py.GetMagnitudeSquared().Integrate(MomentumDomainY[0], MomentumDomainY[1]));
+
+                WaveFunctionMomentumSpaceX[i] = new DiscreteFunctionComplex(k => Npx * px.Evaluate(k));
+                WaveFunctionMomentumSpaceY[i] = new DiscreteFunctionComplex(k => Npy * py.Evaluate(k));
+                PositionSpaceDistributionParametersX.Add(GetPositionSpaceDistributionParametersX(i));
+                PositionSpaceDistributionParametersY.Add(GetPositionSpaceDistributionParametersY(i));
+
+                MomentumSpaceDistributionParametersX.Add(GetMomentumSpaceDistributionParametersX(i));
+                MomentumSpaceDistributionParametersY.Add(GetMomentumSpaceDistributionParametersY(i));
+                token.ThrowIfCancellationRequested();
+            }
+
             token.ThrowIfCancellationRequested();
         }
 
         public void PlotPositionSpace(FormsPlot plot)
         {
-            WaveFunction.Plot(plot, PositionDomain, Precision);
+            var f = new DiscreteFunction2DComplex((x, y) => WaveFunctionX[EnergyLevelX].Evaluate(x) * WaveFunctionY[EnergyLevelY].Evaluate(y));
+            f.Plot(plot, new double[,] { { PositionDomainX[0], PositionDomainX[1] }, { PositionDomainY[0], PositionDomainY[1] } }, (int)Math.Sqrt(Precision));
         }
 
         public void PlotMomentumSpace(FormsPlot plot)
         {
-            var n = Precision * Precision;
-            var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
-            var k = CreateVector.Sparse<double>(n);
-            var p = CreateVector.Sparse<double>(n);
+            var n = Precision / 5;
+            var dp = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
 
+            var fx = WaveFunctionMomentumSpaceX[EnergyLevelX];
+            var fy = WaveFunctionMomentumSpaceY[EnergyLevelY];
+            
+            var psi = new DiscreteFunction2DComplex((x, y) => fx.Evaluate(x) * fy.Evaluate(y));
+            var p = CreateVector.Sparse<double>(n);
+            var u = CreateVector.Sparse<Complex>(n);
+            
             for (int i = 0; i < n; ++i)
             {
-                k[i] = MomentumMagnitudeDomain[0] + i * dk;
-                p[i] = MomentumSpaceProbabilityDensity.IntegratePolar(k[i] - dk, k[i] + dk, 0, Math.PI * 2);
+                p[i] = MomentumMagnitudeDomain[0] + i * dp;
+                u[i] = psi.IntegratePolar(p[i] - dp, p[i] + dp, 0, 2 * Math.PI);
             }
 
-            var f = Interpolator.Cubic(k, p);
+            var f = Interpolator.Cubic(p, u);
             f.Plot(plot, MomentumMagnitudeDomain, n);
         }
 
@@ -174,7 +181,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var x = r.Item1;
             var y = r.Item1;
             var p = MeasureMomentum(seed);
-            
 
             var R = Tuple.Create(x + RandomSign() * Random.NextDouble() * 0.5, y + RandomSign() * Random.NextDouble());
             return Tuple.Create(R, p + RandomSign() * Random.NextDouble() * 0.5);
@@ -187,52 +193,71 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         #region Position Space
 
-        public double[,] GetPositionDomain()
+        public double[] GetPositionDomainX()
         {
-            return PositionDomain;
+            return PositionDomainX;
         }
 
-        private double[,] GetPositionSpaceDistributionParameters()
+        public double[] GetPositionDomainY()
         {
-            var mean_x = new DiscreteFunction2D((x, y) => x * PositionSpaceProbabilityDensity.Evaluate(x, y)).Integrate(PositionDomain[0, 0], PositionDomain[0, 1], PositionDomain[1, 0], PositionDomain[1, 1]);
-            var mean_y = new DiscreteFunction2D((x, y) => y * PositionSpaceProbabilityDensity.Evaluate(x, y)).Integrate(PositionDomain[0, 0], PositionDomain[0, 1], PositionDomain[1, 0], PositionDomain[1, 1]);
-            var var_x = new DiscreteFunction2D((x, y) => (x - mean_x) * (x - mean_x) * PositionSpaceProbabilityDensity.Evaluate(x, y)).Integrate(PositionDomain[0, 0], PositionDomain[0, 1], PositionDomain[1, 0], PositionDomain[1, 1]);
-            var var_y = new DiscreteFunction2D((x, y) => (y - mean_y) * (y - mean_y) * PositionSpaceProbabilityDensity.Evaluate(x, y)).Integrate(PositionDomain[0, 0], PositionDomain[0, 1], PositionDomain[1, 0], PositionDomain[1, 1]);
+            return PositionDomainY;
+        }
 
-            return new double[,] { { mean_x, Math.Sqrt(var_x) }, { mean_y, Math.Sqrt(var_y) } };
+        private double[] GetPositionSpaceDistributionParametersX(int i)
+        {
+            var density = WaveFunctionX[i];
+
+            var mean_x = new DiscreteFunction(x => x * density.Evaluate(x).MagnitudeSquared()).Integrate(PositionDomainX[0], PositionDomainX[1]);
+            var var_x = new DiscreteFunction(x => (x - mean_x) * (x - mean_x) * density.Evaluate(x).MagnitudeSquared()).Integrate(PositionDomainX[0], PositionDomainX[1]);
+
+            return new double[] { mean_x, Math.Sqrt(var_x) };
+        }
+
+        private double[] GetPositionSpaceDistributionParametersY(int i)
+        {
+            var density = WaveFunctionY[i];
+
+            var mean_y = new DiscreteFunction(y => y * density.Evaluate(y).MagnitudeSquared()).Integrate(PositionDomainY[0], PositionDomainY[1]);
+            var var_y = new DiscreteFunction(y => (y - mean_y) * (y - mean_y) * density.Evaluate(y).MagnitudeSquared()).Integrate(PositionDomainY[0], PositionDomainY[1]);
+
+            return new double[] { mean_y, Math.Sqrt(var_y) };
         }
 
         public double GetProbabilityPositionSpace(double x, double y)
         {
-            var dx = (PositionDomain[0, 1] - PositionDomain[0, 0]) / (Precision - 1);
-            var dy = (PositionDomain[1, 1] - PositionDomain[1, 0]) / (Precision - 1);
-            return PositionSpaceProbabilityDensity.Integrate(x - dx, x + dx, y - dy, y + dy);
+            var dx = (PositionDomainX[1] - PositionDomainX[0]) / (Precision - 1);
+            var dy = (PositionDomainY[1] - PositionDomainY[0]) / (Precision - 1);
+
+            var Px = WaveFunctionX[EnergyLevelX].GetMagnitudeSquared().Integrate(x - dx, x + dx);
+            var Py = WaveFunctionY[EnergyLevelY].GetMagnitudeSquared().Integrate(y - dy, y + dy);
+
+            return Px * Py;
         }
 
         public Tuple<double, double> ExpectedPosition()
         {
-            var fx = new DiscreteFunction2D(new Func<double, double, double>((x, y) => x * PositionSpaceProbabilityDensity.Evaluate(x, y)));
-            var fy = new DiscreteFunction2D(new Func<double, double, double>((x, y) => y * PositionSpaceProbabilityDensity.Evaluate(x, y)));
-
-            var exp_x = fx.Integrate(PositionDomain[0, 0], PositionDomain[0, 1], PositionDomain[1, 0], PositionDomain[1, 1]);
-            var exp_y = fy.Integrate(PositionDomain[0, 0], PositionDomain[0, 1], PositionDomain[1, 0], PositionDomain[1, 1]);
+            var parametersX = PositionSpaceDistributionParametersX[EnergyLevelX];
+            var parametersY = PositionSpaceDistributionParametersY[EnergyLevelY];
+            var exp_x = parametersX[0];
+            var exp_y = parametersY[0];
 
             return Tuple.Create(exp_x, exp_y);
         }
 
         public Tuple<double, double> MeasurePosition(int seed)
         {
-            var parameters = PositionSpaceDistributionParameters;
+            var parametersX = PositionSpaceDistributionParametersX[EnergyLevelX];
+            var parametersY = PositionSpaceDistributionParametersY[EnergyLevelY];
             Random = new Random(seed);
 
-            var x = Normal.Sample(Random, parameters[0, 0], parameters[0, 1]);
-            var y = Normal.Sample(Random, parameters[1, 0], parameters[1, 1]);
+            var x = Normal.Sample(Random, parametersX[0], parametersX[1]);
+            var y = Normal.Sample(Random, parametersY[0], parametersY[1]);
 
-            while (x <= PositionDomain[0, 0] || x >= PositionDomain[0, 1])
-                x = Normal.Sample(Random, parameters[0, 0], parameters[0, 1]);
+            while (x <= PositionDomainX[0] || x >= PositionDomainX[1])
+                x = Normal.Sample(Random, parametersX[0], parametersX[1]);
 
-            while (y <= PositionDomain[1, 0] || y >= PositionDomain[1, 1])
-                y = Normal.Sample(Random, parameters[1, 0], parameters[1, 1]);
+            while (y <= PositionDomainY[0] || y >= PositionDomainY[1])
+                y = Normal.Sample(Random, parametersY[0], parametersY[1]);
 
             return Tuple.Create(x, y);
         }
@@ -241,10 +266,20 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
         #region Momentum Space
 
-        private double[] GetMomentumSpaceDistributionParameters()
+        private double[] GetMomentumSpaceDistributionParametersX(int i)
         {
-            var mean = new DiscreteFunction2D((x, y) => Math.Sqrt(x * x + y * y) * MomentumSpaceProbabilityDensity.Evaluate(x, y)).Integrate(MomentumDomain[0, 0], MomentumDomain[0, 1], MomentumDomain[1, 0], MomentumDomain[1, 1]);
-            var var = new DiscreteFunction2D((x, y) => (Math.Sqrt(x * x + y * y) - mean) * (Math.Sqrt(x * x + y * y) - mean) * MomentumSpaceProbabilityDensity.Evaluate(x, y)).Integrate(MomentumDomain[0, 0], MomentumDomain[0, 1], MomentumDomain[1, 0], MomentumDomain[1, 1]);
+            var density = WaveFunctionMomentumSpaceX[i].GetMagnitudeSquared();
+            var mean = new DiscreteFunction(x => x * density.Evaluate(x)).Integrate(MomentumDomainX[0], MomentumDomainX[1]);
+            var var = new DiscreteFunction(x => (x - mean) * (x - mean) * density.Evaluate(x)).Integrate(MomentumDomainX[0], MomentumDomainX[1]);
+
+            return new double[] { mean, Math.Sqrt(var) };
+        }
+
+        private double[] GetMomentumSpaceDistributionParametersY(int i)
+        {
+            var density = WaveFunctionMomentumSpaceY[i].GetMagnitudeSquared();
+            var mean = new DiscreteFunction(y => y * density.Evaluate(y)).Integrate(MomentumDomainY[0], MomentumDomainY[1]);
+            var var = new DiscreteFunction(y => (y - mean) * (y - mean) * density.Evaluate(y)).Integrate(MomentumDomainY[0], MomentumDomainY[1]);
 
             return new double[] { mean, Math.Sqrt(var) };
         }
@@ -253,23 +288,39 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         {
             var n = Precision * Precision;
             var dk = (MomentumMagnitudeDomain[1] - MomentumMagnitudeDomain[0]) / (n - 1);
-            return MomentumSpaceProbabilityDensity.IntegratePolar(k - dk, k + dk, 0, Math.PI * 2);
+            var x = WaveFunctionX[EnergyLevelX].GetMagnitudeSquared();
+            var y = WaveFunctionY[EnergyLevelY].GetMagnitudeSquared();
+
+            var f = new DiscreteFunction2D((p, fi) => x.Evaluate(p * Math.Cos(fi) * y.Evaluate(p * Math.Sin(fi))));
+            return f.Integrate(k - dk, k + dk, 0, 2 * Math.PI);
         }
 
         public double ExpectedMomentum()
         {
-            var f = new DiscreteFunction2D(new Func<double, double, double>((kx, ky) => Math.Sqrt(kx * kx + ky * ky) * MomentumSpaceProbabilityDensity.Evaluate(kx, ky)));
-            return f.Integrate(MomentumDomain[0, 0], MomentumDomain[0, 1], MomentumDomain[1, 0], MomentumDomain[1, 1]);
+            var parametersX = MomentumSpaceDistributionParametersX[EnergyLevelX];
+            var parametersY = MomentumSpaceDistributionParametersY[EnergyLevelY];
+
+            var px = parametersX[0];
+            var py = parametersY[0];
+
+            return Math.Sqrt(px * px + py * py);
         }
 
         public double MeasureMomentum(int seed)
         {
             Random = new Random(seed);
-            var parameters = MomentumSpaceDistributionParameters;
-            var p = Normal.Sample(Random, parameters[0], parameters[1]);
+            var parametersX = MomentumSpaceDistributionParametersX[EnergyLevelX];
+            var parametersY = MomentumSpaceDistributionParametersY[EnergyLevelY];
+            var px = Normal.Sample(Random, parametersX[0], parametersX[1]);
+            var py = Normal.Sample(Random, parametersY[0], parametersY[1]);
+            var p = Math.Sqrt(px * px + py * py);
 
             while (p <= MomentumMagnitudeDomain[0] || p >= MomentumMagnitudeDomain[1])
-                p = Normal.Sample(Random, parameters[0], parameters[1]);
+            {
+                px = Normal.Sample(Random, parametersX[0], parametersX[1]);
+                py = Normal.Sample(Random, parametersY[0], parametersY[1]);
+                p = Math.Sqrt(px * px + py * py);
+            }
 
             return p; 
         }

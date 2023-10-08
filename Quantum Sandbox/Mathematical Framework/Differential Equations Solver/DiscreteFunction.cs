@@ -64,8 +64,14 @@ namespace Quantum_Mechanics.DE_Solver
             return MathUtils.Round(Function(x));
         }
 
-        public double Integrate(double a, double b)
+        public double Integrate(double a, double b, bool polar = false)
         {
+            if (polar)
+            {
+                var f = new Func<double, double>(x => x * Function(x));
+                return MathUtils.Round(GaussLegendreRule.Integrate(f, a, b, 10));
+            }
+
             return MathUtils.Round(GaussLegendreRule.Integrate(Function, a, b, 10));
         }
 
@@ -100,7 +106,8 @@ namespace Quantum_Mechanics.DE_Solver
             }
 
             plot.Plot.SetAxisLimits(domain[0], domain[1], y.Min(), y.Max());
-            plot.Plot.AddSignalXY(x, y);
+            var p = plot.Plot.AddSignalXY(x, y);
+            p.MarkerSize = 0;
         }
     }
 }

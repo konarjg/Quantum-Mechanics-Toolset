@@ -1,5 +1,9 @@
 ﻿using MathNet.Numerics;
+using MathNet.Numerics.Differentiation;
 using MathNet.Numerics.Integration;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.RootFinding;
+using Microsoft.VisualBasic.Logging;
 using ScottPlot;
 using System;
 using System.Collections.Generic;

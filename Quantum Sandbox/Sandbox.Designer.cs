@@ -673,6 +673,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Quantum Sandbox";
             WindowState = FormWindowState.Maximized;
+            Load += Sandbox_Load;
             ResumeLayout(false);
             PerformLayout();
         }

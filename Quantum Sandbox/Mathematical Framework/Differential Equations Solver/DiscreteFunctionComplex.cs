@@ -2,6 +2,7 @@
 using MathNet.Numerics.Differentiation;
 using MathNet.Numerics.Integration;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.RootFinding;
 using Quantum_Mechanics.DE_Solver;
 using ScottPlot;
 using ScottPlot.Drawing;
@@ -55,16 +56,30 @@ namespace Quantum_Mechanics.DE_Solver
             return MathUtils.Round(Function(x));
         }
 
-        public Complex Integrate(double a, double b)
+        public Complex Integrate(double a, double b, bool polar = false)
         {
+            if (polar)
+            {
+                var f = new Func<double, Complex>(x => x * Function(x));
+                return MathUtils.Round(GaussLegendreRule.ContourIntegrate(f, a, b, 10));
+            }
+
             return MathUtils.Round(GaussLegendreRule.ContourIntegrate(Function, a, b, 10));
         }
 
-        public DiscreteFunctionComplex FourierTransform(double[] domain)
+        public DiscreteFunctionComplex FourierTransform(double[] domain, bool polar = false)
         {
             var g = new Func<double, Complex>(k =>
             {
-                var f = new Func<double, Complex>(x => 1 / Math.Sqrt(2 * Math.PI) * Evaluate(x) * Complex.Exp(-Complex.ImaginaryOne * k * x));
+                var f = new Func<double, Complex>(x => 1 / Math.Sqrt(2 * Math.PI) * x * Evaluate(x) * Complex.Exp(-Complex.ImaginaryOne * k * x));
+
+                if (polar)
+                {
+                    var h = new Func<double, Complex>(x => x * f(x));
+                    return GaussLegendreRule.ContourIntegrate(h, domain[0], domain[1], 10);
+                }
+
+
                 return GaussLegendreRule.ContourIntegrate(f, domain[0], domain[1], 10);
             });
 
@@ -85,7 +100,8 @@ namespace Quantum_Mechanics.DE_Solver
             }
 
             plot.Plot.SetAxisLimits(domain[0], domain[1], y.Min(), y.Max());
-            plot.Plot.AddSignalXY(x, y);
+            var p = plot.Plot.AddSignalXY(x, y);
+            p.MarkerSize = 0;
         }
     }
 }
