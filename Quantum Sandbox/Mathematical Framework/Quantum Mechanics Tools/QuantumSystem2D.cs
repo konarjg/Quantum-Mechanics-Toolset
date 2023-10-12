@@ -76,8 +76,8 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             };
 
             token.ThrowIfCancellationRequested();
-            var schrodingerEquationX = new string[] { T.ToString(), "0", V[0] };
-            var schrodingerEquationY = new string[] { T.ToString(), "0", V[1] };
+            var schrodingerEquationX = new string[] { T.ToString(), "0", V[0], "0" };
+            var schrodingerEquationY = new string[] { T.ToString(), "0", V[1], "0" };
 
             var solutionX = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationX, boundaryConditionsX, PositionDomainX, precision);
             var solutionY = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationY, boundaryConditionsY, PositionDomainY, precision);

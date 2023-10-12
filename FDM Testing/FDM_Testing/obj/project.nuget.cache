@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "MHNBu1YaYAJ9Ccok5FsOFy2MZNapbq7ku8MZjKXb6CFk1f6Ts5eTmYnbNg+HA8/1D6dLWi1iH8KqEu/ZTY7ESQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\konis\\Desktop\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\konis\\.nuget\\packages\\mathnet.numerics\\5.0.0\\mathnet.numerics.5.0.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.4\\microsoft.netcore.platforms.3.1.4.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\scottplot\\4.1.68\\scottplot.4.1.68.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\system.drawing.common\\4.7.2\\system.drawing.common.4.7.2.nupkg.sha512",
+    "C:\\Users\\konis\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

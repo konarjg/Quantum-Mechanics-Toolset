@@ -163,6 +163,7 @@ namespace Quantum_Mechanics.DE_Solver
 
             var x = CreateVector.Dense<double>(n);
             var A = CreateMatrix.Dense<System.Numerics.Complex>(n, n);
+            var B = CreateMatrix.SparseDiagonal<System.Numerics.Complex>(n, 1);
 
             for (int i = 0; i < n; ++i)
             {
@@ -175,6 +176,7 @@ namespace Quantum_Mechanics.DE_Solver
                 var a = RPNParser.Calculate(equation[0], (float)x[i]);
                 var b = RPNParser.Calculate(equation[1], (float)x[i]);
                 var c = RPNParser.Calculate(equation[2], (float)x[i]);
+                var d = RPNParser.Calculate(equation[3], (float)x[i]);
 
                 token.ThrowIfCancellationRequested();
 
@@ -213,9 +215,11 @@ namespace Quantum_Mechanics.DE_Solver
                         token.ThrowIfCancellationRequested();
                         break;
                 }
+
+                B[i, i] = d;
             }
 
-            var evd = A.Evd();
+            var evd = (A + B).Evd();
             token.ThrowIfCancellationRequested();
 
             var Y = evd.EigenVectors;
@@ -235,7 +239,7 @@ namespace Quantum_Mechanics.DE_Solver
 
                     if (condition.Order == 0)
                     {
-                        if (Math.Abs(F[k].Real - condition.Value.Real) > 0.02)
+                        if (Math.Abs(F[k].Real - condition.Value.Real) > 0.1)
                         {
                             valid = false;
                             token.ThrowIfCancellationRequested();
@@ -270,15 +274,13 @@ namespace Quantum_Mechanics.DE_Solver
                     else
                     {
                         var periodic = (PeriodicBoundaryCondition)condition;
-                        var f = Interpolator.Cubic(x, F);
+                        var ix = (int)((periodic.Period - domain[0]) / dx);
 
-                        for (int m = 0; m < n; ++m)
+                        if (Math.Abs(F[0].Real - F[ix].Real) > 0.1)
                         {
-                            if (Math.Abs(f.Evaluate(x[m]).Real - f.Evaluate(x[m] + periodic.Period).Real) > 0.02)
-                            {
-                                valid = false;
-                                break;
-                            }    
+                            valid = false;
+                            token.ThrowIfCancellationRequested();
+                            break;
                         }
                     }
                 }

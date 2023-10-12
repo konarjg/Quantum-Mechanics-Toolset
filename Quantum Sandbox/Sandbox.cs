@@ -255,14 +255,15 @@ namespace Quantum_Sandbox
 
                                 domain = new double[,] { { positionDomainPolar[0, 0], positionDomainPolar[0, 1] }, { positionDomainPolar[1, 0], positionDomainPolar[1, 1] } };
                                 CancelLoading.Token.ThrowIfCancellationRequested();
+                                var potential = QuantumSystem.PotentialFunction(Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D, potentialType);
 
                                 if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
                                 {
-                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomainPolar, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, positionDomainPolar, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
                                     CancelLoading.Token.ThrowIfCancellationRequested();
                                 }
                                 else
-                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, (int)Math.Sqrt(500), energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[,] { { 0, 10000 }, { 0, Math.PI * 2 } }, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, new double[,] { { 0, 10000 }, { 0, Math.PI * 2 } }, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
 
                                 CancelLoading.Token.ThrowIfCancellationRequested();
 
