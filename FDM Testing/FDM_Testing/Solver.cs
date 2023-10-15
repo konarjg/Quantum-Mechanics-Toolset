@@ -1,131 +1,115 @@
-﻿using System;
+﻿using MathNet.Numerics;
+using MathNet.Numerics.LinearAlgebra;
+using Quantum_Mechanics.DE_Solver;
+using ScottPlot;
+using ScottPlot.Drawing;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Reflection.Emit;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
-using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
-using MathNet.Numerics;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Complex;
-using MathNet.Numerics.LinearAlgebra.Factorization;
-using Quantum_Mechanics.DE_Solver;
-using Quantum_Mechanics.General;
-using ScottPlot;
 
 namespace FDM_Testing
 {
     public static class Solver
     {
-
-        //Solves the equation and outputs the sqrt(MSE) error for given grid resolution and error tolerance
-        public static double Solve(int n, double epsilon)
+        private static Vector<double> Normalize(Vector<double> f, double dx, double dy)
         {
-            var dx = 4d / (n - 1);
-            var dy = 4d / (n - 1);
+            var N2 = 0d;
 
-            var H = CreateMatrix.Sparse<Complex>(n * n, n * n);
+            for (int j = 0; j < f.Count; ++j)
+                N2 += f[j] * f[j] * dx * dy;
 
-            Parallel.For(0, n * n, k =>
+            f /= Math.Sqrt(N2);
+            return f;
+        }
+
+        public static double Solve(int n)
+        {
+            var dx = 5d / (n - 1);
+            var dy = 2 * Math.PI / (n - 1);
+
+            var x = CreateVector.Sparse<double>(n);
+            var y = CreateVector.Sparse<double>(n);
+            var A = CreateMatrix.Sparse<double>(n * n, n * n);
+
+            for (int i = 0; i < n; ++i)
             {
-                lock (H)
+                for (int j = 0; j < n; ++j)
                 {
-                    if (k + n < n * n)
-                        H[k, k + n] = -1 / (dx * dx);
-
-                    if (k - n >= 0)
-                        H[k, k - n] = -1 / (dx * dx);
-
-                    if (k + 1 < n * n)
-                        H[k, k + 1] = -1 / (dy * dy);
-
-                    if (k - 1 >= 0)
-                        H[k, k - 1] = -1 / (dy * dy);
-
-                    H[k, k] = 2 / (dx * dx) + 2 / (dy * dy);
+                    x[i] = i * dx;
+                    y[j] = j * dy;
                 }
-            });
-
-            H[0, 0] = 0;
-            H[n - 1, n - 1] = 0;
-            H[n * (n - 1), n * (n - 1)] = 0;
-
-            var A = H.Evd();
-
-            var E = A.EigenValues;
-            var U = A.EigenVectors.EnumerateColumns().ToArray();
-
-            var solutions = new List<Tuple<double, MathNet.Numerics.LinearAlgebra.Vector<Complex>>>();
-            var actualSolutions = new Dictionary<(int, int), double>();
-
-            for(int i = 0; i < E.Count; ++i)
-            {
-                if (E[i].Real < 0)
-                    continue;
-
-                var valid = true;
-
-                Parallel.For(0, n, j =>
-                {
-                    if (!U[i][j].AlmostEqual(0, epsilon)
-                        || !U[i][n * (n - 1) + j].AlmostEqual(0, epsilon)
-                        || !U[i][n * j].AlmostEqual(0, epsilon)
-                        || !U[i][n * j + n - 1].AlmostEqual(0, epsilon))
-                    {
-                        valid = false;
-                        return;
-                    }
-                });
-
-                if (!valid)
-                    continue;
-
-                solutions.Add(Tuple.Create(E[i].Real, U[i]));
             }
 
-            Parallel.For(0, solutions.Count, i =>
+            for (int i = 0; i < n * n; ++i)
             {
-                lock (solutions)
-                {
-                    var N2 = 0d;
+                if (i + 2 * n < n * n)
+                    A[i, i + 2 * n] = 1 / (12 * dx * dx) + 1 / (12 * dx);
 
-                    for (int j = 0; j < solutions[i].Item2.Count; ++j)
-                        N2 += solutions[i].Item2[j].MagnitudeSquared() * dx * dy;
+                if (i - 2 * n >= 0)
+                    A[i, i - 2 * n] = -1 / (dx * dx) - 1 / (12 * dx);
 
-                    solutions[i] = Tuple.Create(solutions[i].Item1, solutions[i].Item2 * Math.Sqrt(1 / N2));
-                }
-            });
+                if (i + n < n * n)
+                    A[i, i + n] = 4 / (dx * dx) - 2 / (3 * dx);
 
-            for (int nx = 1; nx <= 10; ++nx)
-            {
-                Parallel.For(1, 11, ny =>
-                {
-                    lock (actualSolutions)
-                    {
-                        var Exy = (nx * nx + ny * ny) * (Math.PI * Math.PI) / 32;
-                        actualSolutions.Add((nx, ny), Exy);
-                    }
-                });
+                if (i - n >= 0)
+                    A[i, i - n] = 4 / (dx * dx) + 2 / (3 * dx);
+
+                if (i + 2 < n * n)
+                    A[i, i + 2] = -1 / (dy * dy) + 1 / (12 * dy);
+
+                if (i - 2 >= 0)
+                    A[i, i - 2] = -1 / (dy * dy) - 1 / (12 * dy);
+
+                if (i + 1 < n * n)
+                    A[i, i + 1] = 4 / (dy * dy) - 2 / (3 * dy);
+
+                if (i - 1 >= 0)
+                    A[i, i - 1] = 4 / (dy * dy) + 2 / (3 * dy);
+
+                A[i, i] = -6 / (dx * dx) - 6 / (dy * dy);
             }
 
-            var E_real = actualSolutions.OrderBy(x => x.Value);
-            var C = 0d;
-            var X = 0.01 * (solutions.Max(x => x.Item1) - solutions.Min(x => x.Item1));
-
-            Parallel.For(0, 10, i =>
+            for (int i = 0; i < n; ++i)
             {
-                var real = E_real.ElementAt(i).Value;
-                var approx = solutions[i].Item1;
-                var error = real - approx;
+                A[i, i] = 0;
+                A[n * i, n * i] = 0;
+                A[n * (n - 1) + i, n * (n - 1) + i] = 0;
+                A[n * i + n - 1, n * i + n - 1] = 0;
+            }
 
-                C += error * error / 10;
-            });
+            var evd = A.Evd();
+            var possible_U = evd.EigenVectors.EnumerateColumns().ToArray();
+            var E = evd.EigenValues;
 
-            return Math.Round(Math.Sqrt(C) / X, 3);
+            var nx = 4;
+            var U = Normalize(possible_U[nx], dx, dy);
+            var u_real = CreateMatrix.Sparse<double>(n, n);
+            var u = CreateMatrix.Sparse<double>(n, n);
+
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                    u[i, j] = U[n * i + j] * U[n * i + j];
+            }
+
+            var plot = new Plot();
+            plot.SetAxisLimits(0, 5, 0, 5);
+            var map = plot.AddHeatmap(u.ToArray());
+            map.CellWidth = dx;
+            map.CellHeight = dy;
+            plot.AddColorbar(map);
+
+            plot.SaveFig("plot.png");
+
+            Process.Start("explorer.exe", "plot.png");
+
+            return 0;
         }
     }
 }

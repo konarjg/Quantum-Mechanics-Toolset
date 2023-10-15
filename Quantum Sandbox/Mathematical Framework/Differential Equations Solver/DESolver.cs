@@ -18,6 +18,7 @@ using ScottPlot.Plottable;
 using ScottPlot.Statistics.Interpolation;
 using MathNet.Numerics.RootFinding;
 using System.Text.Json.Serialization.Metadata;
+using System.Numerics;
 
 namespace Quantum_Mechanics.DE_Solver
 {
@@ -397,7 +398,7 @@ namespace Quantum_Mechanics.DE_Solver
             return solution;
         }
 
-        public static Dictionary<System.Numerics.Complex, Matrix<System.Numerics.Complex>> SolveEigenvaluePDE(CancellationToken token, DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n) 
+        public static Dictionary<System.Numerics.Complex, MathNet.Numerics.LinearAlgebra.Vector<System.Numerics.Complex>> SolveEigenvaluePDE(CancellationToken token, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n) 
         {
             var x = new double[n];
             var y = new double[n];
@@ -406,7 +407,7 @@ namespace Quantum_Mechanics.DE_Solver
 
             var A = CreateMatrix.Sparse<System.Numerics.Complex>(n * n, n * n);
 
-            var solution = new Dictionary<System.Numerics.Complex, Matrix<System.Numerics.Complex>>();
+            var solution = new Dictionary<System.Numerics.Complex, MathNet.Numerics.LinearAlgebra.Vector<System.Numerics.Complex>>();
             token.ThrowIfCancellationRequested();
 
             for (int i = 0; i < n; ++i)
@@ -430,81 +431,49 @@ namespace Quantum_Mechanics.DE_Solver
 
                     var k = n * i + j;
 
-                    switch (scheme)
-                    {
-                        case DifferenceScheme.CENTRAL:
-                            if (k + n < n * n)
-                                A[k, k + n] = a / (dx * dx) + c / (2 * dx);
+                    if (k + n < n * n)
+                        A[k, k + n] = a / (dx * dx) + b / (2 * dx);
 
-                            if (k + 1 < n * n)
-                                A[k, k + 1] = b / (dy * dy) + d / (2 * dy);
+                    if (k - n >= 0)
+                        A[k, k - n] = a / (dx * dx) - b / (2 * dx);
 
-                            if (k - n >= 0)
-                                A[k, k - n] = a / (dx * dx) - c / (2 * dx);
+                    if (k + 1 < n * n)
+                        A[k, k + 1] = c / (dy * dy) + d / (2 * dy);
 
-                            if (k - 1 >= 0)
-                                A[k, k - 1] = b / (dy * dy) - d / (2 * dy);
+                    if (k - 1 >= 0)
+                        A[k, k - 1] = c / (dy * dy) - d / (2 * dy);
 
-                            A[k, k] = -2 * a / (dx * dx) - 2 * b / (dy * dy) + e;
-                            break;
-                    }
+                    A[k, k] = -2 * a / (dx * dx) - 2 * b / (dy * dy) + e;
                 }
             }
 
             var evd = A.Evd();
-            var Y = evd.EigenVectors;
+            var U = evd.EigenVectors.EnumerateColumns().ToArray();
             var E = evd.EigenValues;
 
-            for (int i = 0; i < Y.ColumnCount; ++i)
+            for (int i = 0; i < E.Count; ++i)
             {
+                if (E[i].Real < 0)
+                    continue;
+
                 var valid = true;
-                var u = CreateMatrix.Sparse<System.Numerics.Complex>(n, n);
 
-                for (int k = 0; k < n; ++k)
+                Parallel.For(0, n, j =>
                 {
-                    for (int j = 0; j < n; ++j)
-                        u[k, j] = Y[n * k + j, i];
-                }
-
-                for (int j = 0; j < boundaryConditions.Length; ++j)
-                {
-                    var condition = boundaryConditions[j];
-
-                    if (condition.Variable == 0)
+                    if (!U[i][j].AlmostEqual(0, 0.01)
+                        || !U[i][n * (n - 1) + j].AlmostEqual(0, 0.01)
+                        || !U[i][n * j].AlmostEqual(0, 0.01)
+                        || !U[i][n * j + n - 1].AlmostEqual(0, 0.01))
                     {
-                        var ix = (int)((condition.Argument.Real - domain[0, 0]) / dx);
-
-                        for (int k = 0; k < n; ++k)
-                        {
-                            if (Math.Abs(u[ix, k].Real - condition.Value.Real) > 0.2)
-                            {
-                                valid = false;
-                                break;
-                            }
-                        }
+                        valid = false;
+                        return;
                     }
-                    else
-                    {
-                        var iy = (int)((condition.Argument.Real - domain[1, 0]) / dy);
-
-                        for (int k = 0; k < n; ++k)
-                        {
-                            if (Math.Abs(u[k, iy].Real - condition.Value.Real) > 0.2)
-                            {
-                                valid = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!valid)
-                        break;
-                }
+                });
 
                 if (!valid)
                     continue;
 
-                solution.Add((System.Numerics.Complex)E[i], u);
+                solution.Add(E[i], U[i]);
             }
 
             return solution;

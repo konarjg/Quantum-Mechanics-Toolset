@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\konis\\Desktop\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj": {}
+    "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj": {}
   },
   "projects": {
-    "C:\\Users\\konis\\Desktop\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj": {
+    "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\konis\\Desktop\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj",
+        "projectUniqueName": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj",
         "projectName": "FDM_Testing",
-        "projectPath": "C:\\Users\\konis\\Desktop\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj",
+        "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FDM Testing\\FDM_Testing\\FDM_Testing.csproj",
         "packagesPath": "C:\\Users\\konis\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\konis\\Desktop\\FDM Testing\\FDM_Testing\\obj\\",
+        "outputPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FDM Testing\\FDM_Testing\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
