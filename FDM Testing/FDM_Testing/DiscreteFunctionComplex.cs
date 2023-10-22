@@ -98,7 +98,7 @@ namespace Quantum_Mechanics.DE_Solver
             for (int i = 0; i < n; ++i)
             {
                 x[i] = domain[0] + i * dx;
-                u[i] = Evaluate(x[i]).Real;
+                u[i] = Evaluate(x[i]).MagnitudeSquared();
             }
 
             var plot = new Plot();

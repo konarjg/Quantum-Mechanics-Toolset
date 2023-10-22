@@ -79,11 +79,11 @@ namespace FDM_Testing
         public static List<(double, DiscreteFunctionComplex)> SolveODE(int resolution, double a)
         {
             var n = resolution;
-            var dx = (a - 0.001) / (n - 1);
+            var dx = a / (n - 1);
             var x = CreateVector.Sparse<double>(n);
 
             for (int i = 0; i < n; ++i)
-                x[i] = 0.001 + i * dx;
+                x[i] = i * dx;
 
             var H = CreateMatrix.Sparse<System.Numerics.Complex>(n, n);
             var solution = new List<(double, DiscreteFunctionComplex)>();
@@ -99,20 +99,22 @@ namespace FDM_Testing
                 H[i, i] = Coefficient(2, 0, dx) + 1;
             }
 
-            var evd = (-H).Evd();
+            var evd = H.Evd();
             var E = evd.EigenValues;
 
             H[n - 1, n - 1] = 0;
 
-            evd = (H).Evd();
+            evd = H.Evd();
             var U = evd.EigenVectors.EnumerateColumns().ToArray();
 
-            for (int i = 0; i < 10; ++i)
+            for (int i = 1; i <= 10; ++i)
             {
-                //U[i] = Normalize(U[i], dx, true);
+                U[i] = Normalize(U[i], dx, true);
+                E[i] = E[i].Magnitude;
                 var u = Interpolator.Cubic(x, U[i]);
 
-                solution.Add((E[i].Magnitude, u));
+                Console.WriteLine("E{0} = {1}", i, E[i]);
+                solution.Add((E[i].Real, u));
             }
 
             return solution;

@@ -55,7 +55,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             token.ThrowIfCancellationRequested();
             var schrodingerEquation = new string[] { T.ToString(), "0", V , "0"};
 
-            var solution = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquation, boundaryConditions, positionDomain, precision);
+            var solution = DESolver.SolveODE(schrodingerEquation, positionDomain, boundaryConditions, precision);
             token.ThrowIfCancellationRequested();
 
             Energies = new double[10];
@@ -76,10 +76,10 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             for (int i = 0; i < 10; ++i)
             {
                 token.ThrowIfCancellationRequested();
-                Energies[i] = solution.Keys.ElementAt(i).Real;
-                var function = solution.Values.ElementAt(i);
+                Energies[i] = solution.ElementAt(i).Item1;
+                var function = solution.ElementAt(i).Item2;
 
-                var fx = Interpolator.Cubic(x, function);
+                var fx = function;
                 var N = Math.Sqrt(1d / fx.GetMagnitudeSquared().Integrate(PositionDomain[0], PositionDomain[1]));
                 
                 WaveFunction[i] = new DiscreteFunctionComplex(x => N * fx.Evaluate(x));
@@ -94,8 +94,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
                 MomentumSpaceDistributionParameters.Add(GetMomentumSpaceDistributionParameters(i));
                 token.ThrowIfCancellationRequested();
             }
-
-           
 
             token.ThrowIfCancellationRequested();
         }
@@ -135,7 +133,6 @@ namespace Quantum_Mechanics.Quantum_Mechanics
         }
 
         #region Position Space
-
 
         public double[] GetPositionDomain()
         {

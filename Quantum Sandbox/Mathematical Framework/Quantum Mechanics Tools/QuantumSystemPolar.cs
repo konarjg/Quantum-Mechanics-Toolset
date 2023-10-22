@@ -52,7 +52,7 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
             token.ThrowIfCancellationRequested();
 
-            var T = -1 / (2 * mass);
+            var T = 1 / (2 * mass);
             var V = potential;
 
             var boundaryConditionsR = new BoundaryCondition[]
@@ -62,15 +62,15 @@ namespace Quantum_Mechanics.Quantum_Mechanics
 
             var boundaryConditionsTheta = new BoundaryCondition[]
             {
-                
+                new PeriodicBoundaryCondition(2 * Math.PI)
             };
 
             token.ThrowIfCancellationRequested();
-            var schrodingerEquationR = new string[] { T.ToString(), "(0" + T.ToString() + ")/(x+0,001)", V, "(0-" + T.ToString() + ")/(x^2+0,001)" };
-            var schrodingerEquationTheta= new string[] { T.ToString(), "0", "0", "0" };
+            var schrodingerEquationR = new string[] { T.ToString(), T.ToString() + "/(x+0,1)", V, T.ToString() + "/(x^2+0,1)" };
+            var schrodingerEquationTheta = new string[] { T.ToString(), "0", "0", "0" };
 
-            var solutionR = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationR, boundaryConditionsR, PositionDomainR, precision);
-            var solutionTheta = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationTheta, boundaryConditionsTheta, PositionDomainTheta, precision);
+            var solutionR = DESolver.SolveODE(schrodingerEquationR, PositionDomainR, boundaryConditionsR, precision);
+            var solutionTheta = DESolver.SolveODE(schrodingerEquationTheta, PositionDomainTheta, boundaryConditionsTheta, precision);
             token.ThrowIfCancellationRequested();
 
             var waveFunctionsR = solutionR.Values.ToArray();

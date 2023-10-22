@@ -17,5 +17,4 @@ var u_n = DESolver.SolveODE(500, 5);
 var E = u_n[n - 1].Item1;
 var u = u_n[n - 1].Item2;
 
-Console.WriteLine("E{0} = {1}", n, E);
-u.Plot(500, new double[] { 0.001, 5 });
+u.Plot(500, new double[] { 0, 5 });

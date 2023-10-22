@@ -79,14 +79,22 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var schrodingerEquationX = new string[] { T.ToString(), "0", V[0], "0" };
             var schrodingerEquationY = new string[] { T.ToString(), "0", V[1], "0" };
 
-            var solutionX = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationX, boundaryConditionsX, PositionDomainX, precision);
-            var solutionY = DESolver.SolveEigenvalueODE(token, DifferenceScheme.CENTRAL, schrodingerEquationY, boundaryConditionsY, PositionDomainY, precision);
+            var solutionX = DESolver.SolveODE(schrodingerEquationX, PositionDomainX, boundaryConditionsX, precision);
+            var solutionY = DESolver.SolveODE(schrodingerEquationY, PositionDomainY, boundaryConditionsY, precision);
             token.ThrowIfCancellationRequested();
 
-            var waveFunctionsX = solutionX.Values.ToArray();
-            var waveFunctionsY = solutionY.Values.ToArray();
-            EnergiesX = CreateVector.SparseOfEnumerable(solutionX.Keys).Real().ToArray();
-            EnergiesY = CreateVector.SparseOfEnumerable(solutionY.Keys).Real().ToArray();
+            var waveFunctionsX = new DiscreteFunctionComplex[10];
+            var waveFunctionsY = new DiscreteFunctionComplex[10];
+            EnergiesX = new double[10];
+            EnergiesY = new double[10];
+
+            for (int i = 0; i < 10; ++i)
+            {
+                EnergiesX[i] = solutionX[i].Item1;
+                EnergiesY[i] = solutionY[i].Item1;
+                waveFunctionsX[i] = solutionX[i].Item2;
+                waveFunctionsY[i] = solutionY[i].Item2;
+            }
 
             var dx = (PositionDomainX[1] - PositionDomainX[0]) / (Precision - 1);
             var dy = (PositionDomainY[1] - PositionDomainY[0]) / (Precision - 1);
@@ -108,14 +116,14 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             {
                 token.ThrowIfCancellationRequested();
 
-                WaveFunctionX[i] = Interpolator.Cubic(x, waveFunctionsX[i]);
-                WaveFunctionY[i] = Interpolator.Cubic(y, waveFunctionsY[i]);
+                WaveFunctionX[i] = waveFunctionsX[i];
+                WaveFunctionY[i] = waveFunctionsY[i];
 
                 var Nx = Math.Sqrt(1d / WaveFunctionX[i].GetMagnitudeSquared().Integrate(PositionDomainX[0], PositionDomainX[1]));
                 var Ny = Math.Sqrt(1d / WaveFunctionY[i].GetMagnitudeSquared().Integrate(PositionDomainY[0], PositionDomainY[1]));
 
-                WaveFunctionX[i] = Interpolator.Cubic(x, waveFunctionsX[i] * Nx);
-                WaveFunctionY[i] = Interpolator.Cubic(y, waveFunctionsY[i] * Ny);
+                WaveFunctionX[i] = new DiscreteFunctionComplex(x => Nx * waveFunctionsX[i].Evaluate(x));
+                WaveFunctionY[i] = new DiscreteFunctionComplex(y => Ny * waveFunctionsY[i].Evaluate(y));
 
                 var px = WaveFunctionX[i].FourierTransform(MomentumDomainX);
                 var py = WaveFunctionY[i].FourierTransform(MomentumDomainY);
