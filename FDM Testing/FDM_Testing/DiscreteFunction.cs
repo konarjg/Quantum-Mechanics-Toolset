@@ -91,5 +91,27 @@ namespace Quantum_Mechanics.DE_Solver
 
             return Interpolator.Cubic(y, x);
         }
+
+        public void Plot(int resolution, double[] domain)
+        {
+            var n = resolution;
+            var dx = (domain[1] - domain[0]) / (n - 1);
+
+            var x = new double[n];
+            var u = new double[n];
+
+            for (int i = 0; i < n; ++i)
+            {
+                x[i] = domain[0] + i * dx;
+                u[i] = Evaluate(x[i]);
+            }
+
+            var plot = new Plot();
+            plot.SetAxisLimits(domain[0], domain[1], u.Min(), u.Max() + 1e-9);
+            plot.AddSignalXY(x, u);
+            plot.SaveFig("plot.png");
+
+            Process.Start("explorer.exe", "plot.png");
+        }
     }
 }

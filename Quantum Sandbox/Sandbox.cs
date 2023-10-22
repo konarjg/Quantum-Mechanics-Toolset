@@ -259,11 +259,11 @@ namespace Quantum_Sandbox
 
                                 if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
                                 {
-                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, positionDomainPolar, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, positionDomainPolar, new double[] { 0, 5 });
                                     CancelLoading.Token.ThrowIfCancellationRequested();
                                 }
                                 else
-                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, new double[,] { { 0, 10000 }, { 0, Math.PI * 2 } }, new double[,] { { 0, 5 }, { 0, Math.PI * 2 } });
+                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, new double[,] { { 0, 10000 }, { 0, Math.PI * 2 } }, new double[] { 0, 5 });
 
                                 CancelLoading.Token.ThrowIfCancellationRequested();
 

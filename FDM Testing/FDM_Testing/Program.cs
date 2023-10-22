@@ -1,5 +1,6 @@
 ﻿using FDM_Testing;
 using MathNet.Numerics.LinearAlgebra;
+using Quantum_Mechanics.DE_Solver;
 using ScottPlot;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -10,6 +11,11 @@ using System.Threading.Tasks;
 
 Console.OutputEncoding = Encoding.Unicode;
 
-var C = Solver.Solve(20);
+var n = 1;
+var u_n = DESolver.SolveODE(500, 5);
 
-Console.WriteLine("Error: {0}", C);
+var E = u_n[n - 1].Item1;
+var u = u_n[n - 1].Item2;
+
+Console.WriteLine("E{0} = {1}", n, E);
+u.Plot(500, new double[] { 0.001, 5 });

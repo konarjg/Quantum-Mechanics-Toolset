@@ -73,7 +73,7 @@ namespace Quantum_Mechanics.DE_Solver
 
     public static class DESolver
     {
-        public static Vector<System.Numerics.Complex> SolveODE(DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
+        public static MathNet.Numerics.LinearAlgebra.Vector<System.Numerics.Complex> SolveODE(DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
         {
             float dx = (float)(domain[1] - domain[0]) / (n - 1);
 
@@ -156,9 +156,9 @@ namespace Quantum_Mechanics.DE_Solver
             return A.Solve(B);
         }
 
-        public static Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>> SolveEigenvalueODE(CancellationToken token, DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
+        public static Dictionary<System.Numerics.Complex, MathNet.Numerics.LinearAlgebra.Vector<System.Numerics.Complex>> SolveEigenvalueODE(CancellationToken token, DifferenceScheme scheme, string[] equation, BoundaryCondition[] boundaryConditions, double[] domain, int n)
         {
-            var solution = new Dictionary<System.Numerics.Complex, Vector<System.Numerics.Complex>>();
+            var solution = new Dictionary<System.Numerics.Complex, MathNet.Numerics.LinearAlgebra.Vector<System.Numerics.Complex>>();
 
             float dx = (float)(domain[1] - domain[0]) / (n - 1);
 
@@ -298,7 +298,7 @@ namespace Quantum_Mechanics.DE_Solver
             token.ThrowIfCancellationRequested();
             return solution;
         }
-        public static Vector<System.Numerics.Complex> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n)
+        public static MathNet.Numerics.LinearAlgebra.Vector<System.Numerics.Complex> SolvePDE(DifferenceScheme scheme, string[] equation, BoundaryConditionPDE[] boundaryConditions, double[,] domain, int n)
         {
             var r = CreateMatrix.Sparse<double>(n, 2);
             var dr = CreateVector.Sparse<float>(2);
