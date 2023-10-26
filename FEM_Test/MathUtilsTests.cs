@@ -197,7 +197,6 @@ namespace FEM_Test
                 for (int j = 0; j < n; ++j)
                 {
                     var x = domain[0, 0] + i * dx;
-                    var y = domain[1, 0] + j * dy;
 
                     function[i, j] = x * x;
                 }
