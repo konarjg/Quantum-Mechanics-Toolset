@@ -8,11 +8,80 @@
     ".NETCoreApp,Version=v7.0": {
       "FEM/1.0.0": {
         "dependencies": {
+          "Accord.Extensions.Math": "3.0.1",
+          "Accord.Math": "3.8.0",
           "MathNet.Numerics": "5.0.0",
           "ScottPlot": "4.1.68"
         },
         "runtime": {
           "FEM.dll": {}
+        }
+      },
+      "Accord/3.8.0": {
+        "runtime": {
+          "lib/netstandard2.0/Accord.dll": {
+            "assemblyVersion": "3.8.0.0",
+            "fileVersion": "3.8.0.6134"
+          }
+        }
+      },
+      "Accord.Extensions.Core/3.0.1": {
+        "dependencies": {
+          "Accord": "3.8.0"
+        },
+        "runtime": {
+          "lib/net45/Accord.Extensions.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Accord.Extensions.Math/3.0.1": {
+        "dependencies": {
+          "Accord.Extensions.Core": "3.0.1",
+          "Accord.Statistics": "3.0.2",
+          "DotImaging.Primitives2D": "2.5.3"
+        },
+        "runtime": {
+          "lib/net45/Accord.Extensions.Math.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Accord.Math/3.8.0": {
+        "dependencies": {
+          "Accord": "3.8.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Accord.Math.Core.dll": {
+            "assemblyVersion": "3.8.0.0",
+            "fileVersion": "3.8.0.6134"
+          },
+          "lib/netstandard2.0/Accord.Math.dll": {
+            "assemblyVersion": "3.8.0.0",
+            "fileVersion": "3.8.0.6134"
+          }
+        }
+      },
+      "Accord.Statistics/3.0.2": {
+        "dependencies": {
+          "Accord": "3.8.0",
+          "Accord.Math": "3.8.0"
+        },
+        "runtime": {
+          "lib/net45/Accord.Statistics.dll": {
+            "assemblyVersion": "3.0.2.0",
+            "fileVersion": "3.0.2.5339"
+          }
+        }
+      },
+      "DotImaging.Primitives2D/2.5.3": {
+        "runtime": {
+          "lib/net45/DotImaging.Primitives2D.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
         }
       },
       "MathNet.Numerics/5.0.0": {
@@ -89,6 +158,48 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "Accord/3.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7kJrB570dO5ELim+2KWQNozuvWO9/BuZfZspdFy36fcWPNF2CEccblLuILeUlI8QJYd2DlBy0bfK8BlCx/uayA==",
+      "path": "accord/3.8.0",
+      "hashPath": "accord.3.8.0.nupkg.sha512"
+    },
+    "Accord.Extensions.Core/3.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-M9Gbab1rmmCdm3DuQBWgCTq6IB7rAA95sfFCnv63CZrJeV/Qdj3MuFl5HJ2qMvDCzoL6kRV6ChJzwP00+6veOw==",
+      "path": "accord.extensions.core/3.0.1",
+      "hashPath": "accord.extensions.core.3.0.1.nupkg.sha512"
+    },
+    "Accord.Extensions.Math/3.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AcrjZ3o6qHy27WLbEM2NwlcNxROirjWA29AzplbNZohbMdConIXsxRgqznGIpNWXKsFWibZ0VQO1IZ8cD62SOQ==",
+      "path": "accord.extensions.math/3.0.1",
+      "hashPath": "accord.extensions.math.3.0.1.nupkg.sha512"
+    },
+    "Accord.Math/3.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-K3dzeQjDIrwRnoTRoMOoIbul2Uc0B8cnEtdrSlirmIo37C+jVkmYpJzme/z4Kg99XR2Vj5W5TTNlhjn+AKR+8A==",
+      "path": "accord.math/3.8.0",
+      "hashPath": "accord.math.3.8.0.nupkg.sha512"
+    },
+    "Accord.Statistics/3.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GGfctxlk0DkhweBhWrVdRqpAPL3KmmLu8kzKqjMlmWl8rzItsu4qxXg3OxG5SmbAX2ZKqC1+YIMwarhDmu0M7Q==",
+      "path": "accord.statistics/3.0.2",
+      "hashPath": "accord.statistics.3.0.2.nupkg.sha512"
+    },
+    "DotImaging.Primitives2D/2.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UkZT6XU1QjQBeOCdvhQ7sGzgg7s7HgDl1T1ZM2qKEup3lVwFnBMyCsAvCNxGGH6DXL2cl/mbvwE50Nlqp9UeFA==",
+      "path": "dotimaging.primitives2d/2.5.3",
+      "hashPath": "dotimaging.primitives2d.2.5.3.nupkg.sha512"
     },
     "MathNet.Numerics/5.0.0": {
       "type": "package",

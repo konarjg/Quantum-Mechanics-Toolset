@@ -2,4 +2,4 @@
 using MathNet.Numerics.LinearAlgebra;
 using System.Numerics;
 
-Console.WriteLine();
+SpectralSolver.SolveODEBessel(new double[] { 0, 5 }, 1, 3, 100);
