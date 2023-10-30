@@ -52,3 +52,6 @@ C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.Math.dll
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.Statistics.dll
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\DotImaging.Primitives2D.dll
+C:\Users\konis\Desktop\FEM\FEM\bin\Debug\net7.0\AForge.dll
+C:\Users\konis\Desktop\FEM\FEM\bin\Debug\net7.0\AForge.Math.dll
+C:\Users\konis\Desktop\FEM\FEM\bin\Debug\net7.0\MathNet.Spatial.dll

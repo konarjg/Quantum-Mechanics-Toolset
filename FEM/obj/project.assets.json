@@ -2,102 +2,25 @@
   "version": 3,
   "targets": {
     "net7.0": {
-      "Accord/3.8.0": {
+      "AForge/2.2.5": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Accord.dll": {
-            "related": ".xml"
-          }
+          "lib/AForge.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Accord.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "build/Accord.targets": {}
+          "lib/AForge.dll": {}
         }
       },
-      "Accord.Extensions.Core/3.0.1": {
+      "AForge.Math/2.2.5": {
         "type": "package",
         "dependencies": {
-          "Accord": "3.0.2"
+          "AForge": "2.2.5"
         },
         "compile": {
-          "lib/net45/Accord.Extensions.Core.dll": {
-            "related": ".xml"
-          }
+          "lib/AForge.Math.dll": {}
         },
         "runtime": {
-          "lib/net45/Accord.Extensions.Core.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "Accord.Extensions.Math/3.0.1": {
-        "type": "package",
-        "dependencies": {
-          "Accord.Extensions.Core": "3.0.1",
-          "Accord.Statistics": "3.0.2",
-          "DotImaging.Primitives2D": "2.5.3"
-        },
-        "compile": {
-          "lib/net45/Accord.Extensions.Math.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/Accord.Extensions.Math.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "Accord.Math/3.8.0": {
-        "type": "package",
-        "dependencies": {
-          "Accord": "3.8.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Accord.Math.Core.dll": {
-            "related": ".xml"
-          },
-          "lib/netstandard2.0/Accord.Math.dll": {
-            "related": ".Core.xml;.xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/Accord.Math.Core.dll": {
-            "related": ".xml"
-          },
-          "lib/netstandard2.0/Accord.Math.dll": {
-            "related": ".Core.xml;.xml"
-          }
-        }
-      },
-      "Accord.Statistics/3.0.2": {
-        "type": "package",
-        "dependencies": {
-          "Accord": "3.0.2",
-          "Accord.Math": "3.0.2"
-        },
-        "compile": {
-          "lib/net45/Accord.Statistics.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net45/Accord.Statistics.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "DotImaging.Primitives2D/2.5.3": {
-        "type": "package",
-        "compile": {
-          "lib/net45/DotImaging.Primitives2D.dll": {}
-        },
-        "runtime": {
-          "lib/net45/DotImaging.Primitives2D.dll": {}
+          "lib/AForge.Math.dll": {}
         }
       },
       "MathNet.Numerics/5.0.0": {
@@ -113,7 +36,33 @@
           }
         }
       },
+      "MathNet.Spatial/0.6.0": {
+        "type": "package",
+        "dependencies": {
+          "MathNet.Numerics": "4.9.1",
+          "System.Diagnostics.Contracts": "4.3.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/MathNet.Spatial.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Spatial.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.NETCore.Platforms/3.1.4": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/_._": {}
+        }
+      },
+      "Microsoft.NETCore.Targets/1.1.0": {
         "type": "package",
         "compile": {
           "lib/netstandard1.0/_._": {}
@@ -161,6 +110,20 @@
           }
         }
       },
+      "System.Diagnostics.Contracts/4.3.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        },
+        "compile": {
+          "ref/netstandard1.0/System.Diagnostics.Contracts.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.Diagnostics.Contracts.dll": {}
+        }
+      },
       "System.Drawing.Common/4.7.2": {
         "type": "package",
         "dependencies": {
@@ -194,153 +157,46 @@
         "runtime": {
           "lib/netcoreapp2.0/_._": {}
         }
+      },
+      "System.Runtime/4.3.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0",
+          "Microsoft.NETCore.Targets": "1.1.0"
+        },
+        "compile": {
+          "ref/netstandard1.5/System.Runtime.dll": {
+            "related": ".xml"
+          }
+        }
       }
     }
   },
   "libraries": {
-    "Accord/3.8.0": {
-      "sha512": "7kJrB570dO5ELim+2KWQNozuvWO9/BuZfZspdFy36fcWPNF2CEccblLuILeUlI8QJYd2DlBy0bfK8BlCx/uayA==",
+    "AForge/2.2.5": {
+      "sha512": "clkumhM9DggqIzEXAHgVLeWO4arG5YfoPr7J4jfjJx35AoeEIJSSm49J25bwp/9mXQYLwi7y1Wunc8qgYJsGxg==",
       "type": "package",
-      "path": "accord/3.8.0",
+      "path": "aforge/2.2.5",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "accord.3.8.0.nupkg.sha512",
-        "accord.nuspec",
-        "build/Accord.dll.config",
-        "build/Accord.targets",
-        "lib/net35-unity full v3.5/Accord.dll",
-        "lib/net35-unity full v3.5/Accord.xml",
-        "lib/net35-unity micro v3.5/Accord.dll",
-        "lib/net35-unity micro v3.5/Accord.xml",
-        "lib/net35-unity subset v3.5/Accord.dll",
-        "lib/net35-unity subset v3.5/Accord.xml",
-        "lib/net35-unity web v3.5/Accord.dll",
-        "lib/net35-unity web v3.5/Accord.xml",
-        "lib/net35/Accord.dll",
-        "lib/net35/Accord.xml",
-        "lib/net40/Accord.dll",
-        "lib/net40/Accord.xml",
-        "lib/net45/Accord.dll",
-        "lib/net45/Accord.xml",
-        "lib/net46/Accord.dll",
-        "lib/net46/Accord.xml",
-        "lib/net462/Accord.dll",
-        "lib/net462/Accord.xml",
-        "lib/netstandard1.4/Accord.dll",
-        "lib/netstandard1.4/Accord.xml",
-        "lib/netstandard2.0/Accord.dll",
-        "lib/netstandard2.0/Accord.xml"
+        "aforge.2.2.5.nupkg.sha512",
+        "aforge.nuspec",
+        "lib/AForge.dll",
+        "lib/AForge.xml"
       ]
     },
-    "Accord.Extensions.Core/3.0.1": {
-      "sha512": "M9Gbab1rmmCdm3DuQBWgCTq6IB7rAA95sfFCnv63CZrJeV/Qdj3MuFl5HJ2qMvDCzoL6kRV6ChJzwP00+6veOw==",
+    "AForge.Math/2.2.5": {
+      "sha512": "pmT1WobVv13vMxwXhCu8sRunxjiUHyURWS0+dsW/aBPi06xiyYIdCLHI6jph9Axb4QoLIlb85eBI6zd2EAbGIg==",
       "type": "package",
-      "path": "accord.extensions.core/3.0.1",
+      "path": "aforge.math/2.2.5",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "accord.extensions.core.3.0.1.nupkg.sha512",
-        "accord.extensions.core.nuspec",
-        "lib/net45/Accord.Extensions.Core.dll",
-        "lib/net45/Accord.Extensions.Core.xml"
-      ]
-    },
-    "Accord.Extensions.Math/3.0.1": {
-      "sha512": "AcrjZ3o6qHy27WLbEM2NwlcNxROirjWA29AzplbNZohbMdConIXsxRgqznGIpNWXKsFWibZ0VQO1IZ8cD62SOQ==",
-      "type": "package",
-      "path": "accord.extensions.math/3.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "accord.extensions.math.3.0.1.nupkg.sha512",
-        "accord.extensions.math.nuspec",
-        "lib/net45/Accord.Extensions.Math.dll",
-        "lib/net45/Accord.Extensions.Math.xml"
-      ]
-    },
-    "Accord.Math/3.8.0": {
-      "sha512": "K3dzeQjDIrwRnoTRoMOoIbul2Uc0B8cnEtdrSlirmIo37C+jVkmYpJzme/z4Kg99XR2Vj5W5TTNlhjn+AKR+8A==",
-      "type": "package",
-      "path": "accord.math/3.8.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "accord.math.3.8.0.nupkg.sha512",
-        "accord.math.nuspec",
-        "lib/net35-unity full v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity full v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity full v3.5/Accord.Math.dll",
-        "lib/net35-unity full v3.5/Accord.Math.xml",
-        "lib/net35-unity micro v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity micro v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity micro v3.5/Accord.Math.dll",
-        "lib/net35-unity micro v3.5/Accord.Math.xml",
-        "lib/net35-unity subset v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity subset v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity subset v3.5/Accord.Math.dll",
-        "lib/net35-unity subset v3.5/Accord.Math.xml",
-        "lib/net35-unity web v3.5/Accord.Math.Core.dll",
-        "lib/net35-unity web v3.5/Accord.Math.Core.xml",
-        "lib/net35-unity web v3.5/Accord.Math.dll",
-        "lib/net35-unity web v3.5/Accord.Math.xml",
-        "lib/net35/Accord.Math.Core.dll",
-        "lib/net35/Accord.Math.Core.xml",
-        "lib/net35/Accord.Math.dll",
-        "lib/net35/Accord.Math.xml",
-        "lib/net40/Accord.Math.Core.dll",
-        "lib/net40/Accord.Math.Core.xml",
-        "lib/net40/Accord.Math.dll",
-        "lib/net40/Accord.Math.xml",
-        "lib/net45/Accord.Math.Core.dll",
-        "lib/net45/Accord.Math.Core.xml",
-        "lib/net45/Accord.Math.dll",
-        "lib/net45/Accord.Math.xml",
-        "lib/net46/Accord.Math.Core.dll",
-        "lib/net46/Accord.Math.Core.xml",
-        "lib/net46/Accord.Math.dll",
-        "lib/net46/Accord.Math.xml",
-        "lib/net462/Accord.Math.Core.dll",
-        "lib/net462/Accord.Math.Core.xml",
-        "lib/net462/Accord.Math.dll",
-        "lib/net462/Accord.Math.xml",
-        "lib/netstandard1.4/Accord.Math.Core.dll",
-        "lib/netstandard1.4/Accord.Math.Core.xml",
-        "lib/netstandard1.4/Accord.Math.dll",
-        "lib/netstandard1.4/Accord.Math.xml",
-        "lib/netstandard2.0/Accord.Math.Core.dll",
-        "lib/netstandard2.0/Accord.Math.Core.xml",
-        "lib/netstandard2.0/Accord.Math.dll",
-        "lib/netstandard2.0/Accord.Math.xml"
-      ]
-    },
-    "Accord.Statistics/3.0.2": {
-      "sha512": "GGfctxlk0DkhweBhWrVdRqpAPL3KmmLu8kzKqjMlmWl8rzItsu4qxXg3OxG5SmbAX2ZKqC1+YIMwarhDmu0M7Q==",
-      "type": "package",
-      "path": "accord.statistics/3.0.2",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "accord.statistics.3.0.2.nupkg.sha512",
-        "accord.statistics.nuspec",
-        "lib/net35/Accord.Statistics.dll",
-        "lib/net35/Accord.Statistics.xml",
-        "lib/net40/Accord.Statistics.dll",
-        "lib/net40/Accord.Statistics.xml",
-        "lib/net45/Accord.Statistics.dll",
-        "lib/net45/Accord.Statistics.xml"
-      ]
-    },
-    "DotImaging.Primitives2D/2.5.3": {
-      "sha512": "UkZT6XU1QjQBeOCdvhQ7sGzgg7s7HgDl1T1ZM2qKEup3lVwFnBMyCsAvCNxGGH6DXL2cl/mbvwE50Nlqp9UeFA==",
-      "type": "package",
-      "path": "dotimaging.primitives2d/2.5.3",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "dotimaging.primitives2d.2.5.3.nupkg.sha512",
-        "dotimaging.primitives2d.nuspec",
-        "lib/net45/DotImaging.Primitives2D.dll"
+        "aforge.math.2.2.5.nupkg.sha512",
+        "aforge.math.nuspec",
+        "lib/AForge.Math.dll",
+        "lib/AForge.Math.xml"
       ]
     },
     "MathNet.Numerics/5.0.0": {
@@ -365,6 +221,22 @@
         "mathnet.numerics.nuspec"
       ]
     },
+    "MathNet.Spatial/0.6.0": {
+      "sha512": "suGp382PvzFjgIGbF2ehv7NjoBt3ub4U2eZqhBpZkcc/FjQ9oDwUwKxO8eCxVgOHj2kMJn0Eh6Nnp+42JLSRwg==",
+      "type": "package",
+      "path": "mathnet.spatial/0.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/net461/MathNet.Spatial.dll",
+        "lib/net461/MathNet.Spatial.xml",
+        "lib/netstandard2.0/MathNet.Spatial.dll",
+        "lib/netstandard2.0/MathNet.Spatial.xml",
+        "mathnet.spatial.0.6.0.nupkg.sha512",
+        "mathnet.spatial.nuspec"
+      ]
+    },
     "Microsoft.NETCore.Platforms/3.1.4": {
       "sha512": "9/y05/CuxE+j184Nr4KihhB9KcUkvGojmD4JV4Vt/mHhVZR+eOCD5WCM+CXye9K0OFMsaPXbN+IcaIpjgBGZmg==",
       "type": "package",
@@ -381,6 +253,21 @@
         "runtime.json",
         "useSharedDesignerContext.txt",
         "version.txt"
+      ]
+    },
+    "Microsoft.NETCore.Targets/1.1.0": {
+      "sha512": "aOZA3BWfz9RXjpzt0sRJJMjAscAUm3Hoa4UWAfceV9UTYxgwZ1lZt5nO2myFf+/jetYQo4uTP7zS8sJY67BBxg==",
+      "type": "package",
+      "path": "microsoft.netcore.targets/1.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/netstandard1.0/_._",
+        "microsoft.netcore.targets.1.1.0.nupkg.sha512",
+        "microsoft.netcore.targets.nuspec",
+        "runtime.json"
       ]
     },
     "Microsoft.Win32.SystemEvents/4.7.0": {
@@ -430,6 +317,66 @@
         "lib/netstandard2.0/ScottPlot.xml",
         "scottplot.4.1.68.nupkg.sha512",
         "scottplot.nuspec"
+      ]
+    },
+    "System.Diagnostics.Contracts/4.3.0": {
+      "sha512": "eelRRbnm+OloiQvp9CXS0ixjNQldjjkHO4iIkR5XH2VIP8sUB/SIpa1TdUW6/+HDcQ+MlhP3pNa1u5SbzYuWGA==",
+      "type": "package",
+      "path": "system.diagnostics.contracts/4.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/netcore50/System.Diagnostics.Contracts.dll",
+        "lib/netstandard1.0/System.Diagnostics.Contracts.dll",
+        "lib/portable-net45+win8+wp8+wpa81/_._",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/netcore50/System.Diagnostics.Contracts.dll",
+        "ref/netcore50/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/de/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/es/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/fr/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/it/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/ja/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/ko/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/ru/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/zh-hans/System.Diagnostics.Contracts.xml",
+        "ref/netcore50/zh-hant/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/System.Diagnostics.Contracts.dll",
+        "ref/netstandard1.0/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/de/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/es/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/fr/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/it/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/ja/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/ko/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/ru/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/zh-hans/System.Diagnostics.Contracts.xml",
+        "ref/netstandard1.0/zh-hant/System.Diagnostics.Contracts.xml",
+        "ref/portable-net45+win8+wp8+wpa81/_._",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "runtimes/aot/lib/netcore50/System.Diagnostics.Contracts.dll",
+        "system.diagnostics.contracts.4.3.0.nupkg.sha512",
+        "system.diagnostics.contracts.nuspec"
       ]
     },
     "System.Drawing.Common/4.7.2": {
@@ -518,13 +465,105 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "System.Runtime/4.3.0": {
+      "sha512": "JufQi0vPQ0xGnAczR13AUFglDyVYt4Kqnz1AZaiKZ5+GICq0/1MH/mO/eAJHt/mHW1zjKBJd7kV26SrxddAhiw==",
+      "type": "package",
+      "path": "system.runtime/4.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/net462/System.Runtime.dll",
+        "lib/portable-net45+win8+wp80+wpa81/_._",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/net462/System.Runtime.dll",
+        "ref/netcore50/System.Runtime.dll",
+        "ref/netcore50/System.Runtime.xml",
+        "ref/netcore50/de/System.Runtime.xml",
+        "ref/netcore50/es/System.Runtime.xml",
+        "ref/netcore50/fr/System.Runtime.xml",
+        "ref/netcore50/it/System.Runtime.xml",
+        "ref/netcore50/ja/System.Runtime.xml",
+        "ref/netcore50/ko/System.Runtime.xml",
+        "ref/netcore50/ru/System.Runtime.xml",
+        "ref/netcore50/zh-hans/System.Runtime.xml",
+        "ref/netcore50/zh-hant/System.Runtime.xml",
+        "ref/netstandard1.0/System.Runtime.dll",
+        "ref/netstandard1.0/System.Runtime.xml",
+        "ref/netstandard1.0/de/System.Runtime.xml",
+        "ref/netstandard1.0/es/System.Runtime.xml",
+        "ref/netstandard1.0/fr/System.Runtime.xml",
+        "ref/netstandard1.0/it/System.Runtime.xml",
+        "ref/netstandard1.0/ja/System.Runtime.xml",
+        "ref/netstandard1.0/ko/System.Runtime.xml",
+        "ref/netstandard1.0/ru/System.Runtime.xml",
+        "ref/netstandard1.0/zh-hans/System.Runtime.xml",
+        "ref/netstandard1.0/zh-hant/System.Runtime.xml",
+        "ref/netstandard1.2/System.Runtime.dll",
+        "ref/netstandard1.2/System.Runtime.xml",
+        "ref/netstandard1.2/de/System.Runtime.xml",
+        "ref/netstandard1.2/es/System.Runtime.xml",
+        "ref/netstandard1.2/fr/System.Runtime.xml",
+        "ref/netstandard1.2/it/System.Runtime.xml",
+        "ref/netstandard1.2/ja/System.Runtime.xml",
+        "ref/netstandard1.2/ko/System.Runtime.xml",
+        "ref/netstandard1.2/ru/System.Runtime.xml",
+        "ref/netstandard1.2/zh-hans/System.Runtime.xml",
+        "ref/netstandard1.2/zh-hant/System.Runtime.xml",
+        "ref/netstandard1.3/System.Runtime.dll",
+        "ref/netstandard1.3/System.Runtime.xml",
+        "ref/netstandard1.3/de/System.Runtime.xml",
+        "ref/netstandard1.3/es/System.Runtime.xml",
+        "ref/netstandard1.3/fr/System.Runtime.xml",
+        "ref/netstandard1.3/it/System.Runtime.xml",
+        "ref/netstandard1.3/ja/System.Runtime.xml",
+        "ref/netstandard1.3/ko/System.Runtime.xml",
+        "ref/netstandard1.3/ru/System.Runtime.xml",
+        "ref/netstandard1.3/zh-hans/System.Runtime.xml",
+        "ref/netstandard1.3/zh-hant/System.Runtime.xml",
+        "ref/netstandard1.5/System.Runtime.dll",
+        "ref/netstandard1.5/System.Runtime.xml",
+        "ref/netstandard1.5/de/System.Runtime.xml",
+        "ref/netstandard1.5/es/System.Runtime.xml",
+        "ref/netstandard1.5/fr/System.Runtime.xml",
+        "ref/netstandard1.5/it/System.Runtime.xml",
+        "ref/netstandard1.5/ja/System.Runtime.xml",
+        "ref/netstandard1.5/ko/System.Runtime.xml",
+        "ref/netstandard1.5/ru/System.Runtime.xml",
+        "ref/netstandard1.5/zh-hans/System.Runtime.xml",
+        "ref/netstandard1.5/zh-hant/System.Runtime.xml",
+        "ref/portable-net45+win8+wp80+wpa81/_._",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.runtime.4.3.0.nupkg.sha512",
+        "system.runtime.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "Accord.Extensions.Math >= 3.0.1",
-      "Accord.Math >= 3.8.0",
+      "AForge.Math >= 2.2.5",
       "MathNet.Numerics >= 5.0.0",
+      "MathNet.Spatial >= 0.6.0",
       "ScottPlot >= 4.1.68"
     ]
   },
@@ -535,11 +574,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\FEM.csproj",
+      "projectUniqueName": "C:\\Users\\konis\\Desktop\\FEM\\FEM\\FEM.csproj",
       "projectName": "FEM",
-      "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\FEM.csproj",
+      "projectPath": "C:\\Users\\konis\\Desktop\\FEM\\FEM\\FEM.csproj",
       "packagesPath": "C:\\Users\\konis\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\obj\\",
+      "outputPath": "C:\\Users\\konis\\Desktop\\FEM\\FEM\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -573,17 +612,17 @@
       "net7.0": {
         "targetAlias": "net7.0",
         "dependencies": {
-          "Accord.Extensions.Math": {
+          "AForge.Math": {
             "target": "Package",
-            "version": "[3.0.1, )"
-          },
-          "Accord.Math": {
-            "target": "Package",
-            "version": "[3.8.0, )"
+            "version": "[2.2.5, )"
           },
           "MathNet.Numerics": {
             "target": "Package",
             "version": "[5.0.0, )"
+          },
+          "MathNet.Spatial": {
+            "target": "Package",
+            "version": "[0.6.0, )"
           },
           "ScottPlot": {
             "target": "Package",
@@ -606,7 +645,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -615,8 +654,8 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Pakiet „Accord.Extensions.Core 3.0.1” został przywrócony przy użyciu elementu „.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1” zamiast platformy docelowej projektu „net7.0”. Ten pakiet może nie być w pełni kompatybilny z Twoim projektem.",
-      "libraryId": "Accord.Extensions.Core",
+      "message": "Pakiet „AForge 2.2.5” został przywrócony przy użyciu elementu „.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1” zamiast platformy docelowej projektu „net7.0”. Ten pakiet może nie być w pełni kompatybilny z Twoim projektem.",
+      "libraryId": "AForge",
       "targetGraphs": [
         "net7.0"
       ]
@@ -625,28 +664,8 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Pakiet „Accord.Extensions.Math 3.0.1” został przywrócony przy użyciu elementu „.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1” zamiast platformy docelowej projektu „net7.0”. Ten pakiet może nie być w pełni kompatybilny z Twoim projektem.",
-      "libraryId": "Accord.Extensions.Math",
-      "targetGraphs": [
-        "net7.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Pakiet „Accord.Statistics 3.0.2” został przywrócony przy użyciu elementu „.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1” zamiast platformy docelowej projektu „net7.0”. Ten pakiet może nie być w pełni kompatybilny z Twoim projektem.",
-      "libraryId": "Accord.Statistics",
-      "targetGraphs": [
-        "net7.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Pakiet „DotImaging.Primitives2D 2.5.3” został przywrócony przy użyciu elementu „.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1” zamiast platformy docelowej projektu „net7.0”. Ten pakiet może nie być w pełni kompatybilny z Twoim projektem.",
-      "libraryId": "DotImaging.Primitives2D",
+      "message": "Pakiet „AForge.Math 2.2.5” został przywrócony przy użyciu elementu „.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1” zamiast platformy docelowej projektu „net7.0”. Ten pakiet może nie być w pełni kompatybilny z Twoim projektem.",
+      "libraryId": "AForge.Math",
       "targetGraphs": [
         "net7.0"
       ]

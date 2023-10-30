@@ -1,19 +1,9 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Accord.Math.Decompositions;
-using Accord.Math;
-using Accord.Math.Comparers;
-using Accord.Math.Integration;
 using MathNet.Numerics;
 using Complex = System.Numerics.Complex;
 using ScottPlot;
+using ScottPlot.Statistics.Interpolation;
 using System.Diagnostics;
-using Accord.Extensions.BinaryTree;
-using System.Net.Http.Headers;
 
 namespace FEM
 {
@@ -65,12 +55,11 @@ namespace FEM
 
         public static void SolveODEBessel(double[] domain, int n, int l, int gridPoints)
         {
+            --n;
             var dr = (domain[1] - domain[0]) / (gridPoints - 1);
             var dtheta = 2 * Math.PI / (gridPoints - 1);
             var dx = 2 * domain[1] / (gridPoints - 1);
 
-            var x = new double[gridPoints * gridPoints];
-            var y = new double[gridPoints * gridPoints];
             var r = new double[gridPoints];
             var theta = new double[gridPoints];
 
@@ -79,30 +68,40 @@ namespace FEM
             for (int i = 0; i < gridPoints; ++i)
             {
                 r[i] = domain[0] + i * dr;
-
-                for (int j = 0; j < gridPoints; ++j)
-                {
-                    theta[j] = j * dtheta;
-                    x[gridPoints * i + j] = r[i] * Math.Cos(theta[j]);
-                    y[gridPoints * i + j] = r[i] * Math.Sin(theta[j]);
-                }
+                theta[i] = -Math.PI + i * dtheta;
             }
 
-            var H = CreateMatrix.Sparse<Complex>(gridPoints, gridPoints);
+            var Hr = CreateMatrix.Sparse<Complex>(gridPoints, gridPoints);
+            var Hl = CreateMatrix.Sparse<Complex>(gridPoints, gridPoints);
+            var Bl = CreateVector.Sparse<Complex>(gridPoints);
+            var T = -0.978;
 
             for (int i = 0; i < gridPoints; ++i)
             {
                 if (i + 1 < gridPoints)
-                    H[i, i + 1] = -0.978 / (dr * dr) - 0.978 / (2 * dr) * 1 / (r[i] + 0.1);
+                    Hl[i, i + 1] = T / (dtheta * dtheta);
 
                 if (i - 1 >= 0)
-                    H[i, i - 1] = -0.978 / (dr * dr) + 0.978 / (2 * dr) * 1 / (r[i] + 0.1);
+                    Hl[i, i - 1] = T / (dtheta * dtheta);
 
-                H[i, i] = 2 * 0.978 / (dr * dr) + (l * l) / (r[i] * r[i] + 0.1) - 1 / (r[i] + 0.1);
+                Hl[i, i] = -2 * T / (dtheta * dtheta) - l * l;
+                Bl[i] = 0.001d;
             }
 
-            var evd = H.Evd();
+            for (int i = 0; i < gridPoints; ++i)
+            {
+                if (i + 1 < gridPoints)
+                    Hr[i, i + 1] = T / (dr * dr) + T / (2 * dr * (r[i] + 0.1));
 
+                if (i - 1 >= 0)
+                    Hr[i, i - 1] = T / (dr * dr) - T / (2 * dr * (r[i] + 0.1));
+
+                Hr[i, i] = -2 * T / (dr * dr) + (l * l) / (r[i] * r[i] + 0.1);
+            }
+
+            var evd = Hr.Evd();
+
+            var Ul = Hl.Solve(Bl);
             var E = evd.EigenValues;
             var U = evd.EigenVectors;
 
@@ -111,7 +110,7 @@ namespace FEM
 
             for (int i = 0; i < gridPoints; ++i)
             {
-                L[i] = Complex.Exp(Complex.ImaginaryOne * l * theta[i]);
+                L[i] = Ul[i];
                 R[i] = U.Column(n)[i];
             }
 
@@ -125,7 +124,9 @@ namespace FEM
             }
 
             psi /= Math.Sqrt(N);
-            var u = CreateMatrix.Sparse<double>(gridPoints, gridPoints);
+            Console.WriteLine("E{0}{1} = {2}", n + 1, l, E[n]);
+
+            var u = new double[gridPoints, gridPoints];
 
             for (int i = 0; i < gridPoints; ++i)
             {
@@ -133,20 +134,15 @@ namespace FEM
                     u[i, j] = psi[i, j].MagnitudeSquared();
             }
 
-            u = u.Transpose();
-            Console.WriteLine("E{0} = {1}", n + 1, E[n]);
-
             var plot = new Plot();
-            plot.SetAxisLimits(0, 2 * Math.PI, domain[0], domain[1]);
-            var map = plot.AddHeatmap(u.ToArray());
+            plot.SetAxisLimits(-Math.PI, Math.PI, domain[0], domain[1]);
+            var map = plot.AddHeatmap(u);
+            map.OffsetX = -Math.PI;
+            map.OffsetY = domain[0];
             map.CellWidth = dtheta;
             map.CellHeight = dr;
-            map.OffsetX = 0;
-            map.OffsetY = domain[0];
-            map.UseParallel = true;
-            map.Opacity = 1;
-
             plot.AddColorbar(map);
+
             plot.SaveFig("plot.png");
             Process.Start("explorer.exe", "plot.png");
         }
