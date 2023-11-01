@@ -44,14 +44,6 @@ C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\obj\Debug\net7.0\refint
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\obj\Debug\net7.0\FEM.pdb
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\obj\Debug\net7.0\FEM.genruntimeconfig.cache
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\obj\Debug\net7.0\ref\FEM.dll
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.dll.config
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.dll
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.Extensions.Core.dll
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.Extensions.Math.dll
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.Math.Core.dll
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.Math.dll
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\Accord.Statistics.dll
-C:\Users\konis\Desktop\Quantum Mechanics Toolset\FEM\FEM\bin\Debug\net7.0\DotImaging.Primitives2D.dll
 C:\Users\konis\Desktop\FEM\FEM\bin\Debug\net7.0\AForge.dll
 C:\Users\konis\Desktop\FEM\FEM\bin\Debug\net7.0\AForge.Math.dll
 C:\Users\konis\Desktop\FEM\FEM\bin\Debug\net7.0\MathNet.Spatial.dll

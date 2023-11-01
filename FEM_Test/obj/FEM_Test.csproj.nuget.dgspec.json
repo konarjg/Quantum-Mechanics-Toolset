@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\konis\\Desktop\\FEM\\FEM_Test\\FEM_Test.csproj": {}
+    "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM_Test\\FEM_Test.csproj": {}
   },
   "projects": {
-    "C:\\Users\\konis\\Desktop\\FEM\\FEM\\FEM.csproj": {
+    "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\FEM.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\konis\\Desktop\\FEM\\FEM\\FEM.csproj",
+        "projectUniqueName": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\FEM.csproj",
         "projectName": "FEM",
-        "projectPath": "C:\\Users\\konis\\Desktop\\FEM\\FEM\\FEM.csproj",
+        "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\FEM.csproj",
         "packagesPath": "C:\\Users\\konis\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\konis\\Desktop\\FEM\\FEM\\obj\\",
+        "outputPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -45,17 +45,9 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "AForge.Math": {
-              "target": "Package",
-              "version": "[2.2.5, )"
-            },
             "MathNet.Numerics": {
               "target": "Package",
               "version": "[5.0.0, )"
-            },
-            "MathNet.Spatial": {
-              "target": "Package",
-              "version": "[0.6.0, )"
             },
             "ScottPlot": {
               "target": "Package",
@@ -78,18 +70,18 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\konis\\Desktop\\FEM\\FEM_Test\\FEM_Test.csproj": {
+    "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM_Test\\FEM_Test.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\konis\\Desktop\\FEM\\FEM_Test\\FEM_Test.csproj",
+        "projectUniqueName": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM_Test\\FEM_Test.csproj",
         "projectName": "FEM_Test",
-        "projectPath": "C:\\Users\\konis\\Desktop\\FEM\\FEM_Test\\FEM_Test.csproj",
+        "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM_Test\\FEM_Test.csproj",
         "packagesPath": "C:\\Users\\konis\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\konis\\Desktop\\FEM\\FEM_Test\\obj\\",
+        "outputPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM_Test\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -111,8 +103,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\konis\\Desktop\\FEM\\FEM\\FEM.csproj": {
-                "projectPath": "C:\\Users\\konis\\Desktop\\FEM\\FEM\\FEM.csproj"
+              "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\FEM.csproj": {
+                "projectPath": "C:\\Users\\konis\\Desktop\\Quantum Mechanics Toolset\\FEM\\FEM\\FEM.csproj"
               }
             }
           }
@@ -127,10 +119,6 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "AForge.Math": {
-              "target": "Package",
-              "version": "[2.2.5, )"
-            },
             "MSTest.TestAdapter": {
               "target": "Package",
               "version": "[2.2.10, )"
@@ -138,10 +126,6 @@
             "MSTest.TestFramework": {
               "target": "Package",
               "version": "[2.2.10, )"
-            },
-            "MathNet.Spatial": {
-              "target": "Package",
-              "version": "[0.6.0, )"
             },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
@@ -168,7 +152,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

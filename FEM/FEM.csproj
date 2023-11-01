@@ -8,9 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AForge.Math" Version="2.2.5" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
     <PackageReference Include="ScottPlot" Version="4.1.68" />
   </ItemGroup>
 

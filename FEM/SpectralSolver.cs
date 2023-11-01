@@ -72,37 +72,28 @@ namespace FEM
             }
 
             var Hr = CreateMatrix.Sparse<Complex>(gridPoints, gridPoints);
-            var Hl = CreateMatrix.Sparse<Complex>(gridPoints, gridPoints);
-            var Bl = CreateVector.Sparse<Complex>(gridPoints);
             var T = -0.978;
 
             for (int i = 0; i < gridPoints; ++i)
             {
+                if (i + 2 < gridPoints)
+                    Hr[i, i + 2] = -T / (12 * dr * dr) - T / (12 * dr * (r[i] + 0.1));
+
                 if (i + 1 < gridPoints)
-                    Hl[i, i + 1] = T / (dtheta * dtheta);
+                    Hr[i, i + 1] = 16 * T / (12 * dr * dr) + 8 * T / (12 * dr * (r[i] + 0.1));
 
                 if (i - 1 >= 0)
-                    Hl[i, i - 1] = T / (dtheta * dtheta);
+                    Hr[i, i - 1] = 16 * T / (12 * dr * dr) - 8 * T / (12 * dr * (r[i] + 0.1));
 
-                Hl[i, i] = -2 * T / (dtheta * dtheta) - l * l;
-                Bl[i] = 0.001d;
-            }
+                if (i - 2 >= 0)
+                    Hr[i, i - 2] = -T / (12 * dr * dr) + T / (12 * dr * (r[i] + 0.1));
 
-            for (int i = 0; i < gridPoints; ++i)
-            {
-                if (i + 1 < gridPoints)
-                    Hr[i, i + 1] = T / (dr * dr) + T / (2 * dr * (r[i] + 0.1));
-
-                if (i - 1 >= 0)
-                    Hr[i, i - 1] = T / (dr * dr) - T / (2 * dr * (r[i] + 0.1));
-
-                Hr[i, i] = -2 * T / (dr * dr) + (l * l) / (r[i] * r[i] + 0.1);
+                Hr[i, i] = -30 * T / (12 * dr * dr) + (l * (l + 1)) / (r[i] * r[i] + 0.1) - 1 / (r[i] + 0.1);
             }
 
             var evd = Hr.Evd();
 
-            var Ul = Hl.Solve(Bl);
-            var E = evd.EigenValues;
+            var E = -evd.EigenValues;
             var U = evd.EigenVectors;
 
             var L = CreateVector.Sparse<Complex>(gridPoints);
@@ -110,7 +101,7 @@ namespace FEM
 
             for (int i = 0; i < gridPoints; ++i)
             {
-                L[i] = Ul[i];
+                L[i] = Complex.Exp(Complex.ImaginaryOne * l * theta[i]);
                 R[i] = U.Column(n)[i];
             }
 
@@ -124,7 +115,9 @@ namespace FEM
             }
 
             psi /= Math.Sqrt(N);
-            Console.WriteLine("E{0}{1} = {2}", n + 1, l, E[n]);
+
+            for (int i = 0; i < E.Count; ++i)
+                Console.WriteLine("E{0}{1} = {2}", i + 1, l, E[i].Real);
 
             var u = new double[gridPoints, gridPoints];
 
