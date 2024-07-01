@@ -33,23 +33,12 @@
             LoadingTimer = new System.Windows.Forms.Timer(components);
             Parameters = new ListView();
             ParametersTitle = new Label();
-            CoordinateSystem = new ComboBox();
-            CoordinateSystemTitle = new Label();
-            MovementConstraintsTitle = new Label();
-            MovementConstraints = new ComboBox();
             PotentialTypeTitle = new Label();
-            PotentialType = new ComboBox();
+            ScenarioDropdown = new ComboBox();
             EnvironmentTitle = new Label();
             ParticleTitle = new Label();
             EnergyLevel = new ComboBox();
             EnergyLevelTitle = new Label();
-            LaboratorySizeTitle = new Label();
-            Direction1Title = new Label();
-            Direction2Title = new Label();
-            MinX = new TextBox();
-            MaxX = new TextBox();
-            MinY = new TextBox();
-            MaxY = new TextBox();
             AzimuthalLevel = new ComboBox();
             AzimuthalLevelTitle = new Label();
             Simulate = new Button();
@@ -80,6 +69,7 @@
             Measure = new Button();
             Calculate = new Button();
             MainTimer = new System.Windows.Forms.Timer(components);
+            checkBox1 = new CheckBox();
             SuspendLayout();
             // 
             // MainGraph
@@ -100,7 +90,7 @@
             // 
             Parameters.Location = new Point(54, 134);
             Parameters.Name = "Parameters";
-            Parameters.Size = new Size(602, 775);
+            Parameters.Size = new Size(602, 617);
             Parameters.TabIndex = 1;
             Parameters.UseCompatibleStateImageBehavior = false;
             // 
@@ -115,65 +105,25 @@
             ParametersTitle.TabIndex = 2;
             ParametersTitle.Text = "Simulation Parameters";
             // 
-            // CoordinateSystem
-            // 
-            CoordinateSystem.DropDownStyle = ComboBoxStyle.DropDownList;
-            CoordinateSystem.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            CoordinateSystem.Items.AddRange(new object[] { "Cartesian 1D", "Cartesian 2D", "Polar" });
-            CoordinateSystem.Location = new Point(345, 257);
-            CoordinateSystem.Name = "CoordinateSystem";
-            CoordinateSystem.Size = new Size(173, 40);
-            CoordinateSystem.TabIndex = 3;
-            // 
-            // CoordinateSystemTitle
-            // 
-            CoordinateSystemTitle.AutoSize = true;
-            CoordinateSystemTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            CoordinateSystemTitle.Location = new Point(143, 262);
-            CoordinateSystemTitle.Name = "CoordinateSystemTitle";
-            CoordinateSystemTitle.Size = new Size(196, 30);
-            CoordinateSystemTitle.TabIndex = 4;
-            CoordinateSystemTitle.Text = "Coordinate System";
-            // 
-            // MovementConstraintsTitle
-            // 
-            MovementConstraintsTitle.AutoSize = true;
-            MovementConstraintsTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            MovementConstraintsTitle.Location = new Point(96, 308);
-            MovementConstraintsTitle.Name = "MovementConstraintsTitle";
-            MovementConstraintsTitle.Size = new Size(232, 30);
-            MovementConstraintsTitle.TabIndex = 5;
-            MovementConstraintsTitle.Text = "Movement Constraints";
-            // 
-            // MovementConstraints
-            // 
-            MovementConstraints.DropDownStyle = ComboBoxStyle.DropDownList;
-            MovementConstraints.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            MovementConstraints.Items.AddRange(new object[] { "Free Movement", "Potential Barriers" });
-            MovementConstraints.Location = new Point(334, 303);
-            MovementConstraints.Name = "MovementConstraints";
-            MovementConstraints.Size = new Size(256, 40);
-            MovementConstraints.TabIndex = 6;
-            // 
             // PotentialTypeTitle
             // 
             PotentialTypeTitle.AutoSize = true;
             PotentialTypeTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            PotentialTypeTitle.Location = new Point(96, 361);
+            PotentialTypeTitle.Location = new Point(175, 261);
             PotentialTypeTitle.Name = "PotentialTypeTitle";
-            PotentialTypeTitle.Size = new Size(231, 30);
+            PotentialTypeTitle.Size = new Size(96, 30);
             PotentialTypeTitle.TabIndex = 7;
-            PotentialTypeTitle.Text = "External Potential Type";
+            PotentialTypeTitle.Text = "Scenario";
             // 
-            // PotentialType
+            // ScenarioDropdown
             // 
-            PotentialType.DropDownStyle = ComboBoxStyle.DropDownList;
-            PotentialType.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            PotentialType.Items.AddRange(new object[] { "None", "Harmonic", "Electric", "Magnetic", "Electromagnetic" });
-            PotentialType.Location = new Point(334, 356);
-            PotentialType.Name = "PotentialType";
-            PotentialType.Size = new Size(256, 40);
-            PotentialType.TabIndex = 8;
+            ScenarioDropdown.DropDownStyle = ComboBoxStyle.DropDownList;
+            ScenarioDropdown.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            ScenarioDropdown.Items.AddRange(new object[] { "Infinite rectangular well", "Harmonic oscillator", "Finite rectangular well", "Delta potential", "Hydrogen atom", "Hall effect" });
+            ScenarioDropdown.Location = new Point(281, 256);
+            ScenarioDropdown.Name = "ScenarioDropdown";
+            ScenarioDropdown.Size = new Size(256, 40);
+            ScenarioDropdown.TabIndex = 8;
             // 
             // EnvironmentTitle
             // 
@@ -189,7 +139,7 @@
             // 
             ParticleTitle.AutoSize = true;
             ParticleTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            ParticleTitle.Location = new Point(297, 603);
+            ParticleTitle.Location = new Point(295, 359);
             ParticleTitle.Name = "ParticleTitle";
             ParticleTitle.Size = new Size(82, 30);
             ParticleTitle.TabIndex = 10;
@@ -200,8 +150,8 @@
             EnergyLevel.DropDownStyle = ComboBoxStyle.DropDownList;
             EnergyLevel.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             EnergyLevel.FormattingEnabled = true;
-            EnergyLevel.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
-            EnergyLevel.Location = new Point(342, 636);
+            EnergyLevel.Items.AddRange(new object[] { "1", "2", "3", "4" });
+            EnergyLevel.Location = new Point(340, 392);
             EnergyLevel.Name = "EnergyLevel";
             EnergyLevel.Size = new Size(121, 40);
             EnergyLevel.TabIndex = 14;
@@ -210,85 +160,19 @@
             // 
             EnergyLevelTitle.AutoSize = true;
             EnergyLevelTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            EnergyLevelTitle.Location = new Point(200, 641);
+            EnergyLevelTitle.Location = new Point(198, 397);
             EnergyLevelTitle.Name = "EnergyLevelTitle";
             EnergyLevelTitle.Size = new Size(136, 30);
             EnergyLevelTitle.TabIndex = 13;
             EnergyLevelTitle.Text = "Energy Level";
-            // 
-            // LaboratorySizeTitle
-            // 
-            LaboratorySizeTitle.AutoSize = true;
-            LaboratorySizeTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            LaboratorySizeTitle.Location = new Point(263, 438);
-            LaboratorySizeTitle.Name = "LaboratorySizeTitle";
-            LaboratorySizeTitle.Size = new Size(163, 30);
-            LaboratorySizeTitle.TabIndex = 15;
-            LaboratorySizeTitle.Text = "Laboratory Size";
-            // 
-            // Direction1Title
-            // 
-            Direction1Title.AutoSize = true;
-            Direction1Title.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            Direction1Title.Location = new Point(228, 485);
-            Direction1Title.Name = "Direction1Title";
-            Direction1Title.Size = new Size(118, 30);
-            Direction1Title.TabIndex = 16;
-            Direction1Title.Text = "Direction 1";
-            // 
-            // Direction2Title
-            // 
-            Direction2Title.AutoSize = true;
-            Direction2Title.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            Direction2Title.Location = new Point(228, 527);
-            Direction2Title.Name = "Direction2Title";
-            Direction2Title.Size = new Size(118, 30);
-            Direction2Title.TabIndex = 17;
-            Direction2Title.Text = "Direction 2";
-            // 
-            // MinX
-            // 
-            MinX.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            MinX.Location = new Point(352, 482);
-            MinX.Name = "MinX";
-            MinX.PlaceholderText = "Min";
-            MinX.Size = new Size(53, 36);
-            MinX.TabIndex = 18;
-            // 
-            // MaxX
-            // 
-            MaxX.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            MaxX.Location = new Point(411, 482);
-            MaxX.Name = "MaxX";
-            MaxX.PlaceholderText = "Max";
-            MaxX.Size = new Size(53, 36);
-            MaxX.TabIndex = 19;
-            // 
-            // MinY
-            // 
-            MinY.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            MinY.Location = new Point(352, 524);
-            MinY.Name = "MinY";
-            MinY.PlaceholderText = "Min";
-            MinY.Size = new Size(53, 36);
-            MinY.TabIndex = 20;
-            // 
-            // MaxY
-            // 
-            MaxY.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            MaxY.Location = new Point(411, 524);
-            MaxY.Name = "MaxY";
-            MaxY.PlaceholderText = "Max";
-            MaxY.Size = new Size(53, 36);
-            MaxY.TabIndex = 21;
             // 
             // AzimuthalLevel
             // 
             AzimuthalLevel.DropDownStyle = ComboBoxStyle.DropDownList;
             AzimuthalLevel.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             AzimuthalLevel.FormattingEnabled = true;
-            AzimuthalLevel.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
-            AzimuthalLevel.Location = new Point(380, 682);
+            AzimuthalLevel.Items.AddRange(new object[] { "0", "1", "2", "3" });
+            AzimuthalLevel.Location = new Point(378, 438);
             AzimuthalLevel.Name = "AzimuthalLevel";
             AzimuthalLevel.Size = new Size(121, 40);
             AzimuthalLevel.TabIndex = 23;
@@ -297,7 +181,7 @@
             // 
             AzimuthalLevelTitle.AutoSize = true;
             AzimuthalLevelTitle.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
-            AzimuthalLevelTitle.Location = new Point(180, 687);
+            AzimuthalLevelTitle.Location = new Point(178, 443);
             AzimuthalLevelTitle.Name = "AzimuthalLevelTitle";
             AzimuthalLevelTitle.Size = new Size(194, 30);
             AzimuthalLevelTitle.TabIndex = 22;
@@ -307,7 +191,7 @@
             // 
             Simulate.AutoSize = true;
             Simulate.Font = new Font("Segoe UI", 24F, FontStyle.Regular, GraphicsUnit.Point);
-            Simulate.Location = new Point(266, 760);
+            Simulate.Location = new Point(271, 495);
             Simulate.Name = "Simulate";
             Simulate.Size = new Size(153, 55);
             Simulate.TabIndex = 24;
@@ -322,7 +206,7 @@
             ErrorMessage.Enabled = false;
             ErrorMessage.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             ErrorMessage.ForeColor = Color.Red;
-            ErrorMessage.Location = new Point(223, 827);
+            ErrorMessage.Location = new Point(228, 562);
             ErrorMessage.Name = "ErrorMessage";
             ErrorMessage.Size = new Size(240, 32);
             ErrorMessage.TabIndex = 25;
@@ -613,19 +497,45 @@
             MainTimer.Interval = 1;
             MainTimer.Tick += MainTimer_Tick;
             // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            checkBox1.Location = new Point(241, 302);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(190, 34);
+            checkBox1.TabIndex = 59;
+            checkBox1.Text = "Two Dimensional";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            // 
             // Sandbox
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1904, 1041);
-            Controls.Add(Calculate);
-            Controls.Add(Measure);
-            Controls.Add(ExpectedPositionY);
+            Controls.Add(checkBox1);
             Controls.Add(CancelLoadingButton);
             Controls.Add(LoadingMessage);
             Controls.Add(LoadingTitle);
             Controls.Add(LoadingProgressBar);
             Controls.Add(LoadingScreen);
+            Controls.Add(ErrorMessage);
+            Controls.Add(Simulate);
+            Controls.Add(AzimuthalLevel);
+            Controls.Add(AzimuthalLevelTitle);
+            Controls.Add(EnergyLevel);
+            Controls.Add(EnergyLevelTitle);
+            Controls.Add(ParticleTitle);
+            Controls.Add(EnvironmentTitle);
+            Controls.Add(ScenarioDropdown);
+            Controls.Add(PotentialTypeTitle);
+            Controls.Add(ParametersTitle);
+            Controls.Add(MainGraph);
+            Controls.Add(Parameters);
+            Controls.Add(Calculate);
+            Controls.Add(Measure);
+            Controls.Add(ExpectedPositionY);
             Controls.Add(Back);
             Controls.Add(RevealParticle);
             Controls.Add(ExpectedMomentum);
@@ -643,36 +553,13 @@
             Controls.Add(WavefunctionTitle);
             Controls.Add(ToolsTitle);
             Controls.Add(ToolsMenu);
-            Controls.Add(ErrorMessage);
-            Controls.Add(Simulate);
-            Controls.Add(AzimuthalLevel);
-            Controls.Add(AzimuthalLevelTitle);
-            Controls.Add(MaxY);
-            Controls.Add(MinY);
-            Controls.Add(MaxX);
-            Controls.Add(MinX);
-            Controls.Add(Direction2Title);
-            Controls.Add(Direction1Title);
-            Controls.Add(LaboratorySizeTitle);
-            Controls.Add(EnergyLevel);
-            Controls.Add(EnergyLevelTitle);
-            Controls.Add(ParticleTitle);
-            Controls.Add(EnvironmentTitle);
-            Controls.Add(PotentialType);
-            Controls.Add(PotentialTypeTitle);
-            Controls.Add(MovementConstraints);
-            Controls.Add(MovementConstraintsTitle);
-            Controls.Add(CoordinateSystemTitle);
-            Controls.Add(CoordinateSystem);
-            Controls.Add(ParametersTitle);
-            Controls.Add(MainGraph);
-            Controls.Add(Parameters);
             DoubleBuffered = true;
             MaximizeBox = false;
             Name = "Sandbox";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Quantum Sandbox";
             WindowState = FormWindowState.Maximized;
+            FormClosed += Sandbox_FormClosed;
             Load += Sandbox_Load;
             ResumeLayout(false);
             PerformLayout();
@@ -684,23 +571,12 @@
         private System.Windows.Forms.Timer LoadingTimer;
         private ListView Parameters;
         private Label ParametersTitle;
-        private ComboBox CoordinateSystem;
-        private Label CoordinateSystemTitle;
-        private Label MovementConstraintsTitle;
-        private ComboBox MovementConstraints;
         private Label PotentialTypeTitle;
-        private ComboBox PotentialType;
+        private ComboBox ScenarioDropdown;
         private Label EnvironmentTitle;
         private Label ParticleTitle;
         private ComboBox EnergyLevel;
         private Label EnergyLevelTitle;
-        private Label LaboratorySizeTitle;
-        private Label Direction1Title;
-        private Label Direction2Title;
-        private TextBox MinX;
-        private TextBox MaxX;
-        private TextBox MinY;
-        private TextBox MaxY;
         private ComboBox AzimuthalLevel;
         private Label AzimuthalLevelTitle;
         private Button Simulate;
@@ -731,5 +607,6 @@
         private Button Measure;
         private Button Calculate;
         private System.Windows.Forms.Timer MainTimer;
+        private CheckBox checkBox1;
     }
 }

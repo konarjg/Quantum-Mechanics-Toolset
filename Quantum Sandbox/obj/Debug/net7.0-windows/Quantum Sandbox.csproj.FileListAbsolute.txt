@@ -22,3 +22,36 @@ C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.Graph.resources
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.ValuesRevealed.resources
 C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.ValuesMeasured.resources
+C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.dll.config
+C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.dll
+C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.Math.Core.dll
+C:\Users\konis\Desktop\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.Math.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Quantum Sandbox.exe
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.dll.config
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Quantum Sandbox.deps.json
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Quantum Sandbox.runtimeconfig.json
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Quantum Sandbox.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Quantum Sandbox.pdb
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.Math.Core.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Accord.Math.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\MathNet.Numerics.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\ScottPlot.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\ScottPlot.WinForms.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.csproj.AssemblyReference.cache
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.Graph.resources
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.Sandbox.resources
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.ValuesMeasured.resources
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum_Sandbox.ValuesRevealed.resources
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.csproj.GenerateResource.cache
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.AssemblyInfoInputs.cache
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.AssemblyInfo.cs
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.csproj.CoreCompileInputs.cache
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.csproj.CopyComplete
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\refint\Quantum Sandbox.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.pdb
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\Quantum Sandbox.genruntimeconfig.cache
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\obj\Debug\net7.0-windows\ref\Quantum Sandbox.dll
+C:\Users\konis\Desktop\FEM_Python\Quantum Mechanics Toolset\Quantum Sandbox\bin\Debug\net7.0-windows\Python.Runtime.dll

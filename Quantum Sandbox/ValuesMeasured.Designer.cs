@@ -30,8 +30,7 @@
         {
             Title = new Label();
             label2 = new Label();
-            PositionX = new TextBox();
-            PositionY = new TextBox();
+            Position = new TextBox();
             label3 = new Label();
             Momentum = new TextBox();
             label4 = new Label();
@@ -60,21 +59,13 @@
             label2.TabIndex = 1;
             label2.Text = "Position";
             // 
-            // PositionX
+            // Position
             // 
-            PositionX.Location = new Point(107, 62);
-            PositionX.Name = "PositionX";
-            PositionX.ReadOnly = true;
-            PositionX.Size = new Size(88, 23);
-            PositionX.TabIndex = 2;
-            // 
-            // PositionY
-            // 
-            PositionY.Location = new Point(205, 62);
-            PositionY.Name = "PositionY";
-            PositionY.ReadOnly = true;
-            PositionY.Size = new Size(89, 23);
-            PositionY.TabIndex = 3;
+            Position.Location = new Point(107, 62);
+            Position.Name = "Position";
+            Position.ReadOnly = true;
+            Position.Size = new Size(88, 23);
+            Position.TabIndex = 2;
             // 
             // label3
             // 
@@ -141,8 +132,7 @@
             Controls.Add(label4);
             Controls.Add(Momentum);
             Controls.Add(label3);
-            Controls.Add(PositionY);
-            Controls.Add(PositionX);
+            Controls.Add(Position);
             Controls.Add(label2);
             Controls.Add(Title);
             Location = new Point(400, 115);
@@ -152,6 +142,7 @@
             StartPosition = FormStartPosition.Manual;
             Text = "ValuesRevealed";
             FormClosing += ValuesMeasured_FormClosing;
+            Load += ValuesMeasured_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -160,8 +151,7 @@
 
         private Label Title;
         private Label label2;
-        private TextBox PositionX;
-        private TextBox PositionY;
+        private TextBox Position;
         private Label label3;
         private TextBox Momentum;
         private Label label4;

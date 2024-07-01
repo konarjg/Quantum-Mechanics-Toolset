@@ -1,5 +1,7 @@
-using Quantum_Mechanics.DE_Solver;
-using Quantum_Mechanics.General;
+using Accord;
+using FEM.Symbolics;
+using MathNet.Numerics.LinearAlgebra;
+using Python.Runtime;
 using Quantum_Mechanics.Quantum_Mechanics;
 using Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools;
 using ScottPlot;
@@ -7,6 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 //fajny dzidziuœ tu by³ <33
 
 namespace Quantum_Sandbox
@@ -26,20 +29,19 @@ namespace Quantum_Sandbox
         private Control[] LoadingScreenControls;
 
         [AllowNull]
-        private QuantumSystem1D SystemHandle1D { get; set; }
+        private QuantumSystem1D SystemHandle { get; set; }
         [AllowNull]
         private QuantumSystem2D SystemHandle2D { get; set; }
-        [AllowNull]
-        private QuantumSystemPolar SystemHandlePolar { get; set; }
 
-        private double MeasuredX;
-        private double MeasuredY;
+        public static Dictionary<Scenario, dynamic> ScenarioSolutions = new Dictionary<Scenario, dynamic>();
+        private Scenario Scenario { get; set; }
+
+        private double Measured;
         private double MeasuredMomentum;
         private double MeasuredEnergy;
         private double MeasuredAngularMomentum;
 
-        private double ExpectedPositionValueX;
-        private double ExpectedPositionValueY;
+        private double ExpectedPositionValue;
         private double ExpectedMomentumValue;
 
         private Random SeedGenerator = new Random();
@@ -49,7 +51,8 @@ namespace Quantum_Sandbox
         public Sandbox()
         {
             InitializeComponent();
-            ParametersControls = new Control[] { Parameters, ParametersTitle, EnvironmentTitle, CoordinateSystemTitle, CoordinateSystem, MovementConstraintsTitle, MovementConstraints, PotentialTypeTitle, PotentialType, LaboratorySizeTitle, Direction1Title, MinX, MaxX, Direction2Title, MinY, MaxY, ParticleTitle, EnergyLevelTitle, EnergyLevel, AzimuthalLevelTitle, AzimuthalLevel, Simulate };
+
+            ParametersControls = new Control[] { Parameters, ParametersTitle, EnvironmentTitle, PotentialTypeTitle, ScenarioDropdown, ParticleTitle, EnergyLevelTitle, EnergyLevel, AzimuthalLevelTitle, AzimuthalLevel, Simulate };
             ToolsControls = new Control[] { ToolsTitle, WavefunctionTitle, Back, GraphPositionSpace, GraphMomentumSpace, MeasurementsTitle, Measure, MeasurePosition, MeasureMomentum, MeasureAngularMomentum, MeasureEnergy, CalculationsTitle, Calculate, CalculateExpectedPosition, ExpectedPositionX, ExpectedPositionY, CalculateExpectedMomentum, ExpectedMomentum, RevealParticle, ToolsMenu };
             LoadingScreenControls = new Control[] { LoadingTitle, LoadingProgressBar, LoadingMessage, CancelLoadingButton, LoadingScreen };
 
@@ -77,254 +80,269 @@ namespace Quantum_Sandbox
             ToolsControls.SetVisible(false);
         }
 
-        public void DrawBounds(double[,] domain)
-        {
-            if (SystemHandle1D != null)
-            {
-                MainGraph.Plot.AddVerticalLine(domain[0, 0] - 0.1, Color.Black, 1);
-                MainGraph.Plot.AddVerticalLine(domain[0, 1] + 0.1, Color.Black, 1);
-            }
-            else if (SystemHandle2D != null)
-            {
-                MainGraph.Plot.AddLine(domain[0, 0] - 0.1, domain[1, 0] - 0.1, domain[0, 1] + 0.1, domain[1, 0] - 0.1, Color.Black, 1);
-                MainGraph.Plot.AddLine(domain[0, 0] - 0.1, domain[1, 0] - 0.1, domain[0, 0] - 0.1, domain[1, 1] + 0.1, Color.Black, 1);
-                MainGraph.Plot.AddLine(domain[0, 0] - 0.1, domain[1, 1] + 0.1, domain[0, 1] + 0.1, domain[1, 1] + 0.1, Color.Black, 1);
-                MainGraph.Plot.AddLine(domain[0, 1] + 0.1, domain[1, 0] - 0.1, domain[0, 1] + 0.1, domain[1, 1] + 0.1, Color.Black, 1);
-            }
-            else if (SystemHandlePolar != null)
-            {
-                var dfi = (domain[1, 1] - domain[1, 0]) / 999;
-                var r = domain[0, 1] + 0.1;
-                var circle = Tuple.Create(new double[1000], new double[1000]);
-
-                for (int i = 0; i < 1000; ++i)
-                {
-                    var fi = domain[1, 0] + i * dfi;
-                    var x = r * Math.Cos(fi);
-                    var y = r * Math.Sin(fi);
-
-                    circle.Item1[i] = x;
-                    circle.Item2[i] = y;
-                    CancelLoading.Token.ThrowIfCancellationRequested();
-                }
-
-                MainGraph.Plot.AddScatterLines(circle.Item1, circle.Item2, Color.Black, 1);
-            }
-        }
-
-        public void Superposition(double[,] domain)
+        public void DrawBounds()
         {
             MainGraph.Reset();
 
-            if (SystemHandle1D != null)
+            if (SystemHandle != null)
             {
-                MainGraph.Plot.AddVerticalLine(domain[0, 0] - 0.1, Color.Black, 1);
-                MainGraph.Plot.AddVerticalLine(domain[0, 1] + 0.1, Color.Black, 1);
-
-                for (int i = 0; i < 100; ++i)
+                switch (Scenario)
                 {
-                    var seed = SeedGenerator.Next(-10000, 10001);
-                    MainGraph.Plot.AddPoint(SystemHandle1D.MeasurePosition(seed), 0, Color.Blue);
-                }
-            }
-            else if (SystemHandle2D != null)
-            {
-                MainGraph.Plot.AddLine(domain[0, 0] - 0.1, domain[1, 0] - 0.1, domain[0, 1] + 0.1, domain[1, 0] - 0.1, Color.Black, 1);
-                MainGraph.Plot.AddLine(domain[0, 0] - 0.1, domain[1, 0] - 0.1, domain[0, 0] - 0.1, domain[1, 1] + 0.1, Color.Black, 1);
-                MainGraph.Plot.AddLine(domain[0, 0] - 0.1, domain[1, 1] + 0.1, domain[0, 1] + 0.1, domain[1, 1] + 0.1, Color.Black, 1);
-                MainGraph.Plot.AddLine(domain[0, 1] + 0.1, domain[1, 0] - 0.1, domain[0, 1] + 0.1, domain[1, 1] + 0.1, Color.Black, 1);
+                    case Scenario.INFINITE_RECTANGULAR_WELL:
+                        MainGraph.Plot.AddVerticalLine(0, Color.Black, 1);
+                        MainGraph.Plot.AddVerticalLine(5, Color.Black, 1);
+                        break;
 
-                for (int i = 0; i < 1000; ++i)
-                {
-                    var seed = SeedGenerator.Next(-10000, 10001);
-                    var r = SystemHandle2D.MeasurePosition(seed);
-                    MainGraph.Plot.AddPoint(r.Item1, r.Item2, Color.Blue);
-                }
-            }
-            else if (SystemHandlePolar != null)
-            {
-                var dfi = (domain[1, 1] - domain[1, 0]) / 999;
-                var r = domain[0, 1] + 0.1;
-                var circle = Tuple.Create(new double[1000], new double[1000]);
+                    case Scenario.HARMONIC_OSCILLATOR:
+                        MainGraph.Plot.AddVerticalLine(-5, Color.Black, 1);
+                        MainGraph.Plot.AddVerticalLine(5, Color.Black, 1);
+                        break;
 
-                for (int i = 0; i < 1000; ++i)
-                {
-                    var fi = domain[1, 0] + i * dfi;
-                    var x = r * Math.Cos(fi);
-                    var y = r * Math.Sin(fi);
+                    case Scenario.FINITE_RECTANGULAR_WELL:
+                        MainGraph.Plot.AddVerticalLine(-2.5, Color.Black, 1);
+                        MainGraph.Plot.AddVerticalLine(2.5, Color.Black, 1);
+                        break;
 
-                    circle.Item1[i] = x;
-                    circle.Item2[i] = y;
+                    case Scenario.DELTA_POTENTIAL:
+                        MainGraph.Plot.AddVerticalLine(0, Color.Black, 1);
+                        break;
+
+                    case Scenario.HYDROGEN_ATOM:
+                        MainGraph.Plot.AddPoint(0, 0, Color.Black, 10);
+                        break;
                 }
 
-                MainGraph.Plot.AddScatterLines(circle.Item1, circle.Item2, Color.Black, 1);
-
-                for (int i = 0; i < 1000; ++i)
-                {
-                    var seed = SeedGenerator.Next(-10000, 10001);
-                    var p = SystemHandlePolar.MeasurePosition(seed);
-                    MainGraph.Plot.AddPoint(p.Item1, p.Item2, Color.Blue);
-                }
+                SetAxisLimits(SystemHandle.AzimuthalLevel);
             }
 
             MainGraph.Refresh();
         }
 
-        private Task<int> ConstructSystem(int energyLevel, int azimuthalLevel, CoordinateSystem coordinateSystem, PotentialType potentialType, MovementConstraints movementConstraints, string[,] positionDomainText)
+        public void SetAxisLimits(int l)
+        {
+            switch (Scenario)
+            {
+                case Scenario.INFINITE_RECTANGULAR_WELL:
+                    MainGraph.Plot.SetAxisLimits(-3, 8);
+                    break;
+
+                case Scenario.HARMONIC_OSCILLATOR:
+                    MainGraph.Plot.SetAxisLimits(-8, 8);
+                    break;
+
+                case Scenario.FINITE_RECTANGULAR_WELL:
+                    MainGraph.Plot.SetAxisLimits(-5.5, 5.5);
+                    break;
+
+                case Scenario.DELTA_POTENTIAL:
+                    MainGraph.Plot.SetAxisLimits(-3, 3);
+                    break;
+
+                case Scenario.HYDROGEN_ATOM:
+                    MainGraph.Plot.SetAxisLimits(-3, 10 * (l + 1));
+                    break;
+            }
+        }
+
+        public void Superposition()
+        {
+            MainGraph.Reset();
+
+            if (SystemHandle != null)
+            {
+                switch (Scenario)
+                {
+                    case Scenario.INFINITE_RECTANGULAR_WELL:
+                        MainGraph.Plot.AddVerticalLine(0, Color.Black, 1);
+                        MainGraph.Plot.AddVerticalLine(5, Color.Black, 1);
+                        break;
+
+                    case Scenario.HARMONIC_OSCILLATOR:
+                        MainGraph.Plot.AddVerticalLine(-5, Color.Black, 1);
+                        MainGraph.Plot.AddVerticalLine(5, Color.Black, 1);
+                        break;
+
+                    case Scenario.FINITE_RECTANGULAR_WELL:
+                        MainGraph.Plot.AddVerticalLine(-2.5, Color.Black, 1);
+                        MainGraph.Plot.AddVerticalLine(2.5, Color.Black, 1);
+                        break;
+
+                    case Scenario.DELTA_POTENTIAL:
+                        MainGraph.Plot.AddVerticalLine(0, Color.Black, 1);
+                        break;
+
+                    case Scenario.HYDROGEN_ATOM:
+                        MainGraph.Plot.AddPoint(0, 0, Color.Black, 10);
+                        break;
+                }
+
+                for (int i = 0; i < 500; ++i)
+                {
+                    var seed = SeedGenerator.Next(-10000, 10001);
+                    MainGraph.Plot.AddPoint(SystemHandle.MeasurePosition(seed), 0, Color.Blue);
+                }
+
+                SetAxisLimits(SystemHandle.AzimuthalLevel);
+            }
+
+            MainGraph.Refresh();
+        }
+
+        private Task<int> ConstructSystem(int energyLevel, int azimuthalLevel, Scenario scenario)
         {
             return Task.Run(() =>
             {
                 try
                 {
-                    CancelLoading.Token.ThrowIfCancellationRequested();
-                    var domain = new double[2, 2];
-
-                    switch (coordinateSystem)
+                    if (!checkBox1.Checked)
                     {
-                        case Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D:
-                            if (coordinateSystem == Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D)
+                        double[] energies = null;
+                        double[][] wavefunctions = null;
+                        double[] grid = null;
+
+                        var pythonDll = @"C:\Program Files\Python312\python312.dll";
+                        Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", pythonDll);
+                        PythonEngine.Initialize();
+
+                        using (Py.GIL())
+                        {
+                            dynamic Solver = Py.Import("quantum_mechanics");
+                            dynamic solution = default;
+
+                            switch (scenario)
                             {
-                                CancelLoading.Token.ThrowIfCancellationRequested();
-                                var positionDomain1D = new double[] { RPNParser.Calculate(positionDomainText[0, 0]).Real, RPNParser.Calculate(positionDomainText[0, 1]).Real };
-                                domain = new double[,] { { positionDomain1D[0], positionDomain1D[1] }, { 0, 0 } };
+                                case Scenario.INFINITE_RECTANGULAR_WELL:
+                                    solution = Solver.infinite_rect_well(5, 2000);
+                                    break;
 
-                                if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
-                                {
-                                    SystemHandle1D = new QuantumSystem1D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), positionDomain1D, new double[] { -5, 5 });
-                                    CancelLoading.Token.ThrowIfCancellationRequested();
-                                }
-                                else
-                                    SystemHandle1D = new QuantumSystem1D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, QuantumSystem.PotentialFunction(coordinateSystem, potentialType), new double[] { -10000, 10000 }, new double[] { -5, 5 });
+                                case Scenario.HARMONIC_OSCILLATOR:
+                                    solution = Solver.harmonic_oscillator(2000);
+                                    break;
 
-                                CancelLoading.Token.ThrowIfCancellationRequested();
+                                case Scenario.FINITE_RECTANGULAR_WELL:
+                                    solution = Solver.finite_rect_well(2, 5, 2000);
+                                    break;
 
-                                MainGraph.Plot.AddVerticalLine(positionDomain1D[0] - 0.1, Color.Black, 1);
-                                MainGraph.Plot.AddVerticalLine(positionDomain1D[1] + 0.1, Color.Black, 1);
+                                case Scenario.DELTA_POTENTIAL:
+                                    solution = Solver.delta_potential(2000);
+                                    break;
 
-                                for (int i = 0; i < 100; ++i)
-                                {
-                                    CurrentSeed = SeedGenerator.Next(-10000, 10001);
-                                    MainGraph.Plot.AddPoint(SystemHandle1D.MeasurePosition(CurrentSeed), 0, Color.Blue);
-                                    CancelLoading.Token.ThrowIfCancellationRequested();
-                                }
+                                case Scenario.HYDROGEN_ATOM:
+                                    solution = Solver.hydrogen_atom(2000, azimuthalLevel);
+                                    break;
                             }
 
-                            break;
+                            energies = solution[0].As<double[]>();
+                            wavefunctions = solution[1].As<double[][]>();
+                            grid = solution[2].As<double[]>();
 
-                        case Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_2D:
-                            if (coordinateSystem == Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_2D)
-                            {
-                                var positionDomain2D = new double[,] { { RPNParser.Calculate(positionDomainText[0, 0]).Real, RPNParser.Calculate(positionDomainText[0, 1]).Real },
-                                                                { RPNParser.Calculate(positionDomainText[1, 0]).Real, RPNParser.Calculate(positionDomainText[1, 1]).Real } };
+                            solution.Dispose();
+                            Solver.Dispose();
+                        }
 
-                                domain = new double[,] { { positionDomain2D[0, 0], positionDomain2D[0, 1] }, { positionDomain2D[1, 0], positionDomain2D[1, 1] } };
-                                CancelLoading.Token.ThrowIfCancellationRequested();
-                                var potential = QuantumSystem.PotentialFunction(Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D, potentialType);
+                        PythonEngine.Shutdown();
 
-                                if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
-                                {
-                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, 0, QuantumConstants.Me, potential, potential, positionDomain2D, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
-                                    CancelLoading.Token.ThrowIfCancellationRequested();
-                                }
-                                else
-                                    SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, 500, energyLevel, azimuthalLevel, 0, QuantumConstants.Me, potential, potential, new double[,] { { -10000, 10000 }, { -10000, 10000 } }, new double[,] { { -5, 5 }, { -5, 5 } }, new double[] { 0, 5 });
+                        SystemHandle = new QuantumSystem1D(CancelLoading.Token, energies, wavefunctions, grid, grid.Length, energyLevel, azimuthalLevel, scenario == Scenario.HYDROGEN_ATOM);
 
-                                CancelLoading.Token.ThrowIfCancellationRequested();
+                        CancelLoading.Token.ThrowIfCancellationRequested();
 
-                                MainGraph.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 0] - 0.1, Color.Black, 1);
-                                MainGraph.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
-                                MainGraph.Plot.AddLine(positionDomain2D[0, 0] - 0.1, positionDomain2D[1, 1] + 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
-                                MainGraph.Plot.AddLine(positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 0] - 0.1, positionDomain2D[0, 1] + 0.1, positionDomain2D[1, 1] + 0.1, Color.Black, 1);
-
-                                for (int i = 0; i < 1000; ++i)
-                                {
-                                    CurrentSeed = SeedGenerator.Next(-10000, 10001);
-                                    var r = SystemHandle2D.MeasurePosition(CurrentSeed);
-                                    MainGraph.Plot.AddPoint(r.Item1, r.Item2, Color.Blue);
-                                    CancelLoading.Token.ThrowIfCancellationRequested();
-                                }
-                            }
-
-                            break;
-
-                        case Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.POLAR:
-                            if (coordinateSystem == Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.POLAR)
-                            {
-                                var positionDomainPolar = new double[,] { { RPNParser.Calculate(positionDomainText[0, 0]).Real, RPNParser.Calculate(positionDomainText[0, 1]).Real },
-                                                                { RPNParser.Calculate(positionDomainText[1, 0]).Real, RPNParser.Calculate(positionDomainText[1, 1]).Real } };
-
-                                domain = new double[,] { { positionDomainPolar[0, 0], positionDomainPolar[0, 1] }, { positionDomainPolar[1, 0], positionDomainPolar[1, 1] } };
-                                CancelLoading.Token.ThrowIfCancellationRequested();
-                                var potential = QuantumSystem.PotentialFunction(Mathematical_Framework.Quantum_Mechanics_Tools.CoordinateSystem.CARTESIAN_1D, potentialType);
-
-                                if (movementConstraints == Mathematical_Framework.Quantum_Mechanics_Tools.MovementConstraints.POTENTIAL_BARRIER)
-                                {
-                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, positionDomainPolar, new double[] { 0, 5 });
-                                    CancelLoading.Token.ThrowIfCancellationRequested();
-                                }
-                                else
-                                    SystemHandlePolar = new QuantumSystemPolar(CancelLoading.Token, 500, energyLevel, azimuthalLevel, QuantumConstants.Me, potential, new double[,] { { 0, 10000 }, { 0, Math.PI * 2 } }, new double[] { 0, 5 });
-
-                                CancelLoading.Token.ThrowIfCancellationRequested();
-
-                                var dfi = (positionDomainPolar[1, 1] - positionDomainPolar[1, 0]) / 999;
-                                var r = positionDomainPolar[0, 1] + 0.1;
-                                var circle = Tuple.Create(new double[1000], new double[1000]);
-
-                                for (int i = 0; i < 1000; ++i)
-                                {
-                                    var fi = positionDomainPolar[1, 0] + i * dfi;
-                                    var x = r * Math.Cos(fi);
-                                    var y = r * Math.Sin(fi);
-
-                                    circle.Item1[i] = x;
-                                    circle.Item2[i] = y;
-                                    CancelLoading.Token.ThrowIfCancellationRequested();
-                                }
-
-                                MainGraph.Plot.AddScatterLines(circle.Item1, circle.Item2, Color.Black, 1);
-
-                                for (int i = 0; i < 1000; ++i)
-                                {
-                                    CurrentSeed = SeedGenerator.Next(-10000, 10001);
-                                    var p = SystemHandlePolar.MeasurePosition(CurrentSeed);
-                                    MainGraph.Plot.AddPoint(p.Item1, p.Item2, Color.Blue);
-                                    CancelLoading.Token.ThrowIfCancellationRequested();
-                                }
-                            }
-
-                            break;
+                        //RevealScreen.SetPositionDomain(new double[,] { system.Grid, });
+                        CancelLoading.Token.ThrowIfCancellationRequested();
+                        Superposed = false;
+                        return 1;
                     }
+                    else
+                    {
+                       /* double[] energies = null;
+                        double[][][] wavefunctions = null;
+                        Complex[][][] wavefunctions_momentum = null;
+                        (double[], double[]) grid;
+                        (double[], double[]) momentum_grid;
 
-                    RevealScreen.SetPositionDomain(domain);
-                    CancelLoading.Token.ThrowIfCancellationRequested();
-                    return 1;
+                        var pythonDll = @"C:\Program Files\Python312\python312.dll";
+                        Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", pythonDll);
+                        PythonEngine.Initialize();
+
+                        using (Py.GIL())
+                        {
+                            dynamic np = Py.Import("numpy");
+                            dynamic Solver = Py.Import("quantum_mechanics");
+                            dynamic solution = default;
+
+                            switch (scenario)
+                            {
+                                case Scenario.INFINITE_RECTANGULAR_WELL:
+                                    solution = Solver.infinite_rect_well_2d(2000, 5, 5);
+                                    break;
+
+                                case Scenario.HARMONIC_OSCILLATOR:
+                                    solution = Solver.harmonic_oscillator_2d(2000);
+                                    break;
+
+                                case Scenario.FINITE_RECTANGULAR_WELL:
+                                    solution = Solver.finite_rect_well_2d(2000, 2, 5, 5);
+                                    break;
+
+                                case Scenario.DELTA_POTENTIAL:
+                                    solution = Solver.delta_potential_2d(2000);
+                                    break;
+
+                                case Scenario.HYDROGEN_ATOM:
+                                    solution = Solver.hydrogen_atom2d(1000);
+                                    break;
+                            }
+
+                            energies = solution[0].As<double[]>();
+                            wavefunctions = solution[1].As<double[][][]>();
+                            wavefunctions_momentum = solution[2].As<Complex[][][]>();
+                            var x = solution[2].As<double[]>();
+                            var y = solution[3].As<double[]>();
+                            var px = solution[4].As<double[]>();
+                            var py = solution[5].As<double[]>();
+
+                            grid = (x, y);
+                            momentum_grid = (px, py);
+                            solution.Dispose();
+                            Solver.Dispose();
+                        }
+
+                        PythonEngine.Shutdown();
+
+                        SystemHandle2D = new QuantumSystem2D(CancelLoading.Token, energies, wavefunctions, wavefunctions_momentum, grid, momentum_grid, grid.Item1.Length, energyLevel, azimuthalLevel);
+
+                        CancelLoading.Token.ThrowIfCancellationRequested();
+
+                        //RevealScreen.SetPositionDomain(new double[,] { system.Grid, });
+                        CancelLoading.Token.ThrowIfCancellationRequested();
+                        Superposed = false;*/
+                        return 1;
+                    }
                 }
                 catch (OperationCanceledException)
                 {
                     return 0;
                 }
-                catch (Exception e)
+                catch (Exception e) 
                 {
-                    MessageBox.Show(e.StackTrace);
+                    MessageBox.Show(e.Message + "\n" + e.StackTrace);
                     return -1;
                 }
             });
         }
 
-        private async void SetupSimulation(int energyLevel, int azimuthalLevel, CoordinateSystem system, PotentialType type, MovementConstraints constraints, string[,] domain)
+        private async void SetupSimulation(int energyLevel, int azimuthalLevel, Scenario scenario)
         {
             MainGraph.Reset();
             LoadingTimer.Enabled = true;
             Simulate.Enabled = false;
             LoadingScreenControls.SetVisible(true);
-            var task = ConstructSystem(energyLevel, azimuthalLevel, system, type, constraints, domain);
+            var task = ConstructSystem(energyLevel, azimuthalLevel, scenario);
 
             try
             {
                 await task;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MainGraph.Reset();
                 MainGraph.Refresh();
@@ -335,6 +353,7 @@ namespace Quantum_Sandbox
                 LoadingCancelled = false;
                 CancelLoading.Dispose();
                 CancelLoading = new CancellationTokenSource();
+                MessageBox.Show(ex.Message);
                 return;
             }
 
@@ -350,6 +369,7 @@ namespace Quantum_Sandbox
                 LoadingCancelled = false;
                 CancelLoading.Dispose();
                 CancelLoading = new CancellationTokenSource();
+                GC.Collect();
                 return;
             }
             else if (task.Result == -1)
@@ -359,39 +379,30 @@ namespace Quantum_Sandbox
                 ErrorMessage.Enabled = true;
                 ErrorMessage.Visible = true;
                 Simulate.Enabled = true;
+                GC.Collect();
                 return;
             }
 
-            if (SystemHandle1D != null)
+            GC.Collect();
+
+            if (SystemHandle != null)
             {
-                ExpectedPositionValueX = SystemHandle1D.ExpectedPosition();
-                ExpectedMomentumValue = SystemHandle1D.ExpectedMomentum();
-                MeasuredEnergy = SystemHandle1D.Energy;
-                MeasuredAngularMomentum = SystemHandle1D.MeasureAngularMomentum();
+                ExpectedPositionValue = SystemHandle.ExpectedPosition();
+                ExpectedMomentumValue = SystemHandle.ExpectedMomentum();
+                MeasuredEnergy = SystemHandle.Energy;
+                MeasuredAngularMomentum = SystemHandle.MeasureAngularMomentum();
             }
             else if (SystemHandle2D != null)
             {
-                var exp = SystemHandle2D.ExpectedPosition();
-
-                ExpectedPositionValueX = exp.Item1;
-                ExpectedPositionValueY = exp.Item2;
-                ExpectedMomentumValue = SystemHandle2D.ExpectedMomentum();
+                ExpectedPositionValue = SystemHandle2D.ExpectedPosition().Item1;
+                ExpectedMomentumValue = SystemHandle2D.ExpectedMomentum().Item1;
                 MeasuredEnergy = SystemHandle2D.Energy;
                 MeasuredAngularMomentum = SystemHandle2D.MeasureAngularMomentum();
-            }
-            else if (SystemHandlePolar != null)
-            {
-                var exp = SystemHandlePolar.ExpectedPosition();
-
-                ExpectedPositionValueX = exp.Item1;
-                ExpectedPositionValueY = exp.Item2;
-                ExpectedMomentumValue = SystemHandlePolar.ExpectedMomentum();
-                MeasuredEnergy = SystemHandlePolar.Energy;
-                MeasuredAngularMomentum = SystemHandlePolar.MeasureAngularMomentum();
             }
 
             MainGraph.Refresh();
             ParametersControls.SetVisible(false);
+            LoadingTimer.Enabled = false;
             ToolsControls.SetVisible(true);
         }
 
@@ -405,15 +416,14 @@ namespace Quantum_Sandbox
 
                 var energyLevel = int.Parse(EnergyLevel.Text);
                 var azimuthalLevel = int.Parse(AzimuthalLevel.Text);
-                var coordinateSystem = QuantumSystem.ParseCoordinateSystem(CoordinateSystem.Text);
-                var potentialType = QuantumSystem.ParsePotentialType(PotentialType.Text);
-                var movementConstraints = QuantumSystem.ParseMovementConstraints(MovementConstraints.Text);
-                var positionDomainText = new string[,] { { MinX.Text, MaxX.Text }, { MinY.Text, MaxY.Text } };
+                var scenario = QuantumSystem.ParseScenario(ScenarioDropdown.Text);
+                Scenario = scenario;
 
-                SetupSimulation(energyLevel, azimuthalLevel, coordinateSystem, potentialType, movementConstraints, positionDomainText);
+                SetupSimulation(energyLevel, azimuthalLevel, scenario);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 ErrorMessage.Enabled = true;
                 ErrorMessage.Visible = true;
             }
@@ -421,9 +431,8 @@ namespace Quantum_Sandbox
 
         private void Back_Click(object sender, EventArgs e)
         {
-            SystemHandle1D = null;
-            SystemHandle2D = null;
-            SystemHandlePolar = null;
+            SystemHandle = null;
+            GC.Collect();
 
             PositionSpaceGraph.Visible = false;
             PositionSpaceGraph.Enabled = false;
@@ -433,7 +442,7 @@ namespace Quantum_Sandbox
             RevealScreen.SetEnergy(0, false);
             RevealScreen.SetAngularMomentum(0, false);
 
-            MeasureScreen.SetPosition(0, 0, false);
+            MeasureScreen.SetPosition(0, false);
             MeasureScreen.SetMomentum(0, false);
             MeasureScreen.SetEnergy(0, false);
             MeasureScreen.SetAngularMomentum(0, false);
@@ -481,12 +490,10 @@ namespace Quantum_Sandbox
 
             plot.Reset();
 
-            if (SystemHandle1D != null)
-                SystemHandle1D.PlotPositionSpace(plot);
+            if (SystemHandle != null)
+                SystemHandle.PlotPositionSpace(plot);
             else if (SystemHandle2D != null)
                 SystemHandle2D.PlotPositionSpace(plot);
-            else if (SystemHandlePolar != null)
-                SystemHandlePolar.PlotPositionSpace(plot);
 
             plot.Refresh();
 
@@ -500,12 +507,8 @@ namespace Quantum_Sandbox
 
             plot.Reset();
 
-            if (SystemHandle1D != null)
-                SystemHandle1D.PlotMomentumSpace(plot);
-            else if (SystemHandle2D != null)
-                SystemHandle2D.PlotMomentumSpace(plot);
-            else if (SystemHandlePolar != null)
-                SystemHandlePolar.PlotMomentumSpace(plot);
+            if (SystemHandle != null)
+                SystemHandle.PlotMomentumSpace(plot);
 
             plot.Refresh();
 
@@ -516,46 +519,26 @@ namespace Quantum_Sandbox
         private void RevealParticle_Click(object sender, EventArgs e)
         {
             MainGraph.Reset();
-            DrawBounds(RevealScreen.GetPositionDomain());
+            DrawBounds();
             var r = Tuple.Create(0d, 0d);
             var p = 0d;
 
             if (MeasurePosition.Checked)
-                MainGraph.Plot.AddPoint(MeasuredX, MeasuredY, Color.Blue);
+                MainGraph.Plot.AddPoint(Measured, 0, Color.Blue);
 
-            if (SystemHandle1D != null)
+            if (SystemHandle != null)
             {
                 if (MeasurePosition.Checked)
                 {
-                    var x = SystemHandle1D.MeasurePosition(CurrentSeed);
+                    var x = SystemHandle.MeasurePosition(CurrentSeed);
                     r = Tuple.Create(x, 0d);
                     MainGraph.Plot.AddPoint(x, 0, Color.Red);
                 }
 
                 if (MeasureMomentum.Checked)
-                    p = SystemHandle1D.MeasureMomentum(CurrentSeed);
-            }
-            else if (SystemHandle2D != null)
-            {
-                if (MeasurePosition.Checked)
-                {
-                    r = SystemHandle2D.MeasurePosition(CurrentSeed);
-                    MainGraph.Plot.AddPoint(r.Item1, r.Item2, Color.Red);
-                }
+                    p = SystemHandle.MeasureMomentum(CurrentSeed);
 
-                if (MeasureMomentum.Checked)
-                    p = SystemHandle2D.MeasureMomentum(CurrentSeed);
-            }
-            else if (SystemHandlePolar != null)
-            {
-                if (MeasurePosition.Checked)
-                {
-                    r = SystemHandlePolar.MeasurePosition(CurrentSeed);
-                    MainGraph.Plot.AddPoint(r.Item1, r.Item2, Color.Red);
-                }
-
-                if (MeasureMomentum.Checked)
-                    p = SystemHandlePolar.MeasureMomentum(CurrentSeed);
+                SetAxisLimits(SystemHandle.AzimuthalLevel);
             }
 
             RevealScreen.SetEnergy(MeasuredEnergy, MeasureEnergy.Checked);
@@ -565,6 +548,7 @@ namespace Quantum_Sandbox
 
             RevealScreen.Visible = true;
             RevealScreen.Enabled = true;
+
             MainGraph.Refresh();
         }
 
@@ -587,66 +571,31 @@ namespace Quantum_Sandbox
             CurrentSeed = SeedGenerator.Next(-10000, 10001);
             var domain = RevealScreen.GetPositionDomain();
 
-            if (SystemHandle1D != null)
+            if (SystemHandle != null)
             {
                 if (MeasurePosition.Checked && MeasureMomentum.Checked)
                 {
-                    var m = SystemHandle1D.MeasurePositionMomentum(CurrentSeed);
-                    MeasuredX = m.Item1;
+                    var m = SystemHandle.MeasurePositionMomentum(CurrentSeed);
+                    Measured = m.Item1;
                     MeasuredMomentum = m.Item2;
                 }
                 else if (MeasurePosition.Checked)
-                    MeasuredX = SystemHandle1D.MeasurePosition(CurrentSeed);
+                    Measured = SystemHandle.MeasurePosition(CurrentSeed);
 
                 else if (MeasureMomentum.Checked)
-                    MeasuredMomentum = SystemHandle1D.MeasureMomentum(CurrentSeed);
-            }
-            else if (SystemHandle2D != null)
-            {
-                if (MeasurePosition.Checked && MeasureMomentum.Checked)
-                {
-                    var m = SystemHandle2D.MeasurePositionMomentum(CurrentSeed);
-                    MeasuredX = m.Item1.Item1;
-                    MeasuredY = m.Item1.Item2;
-                    MeasuredMomentum = m.Item2;
-                }
-                else if (MeasurePosition.Checked)
-                {
-                    var r = SystemHandle2D.MeasurePosition(CurrentSeed);
-                    MeasuredX = r.Item1;
-                    MeasuredY = r.Item2;
-                }
-                else if (MeasureMomentum.Checked)
-                    MeasuredMomentum = SystemHandle2D.MeasureMomentum(CurrentSeed);
-            }
-            else if (SystemHandlePolar != null)
-            {
-                if (MeasurePosition.Checked && MeasureMomentum.Checked)
-                {
-                    var m = SystemHandlePolar.MeasurePositionMomentum(CurrentSeed);
-                    MeasuredX = m.Item1.Item1;
-                    MeasuredY = m.Item1.Item2;
-                    MeasuredMomentum = m.Item2;
-                }
-                else if (MeasurePosition.Checked)
-                {
-                    var r = SystemHandlePolar.MeasurePosition(CurrentSeed);
-                    MeasuredX = r.Item1;
-                    MeasuredY = r.Item2;
-                }
-                else if (MeasureMomentum.Checked)
-                    MeasuredMomentum = SystemHandlePolar.MeasureMomentum(CurrentSeed);
+                    MeasuredMomentum = SystemHandle.MeasureMomentum(CurrentSeed);
             }
 
             if (MeasurePosition.Checked)
             {
                 MainGraph.Reset();
-                DrawBounds(RevealScreen.GetPositionDomain());
-                MainGraph.Plot.AddPoint(MeasuredX, MeasuredY, Color.Blue, 5);
+                DrawBounds();
+                MainGraph.Plot.AddPoint(Measured, 0, Color.Blue, 5);
+                SetAxisLimits(SystemHandle.AzimuthalLevel);
                 MainGraph.Refresh();
             }
 
-            MeasureScreen.SetPosition(MeasuredX, MeasuredY, MeasurePosition.Checked);
+            MeasureScreen.SetPosition(Measured, MeasurePosition.Checked);
             MeasureScreen.SetMomentum(MeasuredMomentum, MeasureMomentum.Checked);
             MeasureScreen.SetEnergy(MeasuredEnergy, MeasureEnergy.Checked);
             MeasureScreen.SetAngularMomentum(MeasuredAngularMomentum, MeasureAngularMomentum.Checked);
@@ -659,8 +608,7 @@ namespace Quantum_Sandbox
         {
             if (CalculateExpectedPosition.Checked)
             {
-                ExpectedPositionX.Text = Math.Round(ExpectedPositionValueX, 3).ToString();
-                ExpectedPositionY.Text = Math.Round(ExpectedPositionValueY, 3).ToString();
+                ExpectedPositionX.Text = Math.Round(ExpectedPositionValue, 3).ToString();
             }
             else
             {
@@ -690,7 +638,7 @@ namespace Quantum_Sandbox
             if (!Superposed)
             {
                 MainGraph.Reset();
-                Superposition(RevealScreen.GetPositionDomain());
+                Superposition();
                 Superposed = true;
                 MainGraph.Refresh();
             }
@@ -703,7 +651,17 @@ namespace Quantum_Sandbox
 
         private void Sandbox_Load(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void Sandbox_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

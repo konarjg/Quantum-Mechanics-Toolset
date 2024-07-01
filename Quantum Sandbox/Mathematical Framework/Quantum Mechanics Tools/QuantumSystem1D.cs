@@ -1,8 +1,14 @@
-﻿using MathNet.Numerics;
+﻿using Accord.Math;
+using FEM;
+using MathNet.Numerics;
 using MathNet.Numerics.Distributions;
+using MathNet.Numerics.IntegralTransforms;
 using MathNet.Numerics.Integration;
 using MathNet.Numerics.LinearAlgebra;
-using Quantum_Mechanics.DE_Solver;
+using Python.Runtime;
+using Quantum_Mechanics.Differential_Equations_Solver;
+using Quantum_Sandbox;
+using Quantum_Sandbox.Mathematical_Framework.Quantum_Mechanics_Tools;
 using ScottPlot;
 using System;
 using System.Collections.Generic;
@@ -11,101 +17,159 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Generate = MathNet.Numerics.Generate;
 
 namespace Quantum_Mechanics.Quantum_Mechanics
 {
     public class QuantumSystem1D
     {
-        public DiscreteFunctionComplex[] WaveFunction { get; private set; }
-        public DiscreteFunctionComplex[] WaveFunctionMomentumSpace { get; private set; }
-        private List<double[]> PositionSpaceDistributionParameters;
-        private List<double[]> MomentumSpaceDistributionParameters;
+        private bool Spherical;
+        public double[] Wavefunction { get; private set; }
+        public List<(double, double)> PositionMeasurements = new List<(double, double)>();
+        public List<(double, double)> MomentumMeasurements = new List<(double, double)>();
+        public Complex[] WavefunctionMomentum { get; private set; }
+        public double[] Energies { get; private set; }
+        public double[] Grid { get; private set; }
+        public double[] MomentumGrid { get; private set; }
 
-        public double Energy { get => Energies[EnergyLevel]; }
+        public double Energy { get => Energies[EnergyLevel];}
 
-        private double[] Energies;
         private int EnergyLevel;
-        private int AzimuthalLevel;
+        public int AzimuthalLevel { get; private set; }
         private int Precision;
-        private double[] PositionDomain;
-        private double[] MomentumDomain;
 
         private Random Random;
 
-        public QuantumSystem1D(CancellationToken token, int precision, int energyLevel, int azimuthalLevel, double mass, string potential, double[] positionDomain, double[] momentumDomain)
+        private void GeneratePositionMeasurements()
+        {
+            var p = new List<(double, double)>();
+            var PDF = Wavefunction.Pow(2);
+
+            for (int i = 0; i < PDF.Length; ++i)
+                p.Add((PDF[i], Grid[i]));
+
+            p = p.OrderByDescending(p => p.Item1).ToList();
+            var s = new double[p.Count];
+            s[0] = p[0].Item1 * (Grid[1] - Grid[0]);
+
+            if (Spherical)
+                s[0] = p[0].Item1 * 4 * Math.PI * (Grid[1] - Grid[0]);
+
+            for (int i = 1; i < p.Count; ++i)
+            {
+                s[i] = s[i - 1] + p[i].Item1 * (Grid[1] - Grid[0]);
+
+                if (Spherical)
+                    s[i] = s[i - 1] + p[i].Item1 * 4 * Math.PI * (Grid[1] - Grid[0]);
+            }
+
+            for (int i = 0; i < p.Count; ++i)
+                PositionMeasurements.Add((s[i], p[i].Item2));
+        }
+
+        private void GenerateMomentumMeasurements()
+        {
+            var p = new List<(double, double)>();
+            var PDF = WavefunctionMomentum.Magnitude().Pow(2);
+
+            for (int i = 0; i < PDF.Length; ++i)
+                p.Add((PDF[i], MomentumGrid[i]));
+
+            p = p.OrderByDescending(p => p.Item1).ToList();
+            var s = new double[p.Count];
+            s[0] = p[0].Item1 * (MomentumGrid[1] - MomentumGrid[0]);
+
+            if (Spherical)
+                s[0] = p[0].Item1 * 4 * Math.PI * (MomentumGrid[1] - MomentumGrid[0]);
+
+            for (int i = 1; i < p.Count; ++i)
+            {
+                s[i] = s[i - 1] + p[i].Item1 * (MomentumGrid[1] - MomentumGrid[0]);
+
+                if (Spherical)
+                    s[i] = s[i - 1] + p[i].Item1 * 4 * Math.PI * (MomentumGrid[1] - MomentumGrid[0]);
+            }
+
+            for (int i = 0; i < p.Count; ++i)
+                MomentumMeasurements.Add((s[i], p[i].Item2));
+        }
+
+        private void CalculateMomentumSpaceWavefunction()
+        {
+            var psi_x = CreateVector.SparseOfArray(Wavefunction).ToComplex();
+
+            Func<double, Complex> F = p =>
+            {
+                var k = CreateVector.SparseOfArray(Grid).ToComplex().Multiply(-Complex.ImaginaryOne * p);
+                var F = 1 / Math.Sqrt(2 * Math.PI) * k.PointwiseExp().PointwiseMultiply(psi_x);
+
+                if (Spherical)
+                    return F.Sum() * 4 * Math.PI * (Grid[1] - Grid[0]);
+
+                return F.Sum() * (Grid[1] - Grid[0]);
+            };
+
+            var psi_p = new Complex[MomentumGrid.Length];
+
+            for (int j = 0; j < MomentumGrid.Length; ++j)
+                psi_p[j] = F(MomentumGrid[j]);
+
+            var N = Math.Sqrt(1d / (psi_p.Magnitude().Pow(2).Sum() * (MomentumGrid[1] - MomentumGrid[0])));
+            
+            if (Spherical)
+                N = Math.Sqrt(1d / (psi_p.Magnitude().Pow(2).Sum() * 4 * Math.PI * (MomentumGrid[1] - MomentumGrid[0])));
+
+            WavefunctionMomentum = CreateVector.SparseOfArray(psi_p).Multiply(N).ToArray();
+        }
+
+        public QuantumSystem1D(CancellationToken token, double[] energies, double[][] wavefunctions, double[] grid, int precision, int energyLevel, int azimuthalLevel, bool spherical = false)
         {
             Random = new Random();
             token.ThrowIfCancellationRequested();
 
-            PositionDomain = positionDomain;
-            MomentumDomain = momentumDomain;
             Precision = precision;
             EnergyLevel = energyLevel - 1;
             AzimuthalLevel = azimuthalLevel;
-
-            var T = -1 / (2 * mass);
-            var V = potential;
-
-            var boundaryConditions = new BoundaryCondition[]
-            {
-                new BoundaryCondition(0, positionDomain[0].ToString(), "0"),
-                new BoundaryCondition(0, positionDomain[1].ToString(), "0")
-            };
+            Spherical = spherical;
 
             token.ThrowIfCancellationRequested();
-            var schrodingerEquation = new string[] { T.ToString(), "0", V , "0"};
 
-            var solution = DESolver.SolveODE(schrodingerEquation, positionDomain, boundaryConditions, precision);
-            token.ThrowIfCancellationRequested();
-
-            Energies = new double[10];
-            WaveFunction = new DiscreteFunctionComplex[10];
-            WaveFunctionMomentumSpace = new DiscreteFunctionComplex[10];
-            PositionSpaceDistributionParameters = new List<double[]>();
-            MomentumSpaceDistributionParameters = new List<double[]>();
-
-            var dx = (PositionDomain[1] - PositionDomain[0]) / (Precision - 1);
-            var x = CreateVector.Sparse<double>(Precision);
-
-            for (int i = 0; i < Precision; ++i)
-            {
-                x[i] = PositionDomain[0] + i * dx;
-                token.ThrowIfCancellationRequested();
-            }
-
-            for (int i = 0; i < 10; ++i)
-            {
-                token.ThrowIfCancellationRequested();
-                Energies[i] = solution.ElementAt(i).Item1;
-                var function = solution.ElementAt(i).Item2;
-
-                var fx = function;
-                var N = Math.Sqrt(1d / fx.GetMagnitudeSquared().Integrate(PositionDomain[0], PositionDomain[1]));
-                
-                WaveFunction[i] = new DiscreteFunctionComplex(x => N * fx.Evaluate(x));
-                token.ThrowIfCancellationRequested();
-
-                var fp = WaveFunction[i].FourierTransform(MomentumDomain);
-                var Np = Math.Sqrt(1d / fp.GetMagnitudeSquared().Integrate(MomentumDomain[0], MomentumDomain[1]));
-
-                WaveFunctionMomentumSpace[i] = new DiscreteFunctionComplex(p => Np * fp.Evaluate(p));
-
-                PositionSpaceDistributionParameters.Add(GetPositionSpaceDistributionParameters(i));
-                MomentumSpaceDistributionParameters.Add(GetMomentumSpaceDistributionParameters(i));
-                token.ThrowIfCancellationRequested();
-            }
+            Energies = energies;
+            Wavefunction = wavefunctions[EnergyLevel];
+            Grid = grid;
+            MomentumGrid = Generate.LinearSpaced(Grid.Length, -3, 3);
 
             token.ThrowIfCancellationRequested();
+
+            CalculateMomentumSpaceWavefunction();
+            GeneratePositionMeasurements();
+            GenerateMomentumMeasurements();
         }
 
         public void PlotPositionSpace(FormsPlot plot)
         {
-            WaveFunction[EnergyLevel].Plot(plot, PositionDomain, Precision);
+            var x = Grid;
+            var u = new double[Precision];
+
+            for (int i = 0; i < Precision; ++i)
+                u[i] = Wavefunction[i] * Wavefunction[i];
+
+            plot.Plot.SetAxisLimits(Grid[0], Grid.Last(), u.Min(), u.Max());
+            plot.Plot.AddSignalXY(x, u);
+            plot.Refresh();
         }
 
         public void PlotMomentumSpace(FormsPlot plot)
         {
-            WaveFunctionMomentumSpace[EnergyLevel].Plot(plot, MomentumDomain, Precision);
+            var k = MomentumGrid;
+            var u = new double[Precision];
+
+            for (int i = 0; i < Precision; ++i)
+                u[i] = WavefunctionMomentum[i].MagnitudeSquared();
+
+            plot.Plot.SetAxisLimits(MomentumGrid[0], MomentumGrid.Last(), u.Min(), u.Max());
+            plot.Plot.AddSignalXY(k, u);
+            plot.Refresh();
         }
 
         private double RandomSign()
@@ -124,89 +188,69 @@ namespace Quantum_Mechanics.Quantum_Mechanics
             var x = MeasurePosition(seed);
             var p = MeasureMomentum(seed);
 
-            return Tuple.Create(x + RandomSign() * Random.NextDouble() * 0.5, p + RandomSign() * Random.NextDouble() * 0.5);
+            return Tuple.Create(x + RandomSign() * Random.NextDouble() * 0.5, p);
         }
 
         public double MeasureAngularMomentum()
         {
-            return AzimuthalLevel * (AzimuthalLevel + 1);
+            return Math.Sqrt(AzimuthalLevel * (AzimuthalLevel + 1));
         }
 
         #region Position Space
 
-        public double[] GetPositionDomain()
-        {
-            return PositionDomain;
-        }
-
-        private double[] GetPositionSpaceDistributionParameters(int i)
-        {
-            var f = WaveFunction[i].GetMagnitudeSquared();
-            var mean = new DiscreteFunction(x => x * f.Evaluate(x)).Integrate(PositionDomain[0], PositionDomain[1]);
-            var std = Math.Sqrt(new DiscreteFunction(x => (x - mean) * (x - mean) * f.Evaluate(x)).Integrate(PositionDomain[0], PositionDomain[1]));
-
-            return new double[] { mean, std };
-        }
-
-        private double[] GetMomentumSpaceDistributionParameters(int i)
-        {
-            var f = WaveFunctionMomentumSpace[i].GetMagnitudeSquared();
-            var mean = new DiscreteFunction(p => p * f.Evaluate(p)).Integrate(MomentumDomain[0], MomentumDomain[1]);
-            var std = Math.Sqrt(new DiscreteFunction(p => (p - mean) * (p - mean) * f.Evaluate(p)).Integrate(MomentumDomain[0], MomentumDomain[1]));
-
-            return new double[] { mean, std };
-        }
-
-        public double GetProbabilityPositionSpace(double x)
-        {
-            var dx = (PositionDomain[1] - PositionDomain[0]) / (Precision - 1);
-            return WaveFunction[EnergyLevel].GetMagnitudeSquared().Integrate(x - dx, x + dx);
-        }
-
         public double ExpectedPosition()
         {
-            return PositionSpaceDistributionParameters[EnergyLevel][0];
+            if (Spherical)
+                return Wavefunction.Pow(2).Multiply(Grid).Sum() * 4 * Math.PI * (Grid[1] - Grid[0]);
+
+            return Wavefunction.Pow(2).Multiply(Grid).Sum() * (Grid[1] - Grid[0]);
         }
 
         public double MeasurePosition(int seed)
         {
             Random = new Random(seed);
-            var mean = PositionSpaceDistributionParameters[EnergyLevel][0];
-            var std = PositionSpaceDistributionParameters[EnergyLevel][1];
-            var x = Normal.Sample(Random, mean, std);
 
-            while (x <= PositionDomain[0] || x >= PositionDomain[1])
-                x = Normal.Sample(Random, mean, std);   
+            var u = Random.NextDouble();
 
-            return x;
+            for (int i = 0; i < PositionMeasurements.Count; ++i)
+            {
+                if (u <= PositionMeasurements[i].Item1)
+                    return PositionMeasurements[i].Item2;
+            }
+
+            throw new ArgumentException();
         }
 
         #endregion
 
         #region Momentum Space
 
-        public double GetProbabilityMomentumSpace(double k)
-        {
-            var dk = (MomentumDomain[1] - MomentumDomain[0]) / (Precision - 1);
-            return WaveFunctionMomentumSpace[EnergyLevel].GetMagnitudeSquared().Integrate(k - dk, k + dk);
-        }
-
         public double ExpectedMomentum()
         {
-            return MomentumSpaceDistributionParameters[EnergyLevel][0];
+            var u = new double[Precision];
+
+            for (int i = 0; i < Precision; ++i)
+                u[i] = WavefunctionMomentum[i].MagnitudeSquared();
+
+            if (Spherical)
+                return u.Multiply(MomentumGrid).Sum() * 4 * Math.PI * (MomentumGrid[1] - MomentumGrid[0]);
+
+            return u.Multiply(MomentumGrid).Sum() * (MomentumGrid[1] - MomentumGrid[0]);
         }
 
         public double MeasureMomentum(int seed)
         {
             Random = new Random(seed);
-            var mean = MomentumSpaceDistributionParameters[EnergyLevel][0];
-            var std = MomentumSpaceDistributionParameters[EnergyLevel][1];
-            var p = Normal.Sample(Random, mean, std);
 
-            while (p <= MomentumDomain[0] || p >= MomentumDomain[1])
-                p = Normal.Sample(Random, mean, std);
-            
-            return p;
+            var u = Random.NextDouble();
+
+            for (int i = 0; i < MomentumMeasurements.Count; ++i)
+            {
+                if (u <= MomentumMeasurements[i].Item1)
+                    return MomentumMeasurements[i].Item2;
+            }
+
+            throw new ArgumentException();
         }
 
         #endregion

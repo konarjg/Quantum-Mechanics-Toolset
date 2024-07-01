@@ -20,17 +20,15 @@ namespace Quantum_Sandbox
             ParentSandboxMode = parent;
         }
 
-        public void SetPosition(double x, double y, bool measured = true)
+        public void SetPosition(double x, bool measured = true)
         {
             if (!measured)
             {
-                PositionX.Text = "";
-                PositionY.Text = "";
+                Position.Text = "";
                 return;
             }
 
-            PositionX.Text = Math.Round(x, 3).ToString();
-            PositionY.Text = Math.Round(y, 3).ToString();
+            Position.Text = Math.Round(x, 3).ToString();
         }
 
         public void SetMomentum(double p, bool measured = true)
@@ -52,7 +50,7 @@ namespace Quantum_Sandbox
                 return;
             }
 
-            Energy.Text = Math.Round(E, 3).ToString();
+            Energy.Text = Math.Round(E, 3).ToString() + " eV";
         }
 
         public void SetAngularMomentum(double L, bool measured = true)
@@ -72,6 +70,11 @@ namespace Quantum_Sandbox
             Enabled = false;
             ParentSandboxMode.RemoveMeasurement();
             e.Cancel = true;
+        }
+
+        private void ValuesMeasured_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
